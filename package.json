@@ -4,6 +4,7 @@
   "description": "A type-safe HTML head builder",
   "keywords": ["devsantara", "head"],
   "author": "devsantara",
+  "license": "MIT",
   "packageManager": "pnpm@10.28.2",
   "scripts": {},
   "homepage": "https://github.com/devsantara/head#readme",
