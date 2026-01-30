@@ -1,6 +1,6 @@
 {
   "include": ["src"],
-  "exclude": [],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "target": "esnext",
     "lib": ["es2023", "DOM"],
