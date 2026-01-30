@@ -16,12 +16,28 @@
     "type": "git",
     "url": "git+https://github.com/devsantara/head.git"
   },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "lint:ts": "tsc --noEmit",
     "format": "oxfmt",
     "format:check": "oxfmt --check"
   },
   "devDependencies": {
-    "oxfmt": "^0.27.0"
+    "oxfmt": "^0.27.0",
+    "tsdown": "^0.20.1",
+    "typescript": "^5.9.3"
   },
   "packageManager": "pnpm@10.28.2"
 }
