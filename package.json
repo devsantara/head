@@ -2,19 +2,26 @@
   "name": "@devsantara/head",
   "version": "0.0.0",
   "description": "A type-safe HTML head builder",
-  "keywords": ["devsantara", "head"],
-  "author": "devsantara",
-  "license": "MIT",
-  "packageManager": "pnpm@10.28.2",
-  "scripts": {},
+  "keywords": [
+    "devsantara",
+    "head"
+  ],
   "homepage": "https://github.com/devsantara/head#readme",
+  "bugs": {
+    "url": "https://github.com/devsantara/head/issues"
+  },
+  "license": "MIT",
+  "author": "devsantara",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/devsantara/head.git"
   },
-  "bugs": {
-    "url": "https://github.com/devsantara/head/issues"
+  "scripts": {
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "oxfmt": "^0.27.0"
+  },
+  "packageManager": "pnpm@10.28.2"
 }
