@@ -38,9 +38,11 @@
     "lint:fix": "oxlint --type-aware --fix",
     "lint:ts": "tsc --noEmit",
     "format": "oxfmt",
-    "format:check": "oxfmt --check"
+    "format:check": "oxfmt --check",
+    "changeset": "changeset"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "oxfmt": "^0.27.0",
     "oxlint": "^1.42.0",
     "oxlint-tsgolint": "^0.11.4",
