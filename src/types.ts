@@ -1,38 +1,40 @@
-import type {
-  DetailedHTMLProps,
-  LinkHTMLAttributes,
-  MetaHTMLAttributes,
-  ScriptHTMLAttributes,
-  StyleHTMLAttributes,
-} from 'react';
+import * as React from 'react';
 
-export type MetaAttributes = DetailedHTMLProps<
-  MetaHTMLAttributes<HTMLMetaElement>,
+export type HeadMetaAttributes = React.DetailedHTMLProps<
+  React.MetaHTMLAttributes<HTMLMetaElement>,
   HTMLMetaElement
 >;
-export type LinkAttributes = DetailedHTMLProps<
-  LinkHTMLAttributes<HTMLLinkElement>,
+export type HeadLinkAttributes = React.DetailedHTMLProps<
+  React.LinkHTMLAttributes<HTMLLinkElement>,
   HTMLLinkElement
 >;
-export type ScriptAttributes = DetailedHTMLProps<
-  ScriptHTMLAttributes<HTMLScriptElement>,
+export type HeadScriptAttributes = React.DetailedHTMLProps<
+  React.ScriptHTMLAttributes<HTMLScriptElement>,
   HTMLScriptElement
 >;
-export type StyleAttributes = DetailedHTMLProps<
-  StyleHTMLAttributes<HTMLStyleElement>,
+export type HeadStyleAttributes = React.DetailedHTMLProps<
+  React.StyleHTMLAttributes<HTMLStyleElement>,
   HTMLStyleElement
 >;
 
-export interface AttributeTypeMap {
-  meta: MetaAttributes;
-  link: LinkAttributes;
-  script: ScriptAttributes;
-  style: StyleAttributes;
+export interface HeadAttributeTypeMap {
+  meta: HeadMetaAttributes;
+  link: HeadLinkAttributes;
+  script: HeadScriptAttributes;
+  style: HeadStyleAttributes;
 }
 
 export type HeadElement<
-  T extends keyof AttributeTypeMap = keyof AttributeTypeMap,
+  T extends keyof HeadAttributeTypeMap = keyof HeadAttributeTypeMap,
 > = {
   type: T;
-  attributes: AttributeTypeMap[T];
+  attributes: HeadAttributeTypeMap[T];
 };
+
+/**
+ * Generic adapter interface for transforming HeadElement[] to a target format
+ * @template T - The output type of the adapter
+ */
+export interface HeadAdapter<T> {
+  adapter(elements: HeadElement[]): T;
+}
