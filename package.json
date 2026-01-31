@@ -17,7 +17,9 @@
     "url": "git+https://github.com/devsantara/head.git"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "type": "module",
   "main": "./dist/index.js",
@@ -35,15 +37,15 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check"
   },
+  "dependencies": {
+    "@types/react": "^19.2.10",
+    "react": "^19.2.4"
+  },
   "devDependencies": {
     "oxfmt": "^0.27.0",
     "tsdown": "^0.20.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
-  "packageManager": "pnpm@10.28.2",
-  "dependencies": {
-    "@types/react": "^19.2.10",
-    "react": "^19.2.4"
-  }
+  "packageManager": "pnpm@10.28.2"
 }
