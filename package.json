@@ -33,6 +33,8 @@
     "build": "tsdown",
     "dev": "tsdown --watch",
     "test": "vitest",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "oxlint --type-aware --fix",
     "lint:ts": "tsc --noEmit",
     "format": "oxfmt",
     "format:check": "oxfmt --check"
@@ -43,6 +45,8 @@
   },
   "devDependencies": {
     "oxfmt": "^0.27.0",
+    "oxlint": "^1.42.0",
+    "oxlint-tsgolint": "^0.11.4",
     "tsdown": "^0.20.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
