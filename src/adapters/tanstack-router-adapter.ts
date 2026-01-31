@@ -27,7 +27,8 @@ export interface HeadTanStackRouterAdapterResult {
  *   .addLink({ rel: 'canonical', href: 'https://example.com' })
  *   .build();
  *
- * const config = HeadTanstackRouterAdapter.adapter(elements);
+ * const adapter = new HeadTanstackRouterAdapter();
+ * const config = adapter.transform(elements);
  * // Returns: {
  * //   meta: [{ name: 'description', content: 'My site' }],
  * //   links: [{ rel: 'canonical', href: 'https://example.com' }],
@@ -41,7 +42,7 @@ export class HeadTanstackRouterAdapter implements HeadAdapter<HeadTanStackRouter
    * @param elements - Array of head elements from HeadBuilder.build()
    * @returns A TanStackHeadConfig object with elements organized by type
    */
-  static adapter(elements: HeadElement[]): HeadTanStackRouterAdapterResult {
+  transform(elements: HeadElement[]): HeadTanStackRouterAdapterResult {
     const config: HeadTanStackRouterAdapterResult = {
       meta: [],
       links: [],
@@ -62,9 +63,5 @@ export class HeadTanstackRouterAdapter implements HeadAdapter<HeadTanStackRouter
     }
 
     return config;
-  }
-
-  adapter(elements: HeadElement[]): HeadTanStackRouterAdapterResult {
-    return HeadTanstackRouterAdapter.adapter(elements);
   }
 }

@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 export type HeadMetaAttributes = React.DetailedHTMLProps<
   React.MetaHTMLAttributes<HTMLMetaElement>,
   HTMLMetaElement
@@ -36,5 +34,5 @@ export type HeadElement<
  * @template T - The output type of the adapter
  */
 export interface HeadAdapter<T> {
-  adapter(elements: HeadElement[]): T;
+  transform(elements: HeadElement[]): T;
 }

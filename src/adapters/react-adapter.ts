@@ -15,7 +15,8 @@ export type HeadReactAdapterResult = ReactNode[];
  *   .addLink({ rel: 'canonical', href: 'https://example.com' })
  *   .build();
  *
- * const reactElements = HeadReactAdapter.adapter(elements);
+ * const adapter = new HeadReactAdapter();
+ * const reactElements = adapter.transform(elements);
  * // Returns: [<meta name="description" content="My site" />, <link rel="canonical" href="https://example.com" />]
  */
 export class HeadReactAdapter implements HeadAdapter<HeadReactAdapterResult> {
@@ -24,7 +25,7 @@ export class HeadReactAdapter implements HeadAdapter<HeadReactAdapterResult> {
    * @param elements - Array of head elements from HeadBuilder.build()
    * @returns An array of React elements
    */
-  static adapter(elements: HeadElement[]): HeadReactAdapterResult {
+  transform(elements: HeadElement[]): HeadReactAdapterResult {
     return elements.map((element, index) => {
       const { type, attributes } = element;
 
@@ -33,9 +34,5 @@ export class HeadReactAdapter implements HeadAdapter<HeadReactAdapterResult> {
         ...attributes,
       });
     });
-  }
-
-  adapter(elements: HeadElement[]): HeadReactAdapterResult {
-    return HeadReactAdapter.adapter(elements);
   }
 }

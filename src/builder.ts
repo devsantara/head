@@ -149,7 +149,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    */
   build(): TOutput {
     if (this.adapter) {
-      return this.adapter.adapter(this.elements);
+      return this.adapter.transform(this.elements);
     }
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion
     return this.elements as unknown as TOutput;
