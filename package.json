@@ -42,6 +42,7 @@
     "lint:ts": "tsc --noEmit",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
+    "prepublishOnly": "pnpm run build",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish"
