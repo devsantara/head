@@ -1,5 +1,5 @@
 {
-  "name": "@devsantara/head",
+  "name": "@devsantara-labs/head",
   "version": "0.0.0",
   "description": "A type-safe HTML head builder",
   "keywords": [
@@ -11,7 +11,7 @@
     "url": "https://github.com/devsantara/head/issues"
   },
   "license": "MIT",
-  "author": "devsantara",
+  "author": "edwintantawi",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/devsantara/head.git"
@@ -30,6 +30,9 @@
     "./adapters": "./dist/adapters/index.js",
     "./package.json": "./package.json"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
@@ -39,7 +42,9 @@
     "lint:ts": "tsc --noEmit",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "changeset": "changeset"
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.8",
