@@ -14,12 +14,17 @@ export type HeadStyleAttributes = React.DetailedHTMLProps<
   React.StyleHTMLAttributes<HTMLStyleElement>,
   HTMLStyleElement
 >;
+export type HeadTitleAttributes = React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLTitleElement>,
+  HTMLTitleElement
+>;
 
 export interface HeadAttributeTypeMap {
   meta: HeadMetaAttributes;
   link: HeadLinkAttributes;
   script: HeadScriptAttributes;
   style: HeadStyleAttributes;
+  title: HeadTitleAttributes;
 }
 
 export type HeadElement<
@@ -41,6 +46,20 @@ export interface HeadAdapter<T> {
  * Character encoding type with autocomplete for common charsets
  */
 export type CharSet = 'utf-8' | (string & {});
+
+/**
+ * Viewport configuration options
+ */
+export interface ViewportOptions {
+  width?: 'device-width' | number | (string & {});
+  height?: 'device-height' | number | (string & {});
+  initialScale?: number;
+  minimumScale?: number;
+  maximumScale?: number;
+  userScalable?: boolean;
+  viewportFit?: 'auto' | 'cover' | 'contain';
+  interactiveWidget?: 'resizes-visual' | 'resizes-content' | 'overlays-content';
+}
 
 /**
  * Robots meta tag options
