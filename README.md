@@ -31,7 +31,7 @@ import { HeadBuilder } from '@devsantara-labs/head';
 
 const head = new HeadBuilder()
   .addCharSet('utf-8')
-  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addViewport({ width: 'device-width', initialScale: 1 })
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .build();
 ```
@@ -60,7 +60,7 @@ Returns an array of HeadElement objects
 ```typescript
 const head = new HeadBuilder()
   .addCharSet('utf-8')
-  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addViewport({ width: 'device-width', initialScale: 1 })
   .addMeta({ name: 'description', content: 'A type-safe head builder' })
   .build();
 ```
@@ -103,7 +103,7 @@ const head = new HeadBuilder({
   adapter: new HeadReactAdapter(),
 })
   .addCharSet('utf-8')
-  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addViewport({ width: 'device-width', initialScale: 1 })
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .addLink({ rel: 'icon', href: '/favicon.ico' })
   .addScript({ src: '/analytics.js', async: true })
@@ -123,7 +123,7 @@ import { HeadReactAdapter } from '@devsantara-labs/head/adapters';
 
 const head = new HeadBuilder({ adapter: new HeadReactAdapter() })
   .addCharSet('utf-8')
-  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addViewport({ width: 'device-width', initialScale: 1 })
   .addLink({ rel: 'icon', href: '/favicon.ico' })
   .build();
 
@@ -271,6 +271,7 @@ new HeadBuilder(options?: {
 | `addScript()`       | `attributes: HeadScriptAttributes` | `this`                     | Adds a `<script>` element                              |
 | `addStyle()`        | `attributes: HeadStyleAttributes`  | `this`                     | Adds a `<style>` element                               |
 | `addCharSet()`      | `charSet: CharSet`                 | `this`                     | Adds a character encoding declaration                  |
+| `addViewport()`     | `options: ViewportOptions`         | `this`                     | Adds a viewport meta tag for responsive design         |
 | `build()`           | -                                  | `TOutput \| HeadElement[]` | Returns the final output (adapted if adapter provided) |
 | `getMetadataBase()` | -                                  | `URL \| undefined`         | Returns the configured metadataBase URL                |
 
@@ -319,7 +320,8 @@ All attribute types are based on React's `DetailedHTMLProps` for their respectiv
 - `HeadLinkAttributes` - Attributes for `<link>` elements
 - `HeadScriptAttributes` - Attributes for `<script>` elements
 - `HeadStyleAttributes` - Attributes for `<style>` elements
-- `CharSet` - Character encoding type with autocomplete for common charsets and accepts any string value.
+- `CharSet` - Character encoding type with autocomplete for common charsets and accepts any string value
+- `ViewportOptions` - Configuration options for viewport meta tag (width, height, initialScale, etc.)
 
 ## Notes
 
