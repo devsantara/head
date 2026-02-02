@@ -30,9 +30,10 @@ yarn add @devsantara-labs/head
 import { HeadBuilder } from '@devsantara-labs/head';
 
 const head = new HeadBuilder()
+  .addTitle('My Website')
   .addCharSet('utf-8')
   .addDescription('A type-safe HTML head builder library')
-  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addViewport({ width: 'device-width', initialScale: 1 })
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .build();
 ```
@@ -42,6 +43,7 @@ Returns an array of HeadElement objects
 ```typescript
 // console.log(head);
 [
+  { type: 'title', attributes: { children: 'My Website' } },
   { type: 'meta', attributes: { charSet: 'utf-8' } },
   {
     type: 'meta',
@@ -67,9 +69,10 @@ Returns an array of HeadElement objects
 
 ```typescript
 const head = new HeadBuilder()
+  .addTitle('My Website')
   .addCharSet('utf-8')
-  .addDescription('A type-safe head builder')
-  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addViewport({ width: 'device-width', initialScale: 1 })
+  .addMeta({ name: 'description', content: 'A type-safe head builder' })
   .build();
 ```
 
@@ -110,9 +113,9 @@ const head = new HeadBuilder({
   metadataBase: new URL('https://example.com'),
   adapter: new HeadReactAdapter(),
 })
+  .addTitle('My Website')
   .addCharSet('utf-8')
-  .addDescription('A comprehensive example of using HeadBuilder')
-  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addViewport({ width: 'device-width', initialScale: 1 })
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .addLink({ rel: 'icon', href: '/favicon.ico' })
   .addScript({ src: '/analytics.js', async: true })
@@ -131,9 +134,9 @@ import { HeadBuilder } from '@devsantara-labs/head';
 import { HeadReactAdapter } from '@devsantara-labs/head/adapters';
 
 const head = new HeadBuilder({ adapter: new HeadReactAdapter() })
+  .addTitle('My Website')
   .addCharSet('utf-8')
-  .addDescription('My awesome React app')
-  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addViewport({ width: 'device-width', initialScale: 1 })
   .addLink({ rel: 'icon', href: '/favicon.ico' })
   .build();
 
@@ -199,12 +202,13 @@ The `HeadElement` type represents a single head element:
 
 ```typescript
 type HeadElement = {
-  type: 'meta' | 'link' | 'script' | 'style';
+  type: 'meta' | 'link' | 'script' | 'style' | 'title';
   attributes:
     | HeadMetaAttributes
     | HeadLinkAttributes
     | HeadScriptAttributes
-    | HeadStyleAttributes;
+    | HeadStyleAttributes
+    | HeadTitleAttributes;
 };
 ```
 
@@ -240,6 +244,7 @@ class HeadHtmlStringAdapter implements HeadAdapter<HtmlStringOutput> {
 
 // Use your custom adapter
 const head = new HeadBuilder({ adapter: new HeadHtmlStringAdapter() })
+  .addTitle('My Awesome Site')
   .addCharSet('utf-8')
   .addDescription('My awesome site')
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
@@ -247,6 +252,7 @@ const head = new HeadBuilder({ adapter: new HeadHtmlStringAdapter() })
 
 console.log(head);
 // Output:
+// <title>My Awesome Site</title>
 // <meta charSet="utf-8" />
 // <meta name="description" content="My awesome site" />
 // <link rel="stylesheet" href="/styles.css" />
@@ -276,12 +282,13 @@ new HeadBuilder(options?: {
 
 | Method              | Parameters                         | Returns                    | Description                                            |
 | ------------------- | ---------------------------------- | -------------------------- | ------------------------------------------------------ |
+| `addTitle()`        | `title: string`                    | `this`                     | Adds a `<title>` element                               |
 | `addMeta()`         | `attributes: HeadMetaAttributes`   | `this`                     | Adds a `<meta>` element                                |
 | `addLink()`         | `attributes: HeadLinkAttributes`   | `this`                     | Adds a `<link>` element                                |
 | `addScript()`       | `attributes: HeadScriptAttributes` | `this`                     | Adds a `<script>` element                              |
 | `addStyle()`        | `attributes: HeadStyleAttributes`  | `this`                     | Adds a `<style>` element                               |
 | `addCharSet()`      | `charSet: CharSet`                 | `this`                     | Adds a character encoding declaration                  |
-| `addDescription()`  | `description: string`              | `this`                     | Adds a description meta tag                            |
+| `addViewport()`     | `options: ViewportOptions`         | `this`                     | Adds a viewport meta tag for responsive design         |
 | `build()`           | -                                  | `TOutput \| HeadElement[]` | Returns the final output (adapted if adapter provided) |
 | `getMetadataBase()` | -                                  | `URL \| undefined`         | Returns the configured metadataBase URL                |
 
@@ -330,7 +337,9 @@ All attribute types are based on React's `DetailedHTMLProps` for their respectiv
 - `HeadLinkAttributes` - Attributes for `<link>` elements
 - `HeadScriptAttributes` - Attributes for `<script>` elements
 - `HeadStyleAttributes` - Attributes for `<style>` elements
-- `CharSet` - Character encoding type with autocomplete for common charsets and accepts any string value.
+- `HeadTitleAttributes` - Attributes for `<title>` elements
+- `CharSet` - Character encoding type with autocomplete for common charsets and accepts any string value
+- `ViewportOptions` - Configuration options for viewport meta tag (width, height, initialScale, etc.)
 
 ## Notes
 
@@ -344,6 +353,7 @@ The `metadataBase` option allows you to configure a base URL for resolving relat
 
 ## References
 
+- [MDN: `<title>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title)
 - [MDN: `<meta>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta)
 - [MDN: `<link>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link)
 - [MDN: `<script>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script)
