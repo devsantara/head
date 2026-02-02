@@ -38,6 +38,6 @@ export interface HeadAdapter<T> {
 }
 
 /**
- * Character encoding type with autocomplete for 'utf-8' but allows any string
+ * Character encoding type with autocomplete for common charsets
  */
 export type CharSet = 'utf-8' | (string & {});

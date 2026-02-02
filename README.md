@@ -319,7 +319,7 @@ All attribute types are based on React's `DetailedHTMLProps` for their respectiv
 - `HeadLinkAttributes` - Attributes for `<link>` elements
 - `HeadScriptAttributes` - Attributes for `<script>` elements
 - `HeadStyleAttributes` - Attributes for `<style>` elements
-- `CharSet` - Character encoding type with autocomplete for `'utf-8'` and accepts any string
+- `CharSet` - Character encoding type with autocomplete for common charsets and accepts any string value.
 
 ## Notes
 
