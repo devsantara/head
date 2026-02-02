@@ -271,6 +271,7 @@ new HeadBuilder(options?: {
 | `addScript()`       | `attributes: HeadScriptAttributes` | `this`                     | Adds a `<script>` element                              |
 | `addStyle()`        | `attributes: HeadStyleAttributes`  | `this`                     | Adds a `<style>` element                               |
 | `addCharSet()`      | `charSet: CharSet`                 | `this`                     | Adds a character encoding declaration                  |
+| `addRobots()`       | `options: RobotsOptions`           | `this`                     | Adds a robots meta tag for search engine control       |
 | `build()`           | -                                  | `TOutput \| HeadElement[]` | Returns the final output (adapted if adapter provided) |
 | `getMetadataBase()` | -                                  | `URL \| undefined`         | Returns the configured metadataBase URL                |
 
@@ -320,6 +321,7 @@ All attribute types are based on React's `DetailedHTMLProps` for their respectiv
 - `HeadScriptAttributes` - Attributes for `<script>` elements
 - `HeadStyleAttributes` - Attributes for `<style>` elements
 - `CharSet` - Character encoding type with autocomplete for common charsets and accepts any string value.
+- `RobotsOptions` - Robots meta tag configuration with `index` and `follow` boolean properties, plus support for custom directives as boolean (e.g., `noarchive: true`), string values (e.g., `'max-image-preview': 'large'`), or number values (e.g., `'max-snippet': 160`).
 
 ## Notes
 

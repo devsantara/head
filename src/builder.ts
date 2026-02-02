@@ -3,6 +3,7 @@ import type {
   HeadAdapter,
   HeadElement,
   CharSet,
+  RobotsOptions,
 } from './types';
 
 export class HeadBuilder<TOutput = HeadElement[]> {
@@ -163,6 +164,58 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    */
   addCharSet(charSet: CharSet) {
     return this.addElement('meta', { charSet });
+  }
+
+  /**
+   * Adds a robots meta tag to the head configuration
+   *
+   * This method provides a convenient way to control search engine crawling and indexing behavior.
+   * Set index to false for noindex, follow to false for nofollow.
+   * You can also add custom directives as boolean properties, string values, or number values.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/robots
+   *
+   * @param options - The robots configuration options
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addRobots({ index: false, follow: false })
+   *   .build();
+   * // Results in: <meta name="robots" content="noindex, nofollow" />
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addRobots({ index: true, follow: true, noarchive: true })
+   *   .build();
+   * // Results in: <meta name="robots" content="index, follow, noarchive" />
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addRobots({ index: true, 'max-image-preview': 'large', 'max-snippet': 160 })
+   *   .build();
+   * // Results in: <meta name="robots" content="index, max-image-preview:large, max-snippet:160" />
+   */
+  addRobots(options: RobotsOptions) {
+    const directiveParts: string[] = [];
+
+    for (const [key, value] of Object.entries(options)) {
+      if (value === undefined) continue;
+
+      if (key === 'index') {
+        directiveParts.push(value ? 'index' : 'noindex');
+      } else if (key === 'follow') {
+        directiveParts.push(value ? 'follow' : 'nofollow');
+      } else if (typeof value === 'string' || typeof value === 'number') {
+        directiveParts.push(`${key}:${value}`);
+      } else if (value) {
+        directiveParts.push(key);
+      }
+    }
+
+    return this.addElement('meta', {
+      name: 'robots',
+      content: directiveParts.join(', '),
+    });
   }
 
   /**
