@@ -5,6 +5,7 @@ import type {
   CharSet,
   RobotsOptions,
   ViewportOptions,
+  OpenGraphOptions,
 } from './types';
 
 export class HeadBuilder<TOutput = HeadElement[]> {
@@ -312,6 +313,120 @@ export class HeadBuilder<TOutput = HeadElement[]> {
       name: 'robots',
       content: directiveParts.join(', '),
     });
+  }
+
+  /**
+   * Adds OpenGraph meta tags to the head configuration
+   *
+   * This method provides a convenient way to add OpenGraph metadata for rich social media previews.
+   * It handles basic properties, images, and type-specific metadata.
+   *
+   * @see https://ogp.me/
+   *
+   * @param options - The OpenGraph configuration options
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addOpenGraph({
+   *     title: 'My Page Title',
+   *     description: 'A description of my page',
+   *     url: 'https://example.com/page',
+   *     image: {
+   *       url: 'https://example.com/image.jpg',
+   *       alt: 'Image description',
+   *       width: 1200,
+   *       height: 630
+   *     }
+   *   })
+   *   .build();
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addOpenGraph({
+   *     title: 'Article Title',
+   *     type: {
+   *       name: 'article',
+   *       properties: [
+   *         { name: 'article:published_time', content: '2024-01-01' },
+   *         { name: 'article:author', content: 'John Doe' }
+   *       ]
+   *     }
+   *   })
+   *   .build();
+   */
+  addOpenGraph(options: OpenGraphOptions) {
+    // Add basic properties
+    if (options.title) {
+      this.addElement('meta', { property: 'og:title', content: options.title });
+    }
+    if (options.description) {
+      this.addElement('meta', {
+        property: 'og:description',
+        content: options.description,
+      });
+    }
+    if (options.url) {
+      this.addElement('meta', { property: 'og:url', content: options.url });
+    }
+    if (options.locale) {
+      this.addElement('meta', {
+        property: 'og:locale',
+        content: options.locale,
+      });
+    }
+
+    // Add image properties
+    if (options.image) {
+      const imageUrl =
+        options.image.url instanceof URL
+          ? options.image.url.toString()
+          : options.image.url;
+      this.addElement('meta', { property: 'og:image', content: imageUrl });
+
+      if (options.image.alt) {
+        this.addElement('meta', {
+          property: 'og:image:alt',
+          content: options.image.alt,
+        });
+      }
+      if (options.image.type) {
+        this.addElement('meta', {
+          property: 'og:image:type',
+          content: options.image.type,
+        });
+      }
+      if (options.image.width) {
+        this.addElement('meta', {
+          property: 'og:image:width',
+          content: options.image.width.toString(),
+        });
+      }
+      if (options.image.height) {
+        this.addElement('meta', {
+          property: 'og:image:height',
+          content: options.image.height.toString(),
+        });
+      }
+    }
+
+    // Add type and type-specific properties
+    if (options.type) {
+      this.addElement('meta', {
+        property: 'og:type',
+        content: options.type.name,
+      });
+
+      if ('properties' in options.type) {
+        for (const prop of options.type.properties) {
+          this.addElement('meta', {
+            property: prop.name,
+            content: prop.content,
+          });
+        }
+      }
+    }
+
+    return this;
   }
 
   /**
