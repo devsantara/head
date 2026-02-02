@@ -167,6 +167,25 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
+   * Adds a title element to the head configuration
+   *
+   * This method sets the document title that appears in the browser tab,
+   * search engine results, and bookmarks.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title
+   *
+   * @param title - The document title text
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addTitle('My Awesome Website')
+   *   .build();
+   */
+  addTitle(title: string) {
+    return this.addElement('title', { children: title });
+  }
+
+  /**
    * Adds a viewport meta tag to the head configuration
    *
    * This method provides a convenient way to configure the viewport settings
