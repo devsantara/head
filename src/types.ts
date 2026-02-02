@@ -73,6 +73,11 @@ export interface RobotsOptions {
   [key: string]: boolean | string | number | undefined;
 }
 
+/**
+ * OpenGraph article metadata properties
+ * Used for news articles, blog posts, and other written content
+ * @see https://ogp.me/#type_article
+ */
 type ArticleMetadataProperty =
   | { name: 'article:published_time'; content: string }
   | { name: 'article:modified_time'; content: string }
@@ -81,18 +86,33 @@ type ArticleMetadataProperty =
   | { name: 'article:section'; content: string }
   | { name: 'article:tag'; content: string };
 
+/**
+ * OpenGraph book metadata properties
+ * Used for books and publications
+ * @see https://ogp.me/#type_book
+ */
 type BookMetadataProperty =
   | { name: 'book:isbn'; content: string }
   | { name: 'book:release_date'; content: string }
   | { name: 'book:author'; content: string }
   | { name: 'book:tag'; content: string };
 
+/**
+ * OpenGraph profile metadata properties
+ * Used for user profiles and personal pages
+ * @see https://ogp.me/#type_profile
+ */
 type ProfileMetadataProperty =
   | { name: 'profile:first_name'; content: string }
   | { name: 'profile:last_name'; content: string }
   | { name: 'profile:username'; content: string }
   | { name: 'profile:gender'; content: string };
 
+/**
+ * OpenGraph music.song metadata properties
+ * Used for individual music songs
+ * @see https://ogp.me/#type_music.song
+ */
 type MusicSongMetadataProperty =
   | { name: 'music:duration'; content: string }
   | { name: 'music:album'; content: string }
@@ -100,6 +120,11 @@ type MusicSongMetadataProperty =
   | { name: 'music:album:track'; content: string }
   | { name: 'music:musician'; content: string };
 
+/**
+ * OpenGraph music.album metadata properties
+ * Used for music albums
+ * @see https://ogp.me/#type_music.album
+ */
 type MusicAlbumMetadataProperty =
   | { name: 'music:song'; content: string }
   | { name: 'music:song:disc'; content: string }
@@ -107,17 +132,32 @@ type MusicAlbumMetadataProperty =
   | { name: 'music:musician'; content: string }
   | { name: 'music:release_date'; content: string };
 
+/**
+ * OpenGraph music.playlist metadata properties
+ * Used for music playlists
+ * @see https://ogp.me/#type_music.playlist
+ */
 type MusicPlaylistMetadataProperty =
   | { name: 'music:song'; content: string }
   | { name: 'music:song:disc'; content: string }
   | { name: 'music:song:track'; content: string }
   | { name: 'music:creator'; content: string };
 
+/**
+ * OpenGraph music.radio_station metadata properties
+ * Used for radio stations
+ * @see https://ogp.me/#type_music.radio_station
+ */
 interface MusicRadioStationMetadataProperty {
   name: 'music:creator';
   content: string;
 }
 
+/**
+ * OpenGraph video.movie metadata properties
+ * Used for movies
+ * @see https://ogp.me/#type_video.movie
+ */
 type VideoMovieProperty =
   | { name: 'video:actor'; content: string }
   | { name: 'video:actor:role'; content: string }
@@ -127,6 +167,11 @@ type VideoMovieProperty =
   | { name: 'video:release_date'; content: string }
   | { name: 'video:tag'; content: string };
 
+/**
+ * OpenGraph video.episode metadata properties
+ * Used for TV show episodes
+ * @see https://ogp.me/#type_video.episode
+ */
 type VideoEpisodeMetadataProperty =
   | { name: 'video:actor'; content: string }
   | { name: 'video:actor:role'; content: string }
@@ -137,6 +182,11 @@ type VideoEpisodeMetadataProperty =
   | { name: 'video:tag'; content: string }
   | { name: 'video:series'; content: string };
 
+/**
+ * OpenGraph video.tv_show metadata properties
+ * Used for TV shows
+ * @see https://ogp.me/#type_video.tv_show
+ */
 type VideoTvShowMetadataProperty =
   | { name: 'video:actor'; content: string }
   | { name: 'video:actor:role'; content: string }
@@ -146,6 +196,11 @@ type VideoTvShowMetadataProperty =
   | { name: 'video:release_date'; content: string }
   | { name: 'video:tag'; content: string };
 
+/**
+ * OpenGraph video.other metadata properties
+ * Used for other video content that doesn't fit into movie, episode, or tv_show
+ * @see https://ogp.me/#type_video.other
+ */
 type VideoOtherMetadataProperty =
   | { name: 'video:actor'; content: string }
   | { name: 'video:actor:role'; content: string }
@@ -155,7 +210,13 @@ type VideoOtherMetadataProperty =
   | { name: 'video:release_date'; content: string }
   | { name: 'video:tag'; content: string };
 
-type OpenGraphTypeProperty =
+/**
+ * OpenGraph type property with optional type-specific metadata
+ * Supports all standard OpenGraph content types (article, book, music.*, video.*, profile, website)
+ * Each type can include its own specific metadata properties
+ * @see https://ogp.me/#types
+ */
+type OpenGraphType =
   | { name: 'article'; properties: ArticleMetadataProperty[] }
   | { name: 'book'; properties: BookMetadataProperty[] }
   | { name: 'music.song'; properties: MusicSongMetadataProperty[] }
@@ -188,5 +249,5 @@ export interface OpenGraphOptions {
     width?: number;
     height?: number;
   };
-  type?: OpenGraphTypeProperty;
+  type?: OpenGraphType;
 }
