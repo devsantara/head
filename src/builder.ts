@@ -3,6 +3,7 @@ import type {
   HeadAdapter,
   HeadElement,
   CharSet,
+  ViewportOptions,
 } from './types';
 
 export class HeadBuilder<TOutput = HeadElement[]> {
@@ -182,6 +183,60 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    */
   addTitle(title: string) {
     return this.addElement('title', { children: title });
+  }
+
+  /**
+   * Adds a viewport meta tag to the head configuration
+   *
+   * This method provides a convenient way to configure the viewport settings
+   * for responsive web design.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag
+   *
+   * @param options - Viewport configuration options
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addViewport({
+   *     width: 'device-width',
+   *     initialScale: 1,
+   *     maximumScale: 5,
+   *     userScalable: true
+   *   })
+   *   .build();
+   */
+  addViewport(options: ViewportOptions) {
+    const contentParts: string[] = [];
+
+    if (options.width !== undefined) {
+      contentParts.push(`width=${options.width}`);
+    }
+    if (options.height !== undefined) {
+      contentParts.push(`height=${options.height}`);
+    }
+    if (options.initialScale !== undefined) {
+      contentParts.push(`initial-scale=${options.initialScale}`);
+    }
+    if (options.minimumScale !== undefined) {
+      contentParts.push(`minimum-scale=${options.minimumScale}`);
+    }
+    if (options.maximumScale !== undefined) {
+      contentParts.push(`maximum-scale=${options.maximumScale}`);
+    }
+    if (options.userScalable !== undefined) {
+      contentParts.push(`user-scalable=${options.userScalable ? 'yes' : 'no'}`);
+    }
+    if (options.viewportFit !== undefined) {
+      contentParts.push(`viewport-fit=${options.viewportFit}`);
+    }
+    if (options.interactiveWidget !== undefined) {
+      contentParts.push(`interactive-widget=${options.interactiveWidget}`);
+    }
+
+    return this.addElement('meta', {
+      name: 'viewport',
+      content: contentParts.join(', '),
+    });
   }
 
   /**
