@@ -1,3 +1,341 @@
-# @devsantara/head
+# @devsantara-labs/head
 
-A type-safe HTML head builder
+A type-safe HTML head builder library for managing document head metadata with full TypeScript support.
+
+> **⚠️ Note**: This library is currently under active development and may receive breaking changes. The API is subject to change as we continue to improve and expand functionality.
+
+## Features
+
+- 🔒 **Type-Safe**: Full TypeScript support with React HTML attribute types
+- 🔗 **Fluent API**: Chainable builder pattern for intuitive metadata construction
+- 🧩 **Adapter System**: Extensible architecture for different frameworks (e.g, React, TanStack Router)
+- 🛠️ **Custom Adapters**: Create your own adapters to transform output for any framework
+
+## Installation
+
+```bash
+# npm
+npm install @devsantara-labs/head
+
+# pnpm
+pnpm add @devsantara-labs/head
+
+# yarn
+yarn add @devsantara-labs/head
+```
+
+## Quick Start
+
+```typescript
+import { HeadBuilder } from '@devsantara-labs/head';
+
+const head = new HeadBuilder()
+  .meta({ charSet: 'utf-8' })
+  .meta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .link({ rel: 'stylesheet', href: '/styles.css' })
+  .build();
+```
+
+Returns an array of HeadElement objects
+
+```typescript
+// console.log(head);
+[
+  { type: 'meta', attributes: { charSet: 'utf-8' } },
+  {
+    type: 'meta',
+    attributes: {
+      name: 'viewport',
+      content: 'width=device-width, initial-scale=1',
+    },
+  },
+  { type: 'link', attributes: { rel: 'stylesheet', href: '/styles.css' } },
+];
+```
+
+## Usage Examples
+
+### Adding Meta Elements
+
+```typescript
+const head = new HeadBuilder()
+  .meta({ charSet: 'utf-8' })
+  .meta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .meta({ name: 'description', content: 'A type-safe head builder' })
+  .build();
+```
+
+### Adding Link Elements
+
+```typescript
+const head = new HeadBuilder()
+  .link({ rel: 'stylesheet', href: '/styles.css' })
+  .link({ rel: 'icon', href: '/favicon.ico' })
+  .link({ rel: 'canonical', href: 'https://example.com' })
+  .build();
+```
+
+### Adding Script Elements
+
+```typescript
+const head = new HeadBuilder()
+  .script({ src: '/script.js', async: true })
+  .script({ children: 'console.log("Hello, World!");' })
+  .build();
+```
+
+### Adding Style Elements
+
+```typescript
+const head = new HeadBuilder()
+  .style({ children: 'body { margin: 0; padding: 0; }' })
+  .build();
+```
+
+### Complete Example
+
+```typescript
+import { HeadBuilder } from '@devsantara-labs/head';
+import { HeadReactAdapter } from '@devsantara-labs/head/adapters';
+
+const head = new HeadBuilder({
+  metadataBase: new URL('https://example.com'),
+  adapter: new HeadReactAdapter(),
+})
+  .meta({ charSet: 'utf-8' })
+  .meta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .link({ rel: 'stylesheet', href: '/styles.css' })
+  .link({ rel: 'icon', href: '/favicon.ico' })
+  .script({ src: '/analytics.js', async: true })
+  .style({ children: 'body { font-family: system-ui; }' })
+  .build();
+```
+
+## Framework Adapters
+
+### React Adapter
+
+Converts head elements to React elements for rendering.
+
+```typescript
+import { HeadBuilder } from '@devsantara-labs/head';
+import { HeadReactAdapter } from '@devsantara-labs/head/adapters';
+
+const head = new HeadBuilder({ adapter: new HeadReactAdapter() })
+  .meta({ charSet: 'utf-8' })
+  .meta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .link({ rel: 'icon', href: '/favicon.ico' })
+  .build();
+
+// Use in React component
+function App() {
+  return (
+    <>
+      <head>{head}</head>
+      <body>...</body>
+    </>
+  );
+}
+```
+
+**Output Type**: `ReactNode[]`
+
+### TanStack Router Adapter
+
+Converts head elements to TanStack Router head configuration format.
+
+```typescript
+import { HeadBuilder } from '@devsantara-labs/head';
+import { HeadTanstackRouterAdapter } from '@devsantara-labs/head/adapters';
+
+const head = new HeadBuilder({ adapter: new HeadTanstackRouterAdapter() })
+  .meta({ charSet: 'utf-8' })
+  .link({ rel: 'stylesheet', href: '/styles.css' })
+  .script({ src: '/script.js' })
+  .build();
+
+// Use in TanStack Router route
+export const Route = createRootRoute({
+  head: () => head,
+});
+```
+
+**Output Type**: Object with categorized elements (compatible with TanStack Router head configuration):
+
+```typescript
+{
+  meta?: HeadMetaAttributes[];
+  link?: HeadLinkAttributes[];
+  script?: HeadScriptAttributes[];
+  style?: HeadStyleAttributes[];
+}
+```
+
+### Creating Custom Adapters
+
+You can create your own adapter by implementing the `HeadAdapter<T>` interface. This allows you to transform the head elements into any format required by your framework or use case.
+
+#### HeadAdapter Interface
+
+```typescript
+import type { HeadAdapter, HeadElement } from '@devsantara-labs/head';
+
+export interface HeadAdapter<T> {
+  transform(elements: HeadElement[]): T;
+}
+```
+
+The `HeadElement` type represents a single head element:
+
+```typescript
+type HeadElement = {
+  type: 'meta' | 'link' | 'script' | 'style';
+  attributes:
+    | HeadMetaAttributes
+    | HeadLinkAttributes
+    | HeadScriptAttributes
+    | HeadStyleAttributes;
+};
+```
+
+#### Example: Creating a Custom Adapter
+
+Here's an example of creating a custom adapter that transforms head elements into plain HTML strings:
+
+```typescript
+import type { HeadAdapter, HeadElement } from '@devsantara-labs/head';
+import { HeadBuilder } from '@devsantara-labs/head';
+
+// Define your output type
+type HtmlStringOutput = string;
+
+// Implement the HeadAdapter interface
+class HeadHtmlStringAdapter implements HeadAdapter<HtmlStringOutput> {
+  transform(elements: HeadElement[]): HtmlStringOutput {
+    return elements
+      .map((element) => {
+        const { type, attributes } = element;
+        const attrs = Object.entries(attributes)
+          .filter(([key]) => key !== 'children')
+          .map(([key, value]) => `${key}="${value}"`)
+          .join(' ');
+
+        const children = (attributes as { children?: string }).children || '';
+
+        return `<${type} ${attrs}>${children}</${type}>`;
+      })
+      .join('\n');
+  }
+}
+
+// Use your custom adapter
+const head = new HeadBuilder({ adapter: new HeadHtmlStringAdapter() })
+  .meta({ charSet: 'utf-8' })
+  .meta({ name: 'description', content: 'My awesome site' })
+  .link({ rel: 'stylesheet', href: '/styles.css' })
+  .build();
+
+console.log(head);
+// Output:
+// <meta charSet="utf-8" />
+// <meta name="description" content="My awesome site" />
+// <link rel="stylesheet" href="/styles.css" />
+```
+
+## API Reference
+
+### HeadBuilder
+
+The main class for building head elements.
+
+#### Constructor
+
+```typescript
+new HeadBuilder(options?: {
+  metadataBase?: URL;
+  adapter?: HeadAdapter<TOutput>;
+})
+```
+
+| Option         | Type                   | Description                                      |
+| -------------- | ---------------------- | ------------------------------------------------ |
+| `metadataBase` | `URL`                  | Base URL for resolving relative URLs in metadata |
+| `adapter`      | `HeadAdapter<TOutput>` | Optional adapter to transform build output       |
+
+#### Methods
+
+| Method              | Parameters                         | Returns                    | Description                                            |
+| ------------------- | ---------------------------------- | -------------------------- | ------------------------------------------------------ |
+| `meta()`            | `attributes: HeadMetaAttributes`   | `this`                     | Adds a `<meta>` element                                |
+| `link()`            | `attributes: HeadLinkAttributes`   | `this`                     | Adds a `<link>` element                                |
+| `script()`          | `attributes: HeadScriptAttributes` | `this`                     | Adds a `<script>` element                              |
+| `style()`           | `attributes: HeadStyleAttributes`  | `this`                     | Adds a `<style>` element                               |
+| `build()`           | -                                  | `TOutput \| HeadElement[]` | Returns the final output (adapted if adapter provided) |
+| `getMetadataBase()` | -                                  | `URL \| undefined`         | Returns the configured metadataBase URL                |
+
+### HeadAdapter
+
+Interface for creating custom adapters that transform head elements into framework-specific formats.
+
+#### Interface Definition
+
+```typescript
+interface HeadAdapter<T> {
+  transform(elements: HeadElement[]): T;
+}
+```
+
+| Type Parameter | Description                             |
+| -------------- | --------------------------------------- |
+| `T`            | The output type returned by the adapter |
+
+#### Method
+
+| Method        | Parameters                | Returns | Description                                               |
+| ------------- | ------------------------- | ------- | --------------------------------------------------------- |
+| `transform()` | `elements: HeadElement[]` | `T`     | Transforms an array of head elements to the target format |
+
+#### Types
+
+**HeadElement**
+
+```typescript
+type HeadElement = {
+  type: 'meta' | 'link' | 'script' | 'style';
+  attributes:
+    | HeadMetaAttributes
+    | HeadLinkAttributes
+    | HeadScriptAttributes
+    | HeadStyleAttributes;
+};
+```
+
+**Attribute Types**
+
+All attribute types are based on React's `DetailedHTMLProps` for their respective HTML elements:
+
+- `HeadMetaAttributes` - Attributes for `<meta>` elements
+- `HeadLinkAttributes` - Attributes for `<link>` elements
+- `HeadScriptAttributes` - Attributes for `<script>` elements
+- `HeadStyleAttributes` - Attributes for `<style>` elements
+
+## Notes
+
+### Type Safety
+
+This library leverages React's built-in HTML attribute types (`DetailedHTMLProps`) to provide comprehensive type safety for all HTML head elements. This ensures you only use valid attributes for each element type and helps catch errors at compile time.
+
+### Metadata Base URL
+
+The `metadataBase` option allows you to configure a base URL for resolving relative URLs in your metadata. This is useful for ensuring canonical URLs and other metadata references are absolute.
+
+## References
+
+- [MDN: `<meta>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta)
+- [MDN: `<link>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link)
+- [MDN: `<script>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script)
+- [MDN: `<style>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/style)
+
+## License
+
+Licensed under the [MIT license](./LICENSE).
