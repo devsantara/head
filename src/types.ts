@@ -60,3 +60,15 @@ export interface ViewportOptions {
   viewportFit?: 'auto' | 'cover' | 'contain';
   interactiveWidget?: 'resizes-visual' | 'resizes-content' | 'overlays-content';
 }
+
+/**
+ * Robots meta tag options
+ * Supports index and follow with autocomplete, plus any custom directives
+ * Custom properties can be boolean (e.g., noarchive: true), string values (e.g., 'max-image-preview': 'large'), or number values (e.g., 'max-snippet': 160)
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/robots
+ */
+export interface RobotsOptions {
+  index?: boolean;
+  follow?: boolean;
+  [key: string]: boolean | string | number | undefined;
+}

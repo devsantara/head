@@ -289,6 +289,7 @@ new HeadBuilder(options?: {
 | `addStyle()`        | `attributes: HeadStyleAttributes`  | `this`                     | Adds a `<style>` element                               |
 | `addCharSet()`      | `charSet: CharSet`                 | `this`                     | Adds a character encoding declaration                  |
 | `addViewport()`     | `options: ViewportOptions`         | `this`                     | Adds a viewport meta tag for responsive design         |
+| `addRobots()`       | `options: RobotsOptions`           | `this`                     | Adds a robots meta tag for search engine control       |
 | `build()`           | -                                  | `TOutput \| HeadElement[]` | Returns the final output (adapted if adapter provided) |
 | `getMetadataBase()` | -                                  | `URL \| undefined`         | Returns the configured metadataBase URL                |
 
@@ -340,6 +341,7 @@ All attribute types are based on React's `DetailedHTMLProps` for their respectiv
 - `HeadTitleAttributes` - Attributes for `<title>` elements
 - `CharSet` - Character encoding type with autocomplete for common charsets and accepts any string value
 - `ViewportOptions` - Configuration options for viewport meta tag (width, height, initialScale, etc.)
+- `RobotsOptions` - Robots meta tag configuration with `index` and `follow` boolean properties, plus support for custom directives as boolean (e.g., `noarchive: true`), string values (e.g., `'max-image-preview': 'large'`), or number values (e.g., `'max-snippet': 160`)
 
 ## Notes
 
