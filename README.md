@@ -31,6 +31,7 @@ import { HeadBuilder } from '@devsantara-labs/head';
 
 const head = new HeadBuilder()
   .addCharSet('utf-8')
+  .addDescription('A type-safe HTML head builder library')
   .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .build();
@@ -42,6 +43,13 @@ Returns an array of HeadElement objects
 // console.log(head);
 [
   { type: 'meta', attributes: { charSet: 'utf-8' } },
+  {
+    type: 'meta',
+    attributes: {
+      name: 'description',
+      content: 'A type-safe HTML head builder library',
+    },
+  },
   {
     type: 'meta',
     attributes: {
@@ -60,8 +68,8 @@ Returns an array of HeadElement objects
 ```typescript
 const head = new HeadBuilder()
   .addCharSet('utf-8')
+  .addDescription('A type-safe head builder')
   .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
-  .addMeta({ name: 'description', content: 'A type-safe head builder' })
   .build();
 ```
 
@@ -103,6 +111,7 @@ const head = new HeadBuilder({
   adapter: new HeadReactAdapter(),
 })
   .addCharSet('utf-8')
+  .addDescription('A comprehensive example of using HeadBuilder')
   .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .addLink({ rel: 'icon', href: '/favicon.ico' })
@@ -123,6 +132,7 @@ import { HeadReactAdapter } from '@devsantara-labs/head/adapters';
 
 const head = new HeadBuilder({ adapter: new HeadReactAdapter() })
   .addCharSet('utf-8')
+  .addDescription('My awesome React app')
   .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
   .addLink({ rel: 'icon', href: '/favicon.ico' })
   .build();
@@ -231,7 +241,7 @@ class HeadHtmlStringAdapter implements HeadAdapter<HtmlStringOutput> {
 // Use your custom adapter
 const head = new HeadBuilder({ adapter: new HeadHtmlStringAdapter() })
   .addCharSet('utf-8')
-  .addMeta({ name: 'description', content: 'My awesome site' })
+  .addDescription('My awesome site')
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .build();
 
@@ -271,6 +281,7 @@ new HeadBuilder(options?: {
 | `addScript()`       | `attributes: HeadScriptAttributes` | `this`                     | Adds a `<script>` element                              |
 | `addStyle()`        | `attributes: HeadStyleAttributes`  | `this`                     | Adds a `<style>` element                               |
 | `addCharSet()`      | `charSet: CharSet`                 | `this`                     | Adds a character encoding declaration                  |
+| `addDescription()`  | `description: string`              | `this`                     | Adds a description meta tag                            |
 | `build()`           | -                                  | `TOutput \| HeadElement[]` | Returns the final output (adapted if adapter provided) |
 | `getMetadataBase()` | -                                  | `URL \| undefined`         | Returns the configured metadataBase URL                |
 

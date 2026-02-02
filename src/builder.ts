@@ -166,6 +166,28 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
+   * Adds a description meta tag to the head configuration
+   *
+   * This method provides a convenient way to set the page description that appears
+   * in search engine results and social media shares.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name#description
+   *
+   * @param description - The page description text
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addDescription('A comprehensive guide to web development')
+   *   .build();
+   */
+  addDescription(description: string) {
+    return this.addElement('meta', {
+      name: 'description',
+      content: description,
+    });
+  }
+
+  /**
    * Builds and returns the head configuration
    *
    * If an adapter was provided in the constructor, returns the adapted output.
