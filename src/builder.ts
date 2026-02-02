@@ -142,6 +142,25 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
+   * Adds a character encoding declaration to the head configuration
+   *
+   * This method provides a convenient way to declare the document's character encoding
+   * using a meta element with the charset attribute.
+   *
+   * @see https://html.spec.whatwg.org/multipage/semantics.html#character-encoding-declaration
+   *
+   * @param charSet - The character encoding value (e.g., 'utf-8', 'iso-8859-1')
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addCharSet('utf-8')
+   *   .build();
+   */
+  addCharSet(charSet: string) {
+    return this.addElement('meta', { charSet });
+  }
+
+  /**
    * Builds and returns the head configuration
    *
    * If an adapter was provided in the constructor, returns the adapted output.
