@@ -59,6 +59,13 @@ export class HeadTanstackRouterAdapter implements HeadAdapter<HeadTanStackRouter
         config.scripts?.push(element.attributes);
       } else if (isElementOfType(element, 'style')) {
         config.styles?.push(element.attributes);
+      } else if (isElementOfType(element, 'title')) {
+        /**
+         * TanStack Router automatically dedupes title and meta tags
+         * so we only need to push the title as a meta element
+         */
+        // oxlint-disable-next-line typescript/no-base-to-string
+        config.meta?.push({ title: String(element.attributes.children) });
       }
     }
 

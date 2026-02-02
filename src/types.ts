@@ -14,12 +14,17 @@ export type HeadStyleAttributes = React.DetailedHTMLProps<
   React.StyleHTMLAttributes<HTMLStyleElement>,
   HTMLStyleElement
 >;
+export type HeadTitleAttributes = React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLTitleElement>,
+  HTMLTitleElement
+>;
 
 export interface HeadAttributeTypeMap {
   meta: HeadMetaAttributes;
   link: HeadLinkAttributes;
   script: HeadScriptAttributes;
   style: HeadStyleAttributes;
+  title: HeadTitleAttributes;
 }
 
 export type HeadElement<
