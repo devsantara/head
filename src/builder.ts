@@ -1,4 +1,9 @@
-import type { HeadAttributeTypeMap, HeadAdapter, HeadElement } from './types';
+import type {
+  HeadAttributeTypeMap,
+  HeadAdapter,
+  HeadElement,
+  CharSet,
+} from './types';
 
 export class HeadBuilder<TOutput = HeadElement[]> {
   private metadataBase?: URL;
@@ -139,6 +144,25 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    */
   addStyle(attributes: HeadAttributeTypeMap['style']) {
     return this.addElement('style', attributes);
+  }
+
+  /**
+   * Adds a character encoding declaration to the head configuration
+   *
+   * This method provides a convenient way to declare the document's character encoding
+   * using a meta element with the charset attribute.
+   *
+   * @see https://html.spec.whatwg.org/multipage/semantics.html#character-encoding-declaration
+   *
+   * @param charSet - The character encoding value (e.g., 'utf-8', 'iso-8859-1')
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addCharSet('utf-8')
+   *   .build();
+   */
+  addCharSet(charSet: CharSet) {
+    return this.addElement('meta', { charSet });
   }
 
   /**

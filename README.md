@@ -30,9 +30,9 @@ yarn add @devsantara-labs/head
 import { HeadBuilder } from '@devsantara-labs/head';
 
 const head = new HeadBuilder()
-  .meta({ charSet: 'utf-8' })
-  .meta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
-  .link({ rel: 'stylesheet', href: '/styles.css' })
+  .addCharSet('utf-8')
+  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .build();
 ```
 
@@ -59,9 +59,9 @@ Returns an array of HeadElement objects
 
 ```typescript
 const head = new HeadBuilder()
-  .meta({ charSet: 'utf-8' })
-  .meta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
-  .meta({ name: 'description', content: 'A type-safe head builder' })
+  .addCharSet('utf-8')
+  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addMeta({ name: 'description', content: 'A type-safe head builder' })
   .build();
 ```
 
@@ -69,9 +69,9 @@ const head = new HeadBuilder()
 
 ```typescript
 const head = new HeadBuilder()
-  .link({ rel: 'stylesheet', href: '/styles.css' })
-  .link({ rel: 'icon', href: '/favicon.ico' })
-  .link({ rel: 'canonical', href: 'https://example.com' })
+  .addLink({ rel: 'stylesheet', href: '/styles.css' })
+  .addLink({ rel: 'icon', href: '/favicon.ico' })
+  .addLink({ rel: 'canonical', href: 'https://example.com' })
   .build();
 ```
 
@@ -79,8 +79,8 @@ const head = new HeadBuilder()
 
 ```typescript
 const head = new HeadBuilder()
-  .script({ src: '/script.js', async: true })
-  .script({ children: 'console.log("Hello, World!");' })
+  .addScript({ src: '/script.js', async: true })
+  .addScript({ children: 'console.log("Hello, World!");' })
   .build();
 ```
 
@@ -88,7 +88,7 @@ const head = new HeadBuilder()
 
 ```typescript
 const head = new HeadBuilder()
-  .style({ children: 'body { margin: 0; padding: 0; }' })
+  .addStyle({ children: 'body { margin: 0; padding: 0; }' })
   .build();
 ```
 
@@ -102,12 +102,12 @@ const head = new HeadBuilder({
   metadataBase: new URL('https://example.com'),
   adapter: new HeadReactAdapter(),
 })
-  .meta({ charSet: 'utf-8' })
-  .meta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
-  .link({ rel: 'stylesheet', href: '/styles.css' })
-  .link({ rel: 'icon', href: '/favicon.ico' })
-  .script({ src: '/analytics.js', async: true })
-  .style({ children: 'body { font-family: system-ui; }' })
+  .addCharSet('utf-8')
+  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addLink({ rel: 'stylesheet', href: '/styles.css' })
+  .addLink({ rel: 'icon', href: '/favicon.ico' })
+  .addScript({ src: '/analytics.js', async: true })
+  .addStyle({ children: 'body { font-family: system-ui; }' })
   .build();
 ```
 
@@ -122,9 +122,9 @@ import { HeadBuilder } from '@devsantara-labs/head';
 import { HeadReactAdapter } from '@devsantara-labs/head/adapters';
 
 const head = new HeadBuilder({ adapter: new HeadReactAdapter() })
-  .meta({ charSet: 'utf-8' })
-  .meta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
-  .link({ rel: 'icon', href: '/favicon.ico' })
+  .addCharSet('utf-8')
+  .addMeta({ name: 'viewport', content: 'width=device-width, initial-scale=1' })
+  .addLink({ rel: 'icon', href: '/favicon.ico' })
   .build();
 
 // Use in React component
@@ -149,9 +149,9 @@ import { HeadBuilder } from '@devsantara-labs/head';
 import { HeadTanstackRouterAdapter } from '@devsantara-labs/head/adapters';
 
 const head = new HeadBuilder({ adapter: new HeadTanstackRouterAdapter() })
-  .meta({ charSet: 'utf-8' })
-  .link({ rel: 'stylesheet', href: '/styles.css' })
-  .script({ src: '/script.js' })
+  .addCharSet('utf-8')
+  .addLink({ rel: 'stylesheet', href: '/styles.css' })
+  .addScript({ src: '/script.js' })
   .build();
 
 // Use in TanStack Router route
@@ -230,9 +230,9 @@ class HeadHtmlStringAdapter implements HeadAdapter<HtmlStringOutput> {
 
 // Use your custom adapter
 const head = new HeadBuilder({ adapter: new HeadHtmlStringAdapter() })
-  .meta({ charSet: 'utf-8' })
-  .meta({ name: 'description', content: 'My awesome site' })
-  .link({ rel: 'stylesheet', href: '/styles.css' })
+  .addCharSet('utf-8')
+  .addMeta({ name: 'description', content: 'My awesome site' })
+  .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .build();
 
 console.log(head);
@@ -266,10 +266,11 @@ new HeadBuilder(options?: {
 
 | Method              | Parameters                         | Returns                    | Description                                            |
 | ------------------- | ---------------------------------- | -------------------------- | ------------------------------------------------------ |
-| `meta()`            | `attributes: HeadMetaAttributes`   | `this`                     | Adds a `<meta>` element                                |
-| `link()`            | `attributes: HeadLinkAttributes`   | `this`                     | Adds a `<link>` element                                |
-| `script()`          | `attributes: HeadScriptAttributes` | `this`                     | Adds a `<script>` element                              |
-| `style()`           | `attributes: HeadStyleAttributes`  | `this`                     | Adds a `<style>` element                               |
+| `addMeta()`         | `attributes: HeadMetaAttributes`   | `this`                     | Adds a `<meta>` element                                |
+| `addLink()`         | `attributes: HeadLinkAttributes`   | `this`                     | Adds a `<link>` element                                |
+| `addScript()`       | `attributes: HeadScriptAttributes` | `this`                     | Adds a `<script>` element                              |
+| `addStyle()`        | `attributes: HeadStyleAttributes`  | `this`                     | Adds a `<style>` element                               |
+| `addCharSet()`      | `charSet: CharSet`                 | `this`                     | Adds a character encoding declaration                  |
 | `build()`           | -                                  | `TOutput \| HeadElement[]` | Returns the final output (adapted if adapter provided) |
 | `getMetadataBase()` | -                                  | `URL \| undefined`         | Returns the configured metadataBase URL                |
 
@@ -318,6 +319,7 @@ All attribute types are based on React's `DetailedHTMLProps` for their respectiv
 - `HeadLinkAttributes` - Attributes for `<link>` elements
 - `HeadScriptAttributes` - Attributes for `<script>` elements
 - `HeadStyleAttributes` - Attributes for `<style>` elements
+- `CharSet` - Character encoding type with autocomplete for common charsets and accepts any string value.
 
 ## Notes
 
