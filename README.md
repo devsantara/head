@@ -32,6 +32,7 @@ import { HeadBuilder } from '@devsantara-labs/head';
 const head = new HeadBuilder()
   .addTitle('My Website')
   .addCharSet('utf-8')
+  .addDescription('A type-safe HTML head builder library')
   .addViewport({ width: 'device-width', initialScale: 1 })
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .build();
@@ -44,6 +45,13 @@ Returns an array of HeadElement objects
 [
   { type: 'title', attributes: { children: 'My Website' } },
   { type: 'meta', attributes: { charSet: 'utf-8' } },
+  {
+    type: 'meta',
+    attributes: {
+      name: 'description',
+      content: 'A type-safe HTML head builder library',
+    },
+  },
   {
     type: 'meta',
     attributes: {
@@ -238,7 +246,7 @@ class HeadHtmlStringAdapter implements HeadAdapter<HtmlStringOutput> {
 const head = new HeadBuilder({ adapter: new HeadHtmlStringAdapter() })
   .addTitle('My Awesome Site')
   .addCharSet('utf-8')
-  .addMeta({ name: 'description', content: 'My awesome site' })
+  .addDescription('My awesome site')
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .build();
 
