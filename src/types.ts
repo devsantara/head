@@ -46,8 +46,8 @@ export type CharSet = 'utf-8' | (string & {});
  * Viewport configuration options
  */
 export interface ViewportOptions {
-  width?: string | number;
-  height?: string | number;
+  width?: 'device-width' | number | (string & {});
+  height?: 'device-height' | number | (string & {});
   initialScale?: number;
   minimumScale?: number;
   maximumScale?: number;
