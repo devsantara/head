@@ -1,4 +1,9 @@
-import type { HeadAttributeTypeMap, HeadAdapter, HeadElement } from './types';
+import type {
+  HeadAttributeTypeMap,
+  HeadAdapter,
+  HeadElement,
+  CharSet,
+} from './types';
 
 export class HeadBuilder<TOutput = HeadElement[]> {
   private metadataBase?: URL;
@@ -156,7 +161,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .addCharSet('utf-8')
    *   .build();
    */
-  addCharSet(charSet: string) {
+  addCharSet(charSet: CharSet) {
     return this.addElement('meta', { charSet });
   }
 

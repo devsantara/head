@@ -36,3 +36,8 @@ export type HeadElement<
 export interface HeadAdapter<T> {
   transform(elements: HeadElement[]): T;
 }
+
+/**
+ * Character encoding type with autocomplete for 'utf-8' but allows any string
+ */
+export type CharSet = 'utf-8' | (string & {});

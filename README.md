@@ -270,7 +270,7 @@ new HeadBuilder(options?: {
 | `addLink()`         | `attributes: HeadLinkAttributes`   | `this`                     | Adds a `<link>` element                                |
 | `addScript()`       | `attributes: HeadScriptAttributes` | `this`                     | Adds a `<script>` element                              |
 | `addStyle()`        | `attributes: HeadStyleAttributes`  | `this`                     | Adds a `<style>` element                               |
-| `addCharSet()`      | `charSet: string`                  | `this`                     | Adds a character encoding declaration                  |
+| `addCharSet()`      | `charSet: CharSet`                 | `this`                     | Adds a character encoding declaration                  |
 | `build()`           | -                                  | `TOutput \| HeadElement[]` | Returns the final output (adapted if adapter provided) |
 | `getMetadataBase()` | -                                  | `URL \| undefined`         | Returns the configured metadataBase URL                |
 
@@ -319,6 +319,7 @@ All attribute types are based on React's `DetailedHTMLProps` for their respectiv
 - `HeadLinkAttributes` - Attributes for `<link>` elements
 - `HeadScriptAttributes` - Attributes for `<script>` elements
 - `HeadStyleAttributes` - Attributes for `<style>` elements
+- `CharSet` - Character encoding type with autocomplete for `'utf-8'` and accepts any string
 
 ## Notes
 
