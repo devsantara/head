@@ -338,13 +338,10 @@ All attribute types are based on React's `DetailedHTMLProps` for their respectiv
 - `HeadLinkAttributes` - Attributes for `<link>` elements
 - `HeadScriptAttributes` - Attributes for `<script>` elements
 - `HeadStyleAttributes` - Attributes for `<style>` elements
-  <<<<<<< HEAD
-- `CharSet` - Character encoding type with autocomplete for common charsets and accepts any string value.
-- # `RobotsOptions` - Robots meta tag configuration with `index` and `follow` boolean properties, plus support for custom directives as boolean (e.g., `noarchive: true`), string values (e.g., `'max-image-preview': 'large'`), or number values (e.g., `'max-snippet': 160`).
 - `HeadTitleAttributes` - Attributes for `<title>` elements
 - `CharSet` - Character encoding type with autocomplete for common charsets and accepts any string value
 - `ViewportOptions` - Configuration options for viewport meta tag (width, height, initialScale, etc.)
-  > > > > > > > ee72d0a106600a7893f3a4feb8c5162dceb2ace6
+- `RobotsOptions` - Robots meta tag configuration with `index` and `follow` boolean properties, plus support for custom directives as boolean (e.g., `noarchive: true`), string values (e.g., `'max-image-preview': 'large'`), or number values (e.g., `'max-snippet': 160`).
 
 ## Notes
 
