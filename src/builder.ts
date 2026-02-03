@@ -417,12 +417,14 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *
    * @example
    * // Using builder helper callback function
-   * const head = new HeadBuilder(new URL('https://example.com'))
+   * const head = new HeadBuilder({
+   *   metadataBase: new URL('https://example.com')
+   * })
    *   .addOpenGraph((helper) => ({
    *     title: 'My Page Title',
    *     url: helper.resolveUrl('/page'),
    *     image: {
-   *       url: resolveUrl('/images/og-image.jpg'),
+   *       url: helper.resolveUrl('/images/og-image.jpg'),
    *       alt: 'Image description'
    *     }
    *   }))
@@ -538,7 +540,9 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *
    * @example
    * // Using builder helper callback function
-   * const head = new HeadBuilder(new URL('https://example.com'))
+   * const head = new HeadBuilder({
+   *   metadataBase: new URL('https://example.com')
+   * })
    *   .addTwitter((helper) => ({
    *     title: 'My Page Title',
    *     image: {
