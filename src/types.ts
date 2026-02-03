@@ -240,7 +240,7 @@ type OpenGraphType =
 export interface OpenGraphOptions {
   title?: string;
   description?: string;
-  url?: string;
+  url?: string | URL;
   locale?: string;
   image?: {
     url: string | URL;

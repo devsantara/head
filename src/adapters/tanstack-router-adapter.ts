@@ -24,14 +24,14 @@ export interface HeadTanStackRouterAdapterResult {
  * @example
  * const elements = new HeadBuilder()
  *   .addMeta({ name: 'description', content: 'My site' })
- *   .addLink({ rel: 'canonical', href: 'https://example.com' })
+ *   .addLink({ rel: 'canonical', href: 'https://devsantara.com' })
  *   .build();
  *
  * const adapter = new HeadTanstackRouterAdapter();
  * const config = adapter.transform(elements);
  * // Returns: {
  * //   meta: [{ name: 'description', content: 'My site' }],
- * //   links: [{ rel: 'canonical', href: 'https://example.com' }],
+ * //   links: [{ rel: 'canonical', href: 'https://devsantara.com' }],
  * //   scripts: [],
  * //   styles: []
  * // }
