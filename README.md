@@ -103,6 +103,26 @@ const head = new HeadBuilder()
   .build();
 ```
 
+### Adding Web App Manifest
+
+Link to a web app manifest file for Progressive Web Apps:
+
+```typescript
+const head = new HeadBuilder()
+  .addManifest('https://example.com/manifest.json')
+  .build();
+```
+
+With builder helper and relative URL:
+
+```typescript
+const head = new HeadBuilder({
+  metadataBase: new URL('https://example.com'),
+})
+  .addManifest((helper) => helper.resolveUrl('/manifest.json'))
+  .build();
+```
+
 ### Complete Example
 
 ```typescript
@@ -322,6 +342,7 @@ new HeadBuilder(options?: {
 | `addRobots()`      | `options: RobotsOptions`                     | `this`    | Adds a robots meta tag for search engine control       |
 | `addOpenGraph()`   | `valueOrFn: BuilderOption<OpenGraphOptions>` | `this`    | Adds OpenGraph meta tags for social media previews     |
 | `addTwitter()`     | `valueOrFn: BuilderOption<TwitterOptions>`   | `this`    | Adds Twitter Card meta tags for Twitter previews       |
+| `addManifest()`    | `valueOrFn: BuilderOption<string \| URL>`    | `this`    | Adds a web app manifest link for Progressive Web Apps  |
 | `build()`          | -                                            | `TOutput` | Returns the final output (adapted if adapter provided) |
 
 ### HeadAdapter
