@@ -251,3 +251,66 @@ export interface OpenGraphOptions {
   };
   type?: OpenGraphType;
 }
+
+/**
+ * Twitter player card metadata properties
+ * Used for video and audio content
+ * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/player-card
+ */
+type TwitterPlayerProperty =
+  | { name: 'twitter:player'; content: string | URL }
+  | { name: 'twitter:player:width'; content: number }
+  | { name: 'twitter:player:height'; content: number }
+  | { name: 'twitter:player:stream'; content: string | URL };
+
+/**
+ * Twitter app card metadata properties
+ * Used for mobile app installations
+ * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/app-card
+ */
+type TwitterAppProperty =
+  | { name: 'twitter:app:id:iphone'; content: string | number }
+  | { name: 'twitter:app:id:ipad'; content: string | number }
+  | { name: 'twitter:app:id:googleplay'; content: string }
+  | { name: 'twitter:app:url:iphone'; content: string | URL }
+  | { name: 'twitter:app:url:ipad'; content: string | URL }
+  | { name: 'twitter:app:url:googleplay'; content: string | URL }
+  | { name: 'twitter:app:name:iphone'; content: string }
+  | { name: 'twitter:app:name:ipad'; content: string }
+  | { name: 'twitter:app:name:googleplay'; content: string }
+  | { name: 'twitter:app:country'; content: string };
+
+/**
+ * Twitter Card type property with optional card-specific metadata
+ * Supports summary, summary_large_image, player, and app card types
+ * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards
+ */
+type TwitterCard =
+  | { name: 'summary' }
+  | { name: 'summary_large_image' }
+  | {
+      name: 'player';
+      properties: TwitterPlayerProperty[];
+    }
+  | {
+      name: 'app';
+      properties: TwitterAppProperty[];
+    };
+
+/**
+ * Twitter Card metadata options
+ * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup
+ */
+export interface TwitterOptions {
+  title?: string;
+  description?: string;
+  site?: string;
+  siteId?: string;
+  creator?: string;
+  creatorId?: string;
+  image?: {
+    url: string | URL;
+    alt?: string;
+  };
+  card?: TwitterCard;
+}
