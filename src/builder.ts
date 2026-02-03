@@ -246,7 +246,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * This method sets the color scheme preference for the document, indicating
    * which color schemes the page supports (light, dark, or both).
    *
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta/name/color-scheme
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/color-scheme
    *
    * @param colorScheme - The color scheme value (e.g., 'light', 'dark', 'light dark')
    *
