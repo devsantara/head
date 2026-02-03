@@ -326,6 +326,7 @@ new HeadBuilder(options?: {
 | `addOpenGraph()`       | `valueOrFn: BuilderOption<OpenGraphOptions>`                | `this`    | Adds OpenGraph meta tags for social media previews            |
 | `addTwitter()`         | `valueOrFn: BuilderOption<TwitterOptions>`                  | `this`    | Adds Twitter Card meta tags for Twitter previews              |
 | `addAlternateLocale()` | `valueOrFn: BuilderOption<AlternateLocaleOptions<TLocale>>` | `this`    | Adds alternate language/locale links for internationalization |
+| `addManifest()`        | `valueOrFn: BuilderOption<string \| URL>`                   | `this`    | Adds a web app manifest link for Progressive Web Apps         |
 | `build()`              | -                                                           | `TOutput` | Returns the final output (adapted if adapter provided)        |
 
 ### HeadAdapter

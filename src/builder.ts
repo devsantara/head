@@ -751,6 +751,41 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
+   * Adds a web app manifest link to the head configuration
+   *
+   * This method provides a convenient way to link to a web app manifest file,
+   * which defines how your app appears to users and how it can be launched.
+   *
+   * You can pass either a URL directly or a function that receives a helper object.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/Manifest
+   *
+   * @param valueOrFn - The manifest URL or a function that returns it
+   *
+   * @example
+   * // Direct URL
+   * const head = new HeadBuilder()
+   *   .addManifest('https://devsantara.com/manifest.json')
+   *   .build();
+   *
+   * @example
+   * // Using builder helper callback function with relative URL
+   * const head = new HeadBuilder({
+   *   metadataBase: new URL('https://devsantara.com')
+   * })
+   *   .addManifest((helper) => helper.resolveUrl('/manifest.json'))
+   *   .build();
+   */
+  addManifest(valueOrFn: BuilderOption<string | URL>) {
+    const href = this.parseValueOrFn(valueOrFn);
+
+    return this.addElement('link', {
+      rel: 'manifest',
+      href: href.toString(),
+    });
+  }
+
+  /**
    * Builds and returns the head configuration
    *
    * If an adapter was provided in the constructor, returns the adapted output.
