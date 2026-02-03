@@ -280,18 +280,20 @@ new HeadBuilder(options?: {
 
 #### Methods
 
-| Method              | Parameters                         | Returns | Description                                        |
-| ------------------- | ---------------------------------- | ------- | -------------------------------------------------- | --------------------------------------- | -------------- | ------------------------- | ------ | ------------------------------------------------ | --- | --------- | --- | ----------- | -------------- | ------------------------------------------------------ |
-| `addTitle()`        | `title: string`                    | `this`  | Adds a `<title>` element                           |
-| `addMeta()`         | `attributes: HeadMetaAttributes`   | `this`  | Adds a `<meta>` element                            |
-| `addLink()`         | `attributes: HeadLinkAttributes`   | `this`  | Adds a `<link>` element                            |
-| `addScript()`       | `attributes: HeadScriptAttributes` | `this`  | Adds a `<script>` element                          |
-| `addStyle()`        | `attributes: HeadStyleAttributes`  | `this`  | Adds a `<style>` element                           |
-| `addCharSet()`      | `charSet: CharSet`                 | `this`  | Adds a character encoding declaration              |
-| `addViewport()`     | `options: ViewportOptions`         | `this`  | Adds a viewport meta tag for responsive design     |
-| `addRobots()`       | `options: RobotsOptions`           | `this`  | Adds a robots meta tag for search engine control   |
-| `addOpenGraph()`    | `options: OpenGraphOptions`        | `this`  | Adds OpenGraph meta tags for social media previews |                                         | `addTwitter()` | `options: TwitterOptions` | `this` | Adds Twitter Card meta tags for Twitter previews |     | `build()` | -   | `TOutput \\ | HeadElement[]` | Returns the final output (adapted if adapter provided) |
-| `getMetadataBase()` | -                                  | `URL \\ | undefined`                                         | Returns the configured metadataBase URL |
+| Method              | Parameters                         | Returns         | Description                                            |
+| ------------------- | ---------------------------------- | --------------- | ------------------------------------------------------ |
+| `addTitle()`        | `title: string`                    | `this`          | Adds a `<title>` element                               |
+| `addMeta()`         | `attributes: HeadMetaAttributes`   | `this`          | Adds a `<meta>` element                                |
+| `addLink()`         | `attributes: HeadLinkAttributes`   | `this`          | Adds a `<link>` element                                |
+| `addScript()`       | `attributes: HeadScriptAttributes` | `this`          | Adds a `<script>` element                              |
+| `addStyle()`        | `attributes: HeadStyleAttributes`  | `this`          | Adds a `<style>` element                               |
+| `addCharSet()`      | `charSet: CharSet`                 | `this`          | Adds a character encoding declaration                  |
+| `addViewport()`     | `options: ViewportOptions`         | `this`          | Adds a viewport meta tag for responsive design         |
+| `addRobots()`       | `options: RobotsOptions`           | `this`          | Adds a robots meta tag for search engine control       |
+| `addOpenGraph()`    | `options: OpenGraphOptions`        | `this`          | Adds OpenGraph meta tags for social media previews     |
+| `addTwitter()`      | `options: TwitterOptions`          | `this`          | Adds Twitter Card meta tags for Twitter previews       |
+| `build()`           | `TOutput`                          | `HeadElement[]` | Returns the final output (adapted if adapter provided) |
+| `getMetadataBase()` | `URL`                              | `undefined`     | Returns the configured metadataBase URL                |
 
 ### HeadAdapter
 
