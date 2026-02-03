@@ -314,3 +314,27 @@ export interface TwitterOptions {
   };
   card?: TwitterCard;
 }
+/**
+ * Alternate locale/language key type
+ * Supports 'x-default', specific locale strings, or any custom string
+ */
+type AlternateLocaleKey<TLocale extends string> =
+  | ('x-default' | TLocale)
+  | (string & {});
+
+/**
+ * Alternate locale/language options for internationalization
+ * A record mapping language codes to their corresponding URLs
+ * @see https://developers.google.com/search/docs/specialty/international/localized-versions
+ *
+ * @example
+ * {
+ *   "en": "https://example.com/en",
+ *   "fr": "https://example.com/fr",
+ *   "x-default": "https://example.com"
+ * }
+ */
+export type AlternateLocaleOptions<TLocale extends string> = Record<
+  AlternateLocaleKey<TLocale>,
+  string | URL
+>;
