@@ -8,6 +8,7 @@ import type {
   ViewportOptions,
   OpenGraphOptions,
   TwitterOptions,
+  AlternateLocaleOptions,
 } from './types';
 
 /**
@@ -682,6 +683,68 @@ export class HeadBuilder<TOutput = HeadElement[]> {
           });
         }
       }
+    }
+
+    return this;
+  }
+
+  /**
+   * Adds alternate locale/language links to the head configuration
+   *
+   * This method provides a convenient way to specify alternate versions of the current page
+   * in different languages or locales for SEO and internationalization purposes.
+   * Search engines use these links to serve the correct language version to users.
+   *
+   * You can pass either an options object directly or a function that receives a helper object.
+   *
+   * @see https://developers.google.com/search/docs/specialty/international/localized-versions
+   *
+   * @param valueOrFn - A record mapping language codes to URLs, or a function that returns such a record
+   *
+   * @example
+   * // Direct options
+   * const head = new HeadBuilder()
+   *   .addAlternateLocale({
+   *     en: 'https://example.com/en',
+   *     fr: 'https://example.com/fr',
+   *     'x-default': 'https://example.com'
+   *   })
+   *   .build();
+   *
+   * @example
+   * // Using builder helper callback function with relative URLs
+   * const head = new HeadBuilder({
+   *   metadataBase: new URL('https://example.com')
+   * })
+   *   .addAlternateLocale((helper) => ({
+   *     'en-US': helper.resolveUrl('/en-us'),
+   *     'es-ES': helper.resolveUrl('/es-es'),
+   *     'x-default': helper.resolveUrl('/')
+   *   }))
+   *   .build();
+   *
+   * @example
+   * // With type parameter for locale keys
+   * type Locale = 'en' | 'id' | 'fr';
+   * const head = new HeadBuilder()
+   *   .addAlternateLocale<Locale>({
+   *     en: 'https://example.com/en',
+   *     id: 'https://example.com/id',
+   *     fr: 'https://example.com/fr'
+   *   })
+   *   .build();
+   */
+  addAlternateLocale<TLocale extends string = string>(
+    valueOrFn: BuilderOption<AlternateLocaleOptions<TLocale>>,
+  ) {
+    const options = this.parseValueOrFn(valueOrFn);
+
+    for (const [lang, href] of Object.entries(options)) {
+      this.addElement('link', {
+        rel: 'alternate',
+        hrefLang: lang,
+        href: String(href),
+      });
     }
 
     return this;

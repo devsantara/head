@@ -310,22 +310,23 @@ new HeadBuilder(options?: {
 
 #### Methods
 
-| Method             | Parameters                                   | Returns   | Description                                            |
-| ------------------ | -------------------------------------------- | --------- | ------------------------------------------------------ |
-| `addTitle()`       | `title: string`                              | `this`    | Adds a `<title>` element                               |
-| `addMeta()`        | `attributes: HeadMetaAttributes`             | `this`    | Adds a `<meta>` element                                |
-| `addLink()`        | `attributes: HeadLinkAttributes`             | `this`    | Adds a `<link>` element                                |
-| `addScript()`      | `attributes: HeadScriptAttributes`           | `this`    | Adds a `<script>` element                              |
-| `addStyle()`       | `attributes: HeadStyleAttributes`            | `this`    | Adds a `<style>` element                               |
-| `addCharSet()`     | `charSet: CharSet`                           | `this`    | Adds a character encoding declaration                  |
-| `addColorScheme()` | `colorScheme: ColorScheme`                   | `this`    | Adds a color scheme preference declaration             |
-| `addDescription()` | `description: string`                        | `this`    | Adds a description meta tag                            |
-| `addCanonical()`   | `valueOrFn: BuilderOption<string \| URL>`    | `this`    | Adds a canonical link for SEO                          |
-| `addViewport()`    | `options: ViewportOptions`                   | `this`    | Adds a viewport meta tag for responsive design         |
-| `addRobots()`      | `options: RobotsOptions`                     | `this`    | Adds a robots meta tag for search engine control       |
-| `addOpenGraph()`   | `valueOrFn: BuilderOption<OpenGraphOptions>` | `this`    | Adds OpenGraph meta tags for social media previews     |
-| `addTwitter()`     | `valueOrFn: BuilderOption<TwitterOptions>`   | `this`    | Adds Twitter Card meta tags for Twitter previews       |
-| `build()`          | -                                            | `TOutput` | Returns the final output (adapted if adapter provided) |
+| Method                 | Parameters                                                  | Returns   | Description                                                   |
+| ---------------------- | ----------------------------------------------------------- | --------- | ------------------------------------------------------------- |
+| `addTitle()`           | `title: string`                                             | `this`    | Adds a `<title>` element                                      |
+| `addMeta()`            | `attributes: HeadMetaAttributes`                            | `this`    | Adds a `<meta>` element                                       |
+| `addLink()`            | `attributes: HeadLinkAttributes`                            | `this`    | Adds a `<link>` element                                       |
+| `addScript()`          | `attributes: HeadScriptAttributes`                          | `this`    | Adds a `<script>` element                                     |
+| `addStyle()`           | `attributes: HeadStyleAttributes`                           | `this`    | Adds a `<style>` element                                      |
+| `addCharSet()`         | `charSet: CharSet`                                          | `this`    | Adds a character encoding declaration                         |
+| `addColorScheme()`     | `colorScheme: ColorScheme`                                  | `this`    | Adds a color scheme preference declaration                    |
+| `addDescription()`     | `description: string`                                       | `this`    | Adds a description meta tag                                   |
+| `addCanonical()`       | `valueOrFn: BuilderOption<string \| URL>`                   | `this`    | Adds a canonical link for SEO                                 |
+| `addViewport()`        | `options: ViewportOptions`                                  | `this`    | Adds a viewport meta tag for responsive design                |
+| `addRobots()`          | `options: RobotsOptions`                                    | `this`    | Adds a robots meta tag for search engine control              |
+| `addOpenGraph()`       | `valueOrFn: BuilderOption<OpenGraphOptions>`                | `this`    | Adds OpenGraph meta tags for social media previews            |
+| `addTwitter()`         | `valueOrFn: BuilderOption<TwitterOptions>`                  | `this`    | Adds Twitter Card meta tags for Twitter previews              |
+| `addAlternateLocale()` | `valueOrFn: BuilderOption<AlternateLocaleOptions<TLocale>>` | `this`    | Adds alternate language/locale links for internationalization |
+| `build()`              | -                                                           | `TOutput` | Returns the final output (adapted if adapter provided)        |
 
 ### HeadAdapter
 
@@ -379,6 +380,7 @@ All attribute types are based on React's `DetailedHTMLProps` for their respectiv
 - `RobotsOptions` - Robots meta tag configuration with `index` and `follow` boolean properties, plus support for custom directives as boolean (e.g., `noarchive: true`), string values (e.g., `'max-image-preview': 'large'`), or number values (e.g., `'max-snippet': 160`)
 - `OpenGraphOptions` - OpenGraph metadata configuration for social media previews with support for title, description, url, locale, image, and type-specific properties
 - `TwitterOptions` - Twitter Card metadata configuration for Twitter previews with support for title, description, site, creator, image, and card-specific properties (summary, summary_large_image, player, app)
+- `AlternateLocaleOptions<TLocale>` - A record mapping language codes (type `AlternateLocaleKey<TLocale>`) to URLs for specifying alternate language/locale versions of the page. Supports 'x-default', specific locale strings, or any custom string
 
 ## Notes
 
