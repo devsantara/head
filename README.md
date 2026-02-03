@@ -317,6 +317,7 @@ new HeadBuilder(options?: {
 | `addScript()`      | `attributes: HeadScriptAttributes`           | `this`    | Adds a `<script>` element                              |
 | `addStyle()`       | `attributes: HeadStyleAttributes`            | `this`    | Adds a `<style>` element                               |
 | `addCharSet()`     | `charSet: CharSet`                           | `this`    | Adds a character encoding declaration                  |
+| `addColorScheme()` | `colorScheme: ColorScheme`                   | `this`    | Adds a color scheme preference declaration             |
 | `addDescription()` | `description: string`                        | `this`    | Adds a description meta tag                            |
 | `addViewport()`    | `options: ViewportOptions`                   | `this`    | Adds a viewport meta tag for responsive design         |
 | `addRobots()`      | `options: RobotsOptions`                     | `this`    | Adds a robots meta tag for search engine control       |
@@ -371,6 +372,7 @@ All attribute types are based on React's `DetailedHTMLProps` for their respectiv
 - `HeadStyleAttributes` - Attributes for `<style>` elements
 - `HeadTitleAttributes` - Attributes for `<title>` elements
 - `CharSet` - Character encoding type with autocomplete for common charsets and accepts any string value
+- `ColorScheme` - Color scheme preference type with autocomplete for 'light', 'dark', 'light dark', and other combinations
 - `ViewportOptions` - Configuration options for viewport meta tag (width, height, initialScale, etc.)
 - `RobotsOptions` - Robots meta tag configuration with `index` and `follow` boolean properties, plus support for custom directives as boolean (e.g., `noarchive: true`), string values (e.g., `'max-image-preview': 'large'`), or number values (e.g., `'max-snippet': 160`)
 - `OpenGraphOptions` - OpenGraph metadata configuration for social media previews with support for title, description, url, locale, image, and type-specific properties

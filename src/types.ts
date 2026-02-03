@@ -48,6 +48,21 @@ export interface HeadAdapter<T> {
 export type CharSet = 'utf-8' | (string & {});
 
 /**
+ * Color scheme preference for the document
+ * Supports 'light', 'dark', 'normal', or combinations like 'light dark'
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta/name/color-scheme
+ */
+export type ColorScheme =
+  | 'light'
+  | 'dark'
+  | 'light dark'
+  | 'dark light'
+  | 'only light'
+  | 'only dark'
+  | 'normal'
+  | (string & {});
+
+/**
  * Viewport configuration options
  */
 export interface ViewportOptions {
