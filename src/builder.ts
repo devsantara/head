@@ -392,8 +392,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * This method provides a convenient way to add OpenGraph metadata for rich social media previews.
    * It handles basic properties, images, and type-specific metadata.
    *
-   * You can pass either an options object directly or a function that receives a helper object
-   * with a resolveUrl method to construct URLs.
+   * You can pass either an options object directly or a function that receives a helper object.
    *
    * @see https://ogp.me/
    *
@@ -515,8 +514,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * This method provides a convenient way to add Twitter Card metadata for rich previews on Twitter.
    * It handles basic properties, images, and card-specific metadata.
    *
-   * You can pass either an options object directly or a function that receives a helper object
-   * with a resolveUrl method to construct URLs.
+   * You can pass either an options object directly or a function that receives a helper object.
    *
    * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup
    *
