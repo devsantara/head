@@ -106,7 +106,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   }));
    * // Returns: 'https://devsantara.com/page'
    */
-  resolveUrl(url: string | URL): string {
+  private resolveUrl(url: string | URL): string {
     // If url is already a URL object, return as string
     if (url instanceof URL) {
       return url.href;
