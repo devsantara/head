@@ -82,7 +82,7 @@ const head = new HeadBuilder()
 const head = new HeadBuilder()
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .addLink({ rel: 'icon', href: '/favicon.ico' })
-  .addLink({ rel: 'canonical', href: 'https://devsantara.com' })
+  .addCanonical('https://devsantara.com')
   .build();
 ```
 
@@ -125,7 +125,7 @@ const head = new HeadBuilder({
 
 ### Using Builder Helper Callback Functions
 
-Some method like `addOpenGraph()` and `addTwitter()` accept either a direct options object or a callback function that receives a helper object. This helper provides utilities like `resolveUrl()` to construct absolute URLs using the `metadataBase`:
+Some methods like `addCanonical()`, `addOpenGraph()`, and `addTwitter()` accept either a direct value or a callback function that receives a helper object. This helper provides utilities like `resolveUrl()` to construct absolute URLs using the `metadataBase`:
 
 ```typescript
 import { HeadBuilder } from '@devsantara-labs/head';
@@ -133,6 +133,7 @@ import { HeadBuilder } from '@devsantara-labs/head';
 const head = new HeadBuilder({
   metadataBase: new URL('https://devsantara.com'),
 })
+  .addCanonical((helper) => helper.resolveUrl('/page'))
   .addOpenGraph((helper) => ({
     title: 'My Page Title',
     url: helper.resolveUrl('/page'), // Resolves to 'https://devsantara.com/page'
@@ -319,6 +320,7 @@ new HeadBuilder(options?: {
 | `addCharSet()`     | `charSet: CharSet`                           | `this`    | Adds a character encoding declaration                  |
 | `addColorScheme()` | `colorScheme: ColorScheme`                   | `this`    | Adds a color scheme preference declaration             |
 | `addDescription()` | `description: string`                        | `this`    | Adds a description meta tag                            |
+| `addCanonical()`   | `valueOrFn: BuilderOption<string \| URL>`    | `this`    | Adds a canonical link for SEO                          |
 | `addViewport()`    | `options: ViewportOptions`                   | `this`    | Adds a viewport meta tag for responsive design         |
 | `addRobots()`      | `options: RobotsOptions`                     | `this`    | Adds a robots meta tag for search engine control       |
 | `addOpenGraph()`   | `valueOrFn: BuilderOption<OpenGraphOptions>` | `this`    | Adds OpenGraph meta tags for social media previews     |
