@@ -33,17 +33,17 @@ export class HeadBuilder<TOutput = HeadElement[]> {
 
   /**
    * Parses builder options that can be either a value or a function
-   * @param optionOrFn - The options value or function that returns options
+   * @param valueOrFn - The options value or function that returns options
    * @returns The resolved options value
    */
-  private parseOptionOrFn<T>(optionOrFn: BuilderOption<T>): T {
-    if (typeof optionOrFn === 'function') {
+  private parseValueOrFn<T>(valueOrFn: BuilderOption<T>): T {
+    if (typeof valueOrFn === 'function') {
       // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-      return (optionOrFn as (helper: BuilderHelper) => T)({
+      return (valueOrFn as (helper: BuilderHelper) => T)({
         resolveUrl: this.resolveUrl.bind(this),
       });
     }
-    return optionOrFn;
+    return valueOrFn;
   }
 
   /**
@@ -397,7 +397,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *
    * @see https://ogp.me/
    *
-   * @param optionOrFn - The OpenGraph configuration options or a function that returns them
+   * @param valueOrFn - The OpenGraph configuration options or a function that returns them
    *
    * @example
    * // Direct options
@@ -428,8 +428,8 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   }))
    *   .build();
    */
-  addOpenGraph(optionOrFn: BuilderOption<OpenGraphOptions>) {
-    const options = this.parseOptionOrFn(optionOrFn);
+  addOpenGraph(valueOrFn: BuilderOption<OpenGraphOptions>) {
+    const options = this.parseValueOrFn(valueOrFn);
 
     // Add basic properties
     if (options.title) {
@@ -518,7 +518,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *
    * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup
    *
-   * @param optionOrFn - The Twitter Card configuration options or a function that returns them
+   * @param valueOrFn - The Twitter Card configuration options or a function that returns them
    *
    * @example
    * // Direct options
@@ -549,8 +549,8 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   }))
    *   .build();
    */
-  addTwitter(optionOrFn: BuilderOption<TwitterOptions>) {
-    const options = this.parseOptionOrFn(optionOrFn);
+  addTwitter(valueOrFn: BuilderOption<TwitterOptions>) {
+    const options = this.parseValueOrFn(valueOrFn);
 
     // Add basic properties
     if (options.title) {
