@@ -3,10 +3,12 @@ import type {
   HeadAdapter,
   HeadElement,
   CharSet,
+  ColorScheme,
   RobotsOptions,
   ViewportOptions,
   OpenGraphOptions,
   TwitterOptions,
+  AlternateLocaleOptions,
 } from './types';
 
 /**
@@ -240,6 +242,33 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
+   * Adds a color-scheme meta tag to the head configuration
+   *
+   * This method sets the color scheme preference for the document, indicating
+   * which color schemes the page supports (light, dark, or both).
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/color-scheme
+   *
+   * @param colorScheme - The color scheme value (e.g., 'light', 'dark', 'light dark')
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addColorScheme('light dark')
+   *   .build();
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addColorScheme('dark')
+   *   .build();
+   */
+  addColorScheme(colorScheme: ColorScheme) {
+    return this.addElement('meta', {
+      name: 'color-scheme',
+      content: colorScheme,
+    });
+  }
+
+  /**
    * Adds a title element to the head configuration
    *
    * This method sets the document title that appears in the browser tab,
@@ -331,6 +360,41 @@ export class HeadBuilder<TOutput = HeadElement[]> {
     return this.addElement('meta', {
       name: 'description',
       content: description,
+    });
+  }
+
+  /**
+   * Adds a canonical link to the head configuration
+   *
+   * This method provides a convenient way to specify the canonical URL for the page,
+   * which helps search engines understand the preferred version of a page and avoid duplicate content issues.
+   *
+   * You can pass either a URL directly or a function that receives a helper object.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel#canonical
+   *
+   * @param valueOrFn - The canonical URL or a function that returns it
+   *
+   * @example
+   * // Direct URL
+   * const head = new HeadBuilder()
+   *   .addCanonical('https://devsantara.com/page')
+   *   .build();
+   *
+   * @example
+   * // Using builder helper callback function
+   * const head = new HeadBuilder({
+   *   metadataBase: new URL('https://devsantara.com')
+   * })
+   *   .addCanonical((helper) => helper.resolveUrl('/page'))
+   *   .build();
+   * // Results in: <link rel="canonical" href="https://devsantara.com/page" />
+   */
+  addCanonical(valueOrFn: BuilderOption<string | URL>) {
+    const value = this.parseValueOrFn(valueOrFn);
+    return this.addElement('link', {
+      rel: 'canonical',
+      href: value.toString(),
     });
   }
 
@@ -625,6 +689,68 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
+   * Adds alternate locale/language links to the head configuration
+   *
+   * This method provides a convenient way to specify alternate versions of the current page
+   * in different languages or locales for SEO and internationalization purposes.
+   * Search engines use these links to serve the correct language version to users.
+   *
+   * You can pass either an options object directly or a function that receives a helper object.
+   *
+   * @see https://developers.google.com/search/docs/specialty/international/localized-versions
+   *
+   * @param valueOrFn - A record mapping language codes to URLs, or a function that returns such a record
+   *
+   * @example
+   * // Direct options
+   * const head = new HeadBuilder()
+   *   .addAlternateLocale({
+   *     en: 'https://example.com/en',
+   *     fr: 'https://example.com/fr',
+   *     'x-default': 'https://example.com'
+   *   })
+   *   .build();
+   *
+   * @example
+   * // Using builder helper callback function with relative URLs
+   * const head = new HeadBuilder({
+   *   metadataBase: new URL('https://example.com')
+   * })
+   *   .addAlternateLocale((helper) => ({
+   *     'en-US': helper.resolveUrl('/en-us'),
+   *     'es-ES': helper.resolveUrl('/es-es'),
+   *     'x-default': helper.resolveUrl('/')
+   *   }))
+   *   .build();
+   *
+   * @example
+   * // With type parameter for locale keys
+   * type Locale = 'en' | 'id' | 'fr';
+   * const head = new HeadBuilder()
+   *   .addAlternateLocale<Locale>({
+   *     en: 'https://example.com/en',
+   *     id: 'https://example.com/id',
+   *     fr: 'https://example.com/fr'
+   *   })
+   *   .build();
+   */
+  addAlternateLocale<TLocale extends string = string>(
+    valueOrFn: BuilderOption<AlternateLocaleOptions<TLocale>>,
+  ) {
+    const options = this.parseValueOrFn(valueOrFn);
+
+    for (const [lang, href] of Object.entries(options)) {
+      this.addElement('link', {
+        rel: 'alternate',
+        hrefLang: lang,
+        href: String(href),
+      });
+    }
+
+    return this;
+  }
+
+  /**
    * Adds a web app manifest link to the head configuration
    *
    * This method provides a convenient way to link to a web app manifest file,
@@ -639,13 +765,13 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * @example
    * // Direct URL
    * const head = new HeadBuilder()
-   *   .addManifest('https://example.com/manifest.json')
+   *   .addManifest('https://devsantara.com/manifest.json')
    *   .build();
    *
    * @example
    * // Using builder helper callback function with relative URL
    * const head = new HeadBuilder({
-   *   metadataBase: new URL('https://example.com')
+   *   metadataBase: new URL('https://devsantara.com')
    * })
    *   .addManifest((helper) => helper.resolveUrl('/manifest.json'))
    *   .build();
