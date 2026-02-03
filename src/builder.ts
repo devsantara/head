@@ -9,10 +9,42 @@ import type {
   TwitterOptions,
 } from './types';
 
+/**
+ * Helper object passed to callback functions in builder methods
+ */
+interface BuilderHelper {
+  /**
+   * Resolves a URL (absolute or relative) into an absolute URL using the metadataBase
+   * @param url - The raw string or URL to resolve
+   * @returns The resolved absolute URL as a string
+   */
+  resolveUrl: (url: string | URL) => string;
+}
+
+/**
+ * Generic type for builder method options that can accept either a value or a function
+ */
+type BuilderOption<T> = T | ((helper: BuilderHelper) => T);
+
 export class HeadBuilder<TOutput = HeadElement[]> {
   private metadataBase?: URL;
   private elements: HeadElement[] = [];
   private adapter?: HeadAdapter<TOutput>;
+
+  /**
+   * Parses builder options that can be either a value or a function
+   * @param optionOrFn - The options value or function that returns options
+   * @returns The resolved options value
+   */
+  private parseOptionOrFn<T>(optionOrFn: BuilderOption<T>): T {
+    if (typeof optionOrFn === 'function') {
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+      return (optionOrFn as (helper: BuilderHelper) => T)({
+        resolveUrl: this.resolveUrl.bind(this),
+      });
+    }
+    return optionOrFn;
+  }
 
   /**
    * Creates a new HeadBuilder instance with optional metadataBase and adapter configuration
@@ -55,6 +87,44 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }) {
     this.metadataBase = options?.metadataBase;
     this.adapter = options?.adapter;
+  }
+
+  /**
+   * Resolves a URL (absolute or relative) into an absolute URL using the metadataBase
+   *
+   * This method is used to resolve URLs for metadata fields like
+   * Open Graph images, canonical URLs, and other absolute URL requirements.
+   *
+   * @param url - The raw string or URL to resolve
+   * @returns The resolved absolute URL as a string
+   *
+   * @example
+   * const head = new HeadBuilder({ metadataBase: new URL('https://devsantara.com') })
+   *   .addOpenGraph((helper) => ({
+   *     title: 'My Page',
+   *     url: helper.resolveUrl('/page')
+   *   }));
+   * // Returns: 'https://devsantara.com/page'
+   */
+  resolveUrl(url: string | URL): string {
+    // If url is already a URL object, return as string
+    if (url instanceof URL) {
+      return url.href;
+    }
+
+    // If no metadataBase provided, return raw url as is
+    if (!this.metadataBase) {
+      return url;
+    }
+
+    // Resolve relative URL against metadataBase
+    try {
+      const resolved = new URL(url, this.metadataBase);
+      return resolved.href;
+    } catch {
+      // If URL construction fails, return raw url
+      return url;
+    }
   }
 
   /**
@@ -322,11 +392,15 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * This method provides a convenient way to add OpenGraph metadata for rich social media previews.
    * It handles basic properties, images, and type-specific metadata.
    *
+   * You can pass either an options object directly or a function that receives a helper object
+   * with a resolveUrl method to construct URLs.
+   *
    * @see https://ogp.me/
    *
-   * @param options - The OpenGraph configuration options
+   * @param optionOrFn - The OpenGraph configuration options or a function that returns them
    *
    * @example
+   * // Direct options
    * const head = new HeadBuilder()
    *   .addOpenGraph({
    *     title: 'My Page Title',
@@ -342,20 +416,21 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .build();
    *
    * @example
-   * const head = new HeadBuilder()
-   *   .addOpenGraph({
-   *     title: 'Article Title',
-   *     type: {
-   *       name: 'article',
-   *       properties: [
-   *         { name: 'article:published_time', content: '2024-01-01' },
-   *         { name: 'article:author', content: 'John Doe' }
-   *       ]
+   * // Using builder helper callback function
+   * const head = new HeadBuilder(new URL('https://example.com'))
+   *   .addOpenGraph((helper) => ({
+   *     title: 'My Page Title',
+   *     url: helper.resolveUrl('/page'),
+   *     image: {
+   *       url: resolveUrl('/images/og-image.jpg'),
+   *       alt: 'Image description'
    *     }
-   *   })
+   *   }))
    *   .build();
    */
-  addOpenGraph(options: OpenGraphOptions) {
+  addOpenGraph(optionOrFn: BuilderOption<OpenGraphOptions>) {
+    const options = this.parseOptionOrFn(optionOrFn);
+
     // Add basic properties
     if (options.title) {
       this.addElement('meta', { property: 'og:title', content: options.title });
@@ -367,7 +442,10 @@ export class HeadBuilder<TOutput = HeadElement[]> {
       });
     }
     if (options.url) {
-      this.addElement('meta', { property: 'og:url', content: options.url });
+      this.addElement('meta', {
+        property: 'og:url',
+        content: options.url.toString(),
+      });
     }
     if (options.locale) {
       this.addElement('meta', {
@@ -435,11 +513,15 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * This method provides a convenient way to add Twitter Card metadata for rich previews on Twitter.
    * It handles basic properties, images, and card-specific metadata.
    *
+   * You can pass either an options object directly or a function that receives a helper object
+   * with a resolveUrl method to construct URLs.
+   *
    * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup
    *
-   * @param options - The Twitter Card configuration options
+   * @param optionOrFn - The Twitter Card configuration options or a function that returns them
    *
    * @example
+   * // Direct options
    * const head = new HeadBuilder()
    *   .addTwitter({
    *     title: 'My Page Title',
@@ -455,21 +537,21 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .build();
    *
    * @example
-   * const head = new HeadBuilder()
-   *   .addTwitter({
-   *     title: 'Video Title',
-   *     card: {
-   *       name: 'player',
-   *       properties: [
-   *         { name: 'twitter:player', content: 'https://example.com/player' },
-   *         { name: 'twitter:player:width', content: 1280 },
-   *         { name: 'twitter:player:height', content: 720 }
-   *       ]
-   *     }
-   *   })
+   * // Using builder helper callback function
+   * const head = new HeadBuilder(new URL('https://example.com'))
+   *   .addTwitter((helper) => ({
+   *     title: 'My Page Title',
+   *     image: {
+   *       url: helper.resolveUrl('/images/twitter-card.jpg'),
+   *       alt: 'Image description'
+   *     },
+   *     card: { name: 'summary_large_image' }
+   *   }))
    *   .build();
    */
-  addTwitter(options: TwitterOptions) {
+  addTwitter(optionOrFn: BuilderOption<TwitterOptions>) {
+    const options = this.parseOptionOrFn(optionOrFn);
+
     // Add basic properties
     if (options.title) {
       this.addElement('meta', {

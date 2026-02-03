@@ -123,6 +123,35 @@ const head = new HeadBuilder({
   .build();
 ```
 
+### Using Builder Helper Callback Functions
+
+Some method like `addOpenGraph()` and `addTwitter()` accept either a direct options object or a callback function that receives a helper object. This helper provides utilities like `resolveUrl()` to construct absolute URLs using the `metadataBase`:
+
+```typescript
+import { HeadBuilder } from '@devsantara-labs/head';
+
+const head = new HeadBuilder({
+  metadataBase: new URL('https://example.com'),
+})
+  .addOpenGraph((helper) => ({
+    title: 'My Page Title',
+    url: helper.resolveUrl('/page'), // Resolves to 'https://example.com/page'
+    image: {
+      url: helper.resolveUrl('/images/og-image.jpg'),
+      alt: 'Image description',
+    },
+  }))
+  .addTwitter((helper) => ({
+    title: 'My Page Title',
+    image: {
+      url: helper.resolveUrl('/images/twitter-card.jpg'),
+      alt: 'Image description',
+    },
+    card: { name: 'summary_large_image' },
+  }))
+  .build();
+```
+
 ## Framework Adapters
 
 ### React Adapter
@@ -280,20 +309,20 @@ new HeadBuilder(options?: {
 
 #### Methods
 
-| Method              | Parameters                         | Returns         | Description                                            |
-| ------------------- | ---------------------------------- | --------------- | ------------------------------------------------------ |
-| `addTitle()`        | `title: string`                    | `this`          | Adds a `<title>` element                               |
-| `addMeta()`         | `attributes: HeadMetaAttributes`   | `this`          | Adds a `<meta>` element                                |
-| `addLink()`         | `attributes: HeadLinkAttributes`   | `this`          | Adds a `<link>` element                                |
-| `addScript()`       | `attributes: HeadScriptAttributes` | `this`          | Adds a `<script>` element                              |
-| `addStyle()`        | `attributes: HeadStyleAttributes`  | `this`          | Adds a `<style>` element                               |
-| `addCharSet()`      | `charSet: CharSet`                 | `this`          | Adds a character encoding declaration                  |
-| `addViewport()`     | `options: ViewportOptions`         | `this`          | Adds a viewport meta tag for responsive design         |
-| `addRobots()`       | `options: RobotsOptions`           | `this`          | Adds a robots meta tag for search engine control       |
-| `addOpenGraph()`    | `options: OpenGraphOptions`        | `this`          | Adds OpenGraph meta tags for social media previews     |
-| `addTwitter()`      | `options: TwitterOptions`          | `this`          | Adds Twitter Card meta tags for Twitter previews       |
-| `build()`           | `TOutput`                          | `HeadElement[]` | Returns the final output (adapted if adapter provided) |
-| `getMetadataBase()` | `URL`                              | `undefined`     | Returns the configured metadataBase URL                |
+| Method             | Parameters                                    | Returns   | Description                                            |
+| ------------------ | --------------------------------------------- | --------- | ------------------------------------------------------ |
+| `addTitle()`       | `title: string`                               | `this`    | Adds a `<title>` element                               |
+| `addMeta()`        | `attributes: HeadMetaAttributes`              | `this`    | Adds a `<meta>` element                                |
+| `addLink()`        | `attributes: HeadLinkAttributes`              | `this`    | Adds a `<link>` element                                |
+| `addScript()`      | `attributes: HeadScriptAttributes`            | `this`    | Adds a `<script>` element                              |
+| `addStyle()`       | `attributes: HeadStyleAttributes`             | `this`    | Adds a `<style>` element                               |
+| `addCharSet()`     | `charSet: CharSet`                            | `this`    | Adds a character encoding declaration                  |
+| `addDescription()` | `description: string`                         | `this`    | Adds a description meta tag                            |
+| `addViewport()`    | `options: ViewportOptions`                    | `this`    | Adds a viewport meta tag for responsive design         |
+| `addRobots()`      | `options: RobotsOptions`                      | `this`    | Adds a robots meta tag for search engine control       |
+| `addOpenGraph()`   | `optionOrFn: BuilderOption<OpenGraphOptions>` | `this`    | Adds OpenGraph meta tags for social media previews     |
+| `addTwitter()`     | `optionOrFn: BuilderOption<TwitterOptions>`   | `this`    | Adds Twitter Card meta tags for Twitter previews       |
+| `build()`          | -                                             | `TOutput` | Returns the final output (adapted if adapter provided) |
 
 ### HeadAdapter
 
