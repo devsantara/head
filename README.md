@@ -103,26 +103,6 @@ const head = new HeadBuilder()
   .build();
 ```
 
-### Adding Web App Manifest
-
-Link to a web app manifest file for Progressive Web Apps:
-
-```typescript
-const head = new HeadBuilder()
-  .addManifest('https://example.com/manifest.json')
-  .build();
-```
-
-With builder helper and relative URL:
-
-```typescript
-const head = new HeadBuilder({
-  metadataBase: new URL('https://example.com'),
-})
-  .addManifest((helper) => helper.resolveUrl('/manifest.json'))
-  .build();
-```
-
 ### Complete Example
 
 ```typescript
