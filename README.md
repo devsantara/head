@@ -82,7 +82,7 @@ const head = new HeadBuilder()
 const head = new HeadBuilder()
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
   .addLink({ rel: 'icon', href: '/favicon.ico' })
-  .addLink({ rel: 'canonical', href: 'https://example.com' })
+  .addLink({ rel: 'canonical', href: 'https://devsantara.com' })
   .build();
 ```
 
@@ -110,7 +110,7 @@ import { HeadBuilder } from '@devsantara-labs/head';
 import { HeadReactAdapter } from '@devsantara-labs/head/adapters';
 
 const head = new HeadBuilder({
-  metadataBase: new URL('https://example.com'),
+  metadataBase: new URL('https://devsantara.com'),
   adapter: new HeadReactAdapter(),
 })
   .addTitle('My Website')
@@ -131,11 +131,11 @@ Some method like `addOpenGraph()` and `addTwitter()` accept either a direct opti
 import { HeadBuilder } from '@devsantara-labs/head';
 
 const head = new HeadBuilder({
-  metadataBase: new URL('https://example.com'),
+  metadataBase: new URL('https://devsantara.com'),
 })
   .addOpenGraph((helper) => ({
     title: 'My Page Title',
-    url: helper.resolveUrl('/page'), // Resolves to 'https://example.com/page'
+    url: helper.resolveUrl('/page'), // Resolves to 'https://devsantara.com/page'
     image: {
       url: helper.resolveUrl('/images/og-image.jpg'),
       alt: 'Image description',

@@ -405,9 +405,9 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .addOpenGraph({
    *     title: 'My Page Title',
    *     description: 'A description of my page',
-   *     url: 'https://example.com/page',
+   *     url: 'https://devsantara.com/page',
    *     image: {
-   *       url: 'https://example.com/image.jpg',
+   *       url: 'https://devsantara.com/image.jpg',
    *       alt: 'Image description',
    *       width: 1200,
    *       height: 630
@@ -418,7 +418,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * @example
    * // Using builder helper callback function
    * const head = new HeadBuilder({
-   *   metadataBase: new URL('https://example.com')
+   *   metadataBase: new URL('https://devsantara.com')
    * })
    *   .addOpenGraph((helper) => ({
    *     title: 'My Page Title',
@@ -531,7 +531,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *     site: '@mysite',
    *     creator: '@author',
    *     image: {
-   *       url: 'https://example.com/image.jpg',
+   *       url: 'https://devsantara.com/image.jpg',
    *       alt: 'Image description'
    *     },
    *     card: { name: 'summary_large_image' }
@@ -541,7 +541,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * @example
    * // Using builder helper callback function
    * const head = new HeadBuilder({
-   *   metadataBase: new URL('https://example.com')
+   *   metadataBase: new URL('https://devsantara.com')
    * })
    *   .addTwitter((helper) => ({
    *     title: 'My Page Title',

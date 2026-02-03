@@ -12,12 +12,12 @@ export type HeadReactAdapterResult = ReactNode[];
  * @example
  * const elements = new HeadBuilder()
  *   .addMeta({ name: 'description', content: 'My site' })
- *   .addLink({ rel: 'canonical', href: 'https://example.com' })
+ *   .addLink({ rel: 'canonical', href: 'https://devsantara.com' })
  *   .build();
  *
  * const adapter = new HeadReactAdapter();
  * const reactElements = adapter.transform(elements);
- * // Returns: [<meta name="description" content="My site" />, <link rel="canonical" href="https://example.com" />]
+ * // Returns: [<meta name="description" content="My site" />, <link rel="canonical" href="https://devsantara.com" />]
  */
 export class HeadReactAdapter implements HeadAdapter<HeadReactAdapterResult> {
   /**
