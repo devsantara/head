@@ -6,6 +6,7 @@ import type {
   RobotsOptions,
   ViewportOptions,
   OpenGraphOptions,
+  TwitterOptions,
 } from './types';
 
 export class HeadBuilder<TOutput = HeadElement[]> {
@@ -377,11 +378,10 @@ export class HeadBuilder<TOutput = HeadElement[]> {
 
     // Add image properties
     if (options.image) {
-      const imageUrl =
-        options.image.url instanceof URL
-          ? options.image.url.toString()
-          : options.image.url;
-      this.addElement('meta', { property: 'og:image', content: imageUrl });
+      this.addElement('meta', {
+        property: 'og:image',
+        content: options.image.url.toString(),
+      });
 
       if (options.image.alt) {
         this.addElement('meta', {
@@ -417,10 +417,121 @@ export class HeadBuilder<TOutput = HeadElement[]> {
       });
 
       if ('properties' in options.type) {
-        for (const prop of options.type.properties) {
+        for (const typeProperty of options.type.properties) {
           this.addElement('meta', {
-            property: prop.name,
-            content: prop.content,
+            property: typeProperty.name,
+            content: typeProperty.content,
+          });
+        }
+      }
+    }
+
+    return this;
+  }
+
+  /**
+   * Adds Twitter Card meta tags to the head configuration
+   *
+   * This method provides a convenient way to add Twitter Card metadata for rich previews on Twitter.
+   * It handles basic properties, images, and card-specific metadata.
+   *
+   * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup
+   *
+   * @param options - The Twitter Card configuration options
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addTwitter({
+   *     title: 'My Page Title',
+   *     description: 'A description of my page',
+   *     site: '@mysite',
+   *     creator: '@author',
+   *     image: {
+   *       url: 'https://example.com/image.jpg',
+   *       alt: 'Image description'
+   *     },
+   *     card: { name: 'summary_large_image' }
+   *   })
+   *   .build();
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addTwitter({
+   *     title: 'Video Title',
+   *     card: {
+   *       name: 'player',
+   *       properties: [
+   *         { name: 'twitter:player', content: 'https://example.com/player' },
+   *         { name: 'twitter:player:width', content: 1280 },
+   *         { name: 'twitter:player:height', content: 720 }
+   *       ]
+   *     }
+   *   })
+   *   .build();
+   */
+  addTwitter(options: TwitterOptions) {
+    // Add basic properties
+    if (options.title) {
+      this.addElement('meta', {
+        name: 'twitter:title',
+        content: options.title,
+      });
+    }
+    if (options.description) {
+      this.addElement('meta', {
+        name: 'twitter:description',
+        content: options.description,
+      });
+    }
+    if (options.site) {
+      this.addElement('meta', { name: 'twitter:site', content: options.site });
+    }
+    if (options.siteId) {
+      this.addElement('meta', {
+        name: 'twitter:site:id',
+        content: options.siteId,
+      });
+    }
+    if (options.creator) {
+      this.addElement('meta', {
+        name: 'twitter:creator',
+        content: options.creator,
+      });
+    }
+    if (options.creatorId) {
+      this.addElement('meta', {
+        name: 'twitter:creator:id',
+        content: options.creatorId,
+      });
+    }
+
+    // Add image properties
+    if (options.image) {
+      this.addElement('meta', {
+        name: 'twitter:image',
+        content: options.image.url.toString(),
+      });
+
+      if (options.image.alt) {
+        this.addElement('meta', {
+          name: 'twitter:image:alt',
+          content: options.image.alt,
+        });
+      }
+    }
+
+    // Add card and card-specific properties
+    if (options.card) {
+      this.addElement('meta', {
+        name: 'twitter:card',
+        content: options.card.name,
+      });
+
+      if ('properties' in options.card) {
+        for (const cardProperty of options.card.properties) {
+          this.addElement('meta', {
+            name: cardProperty.name,
+            content: cardProperty.content.toString(),
           });
         }
       }
