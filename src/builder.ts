@@ -335,6 +335,41 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
+   * Adds a canonical link to the head configuration
+   *
+   * This method provides a convenient way to specify the canonical URL for the page,
+   * which helps search engines understand the preferred version of a page and avoid duplicate content issues.
+   *
+   * You can pass either a URL directly or a function that receives a helper object.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel#canonical
+   *
+   * @param valueOrFn - The canonical URL or a function that returns it
+   *
+   * @example
+   * // Direct URL
+   * const head = new HeadBuilder()
+   *   .addCanonical('https://devsantara.com/page')
+   *   .build();
+   *
+   * @example
+   * // Using builder helper callback function
+   * const head = new HeadBuilder({
+   *   metadataBase: new URL('https://devsantara.com')
+   * })
+   *   .addCanonical((helper) => helper.resolveUrl('/page'))
+   *   .build();
+   * // Results in: <link rel="canonical" href="https://devsantara.com/page" />
+   */
+  addCanonical(valueOrFn: BuilderOption<string | URL>) {
+    const value = this.parseValueOrFn(valueOrFn);
+    return this.addElement('link', {
+      rel: 'canonical',
+      href: value.toString(),
+    });
+  }
+
+  /**
    * Adds a robots meta tag to the head configuration
    *
    * This method provides a convenient way to control search engine crawling and indexing behavior.
