@@ -3,6 +3,7 @@ import type {
   HeadAdapter,
   HeadElement,
   CharSet,
+  ColorScheme,
   RobotsOptions,
   ViewportOptions,
   OpenGraphOptions,
@@ -237,6 +238,33 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    */
   addCharSet(charSet: CharSet) {
     return this.addElement('meta', { charSet });
+  }
+
+  /**
+   * Adds a color-scheme meta tag to the head configuration
+   *
+   * This method sets the color scheme preference for the document, indicating
+   * which color schemes the page supports (light, dark, or both).
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/color-scheme
+   *
+   * @param colorScheme - The color scheme value (e.g., 'light', 'dark', 'light dark')
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addColorScheme('light dark')
+   *   .build();
+   *
+   * @example
+   * const head = new HeadBuilder()
+   *   .addColorScheme('dark')
+   *   .build();
+   */
+  addColorScheme(colorScheme: ColorScheme) {
+    return this.addElement('meta', {
+      name: 'color-scheme',
+      content: colorScheme,
+    });
   }
 
   /**
