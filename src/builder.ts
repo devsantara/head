@@ -11,6 +11,7 @@ import type {
   AlternateLocaleOptions,
   IconOptions,
   IconPreset,
+  StylesheetOptions,
 } from './types';
 
 /**
@@ -784,6 +785,43 @@ export class HeadBuilder<TOutput = HeadElement[]> {
     return this.addElement('link', {
       rel: 'manifest',
       href: href.toString(),
+    });
+  }
+
+  /**
+   * Adds a stylesheet link to the head configuration
+   *
+   * This method provides a convenient way to link to CSS stylesheets.
+   *
+   * @param href - The stylesheet URL
+   * @param options - Optional additional attributes for the link element
+   *
+   * @example
+   * // Single stylesheet
+   * const head = new HeadBuilder()
+   *   .addStylesheet('/styles.css')
+   *   .build();
+   * // Results in: <link rel="stylesheet" href="/styles.css" />
+   *
+   * @example
+   * // With media query
+   * const head = new HeadBuilder()
+   *   .addStylesheet('/print.css', { media: 'print' })
+   *   .build();
+   * // Results in: <link rel="stylesheet" href="/print.css" media="print" />
+   *
+   * @example
+   * // Multiple stylesheets
+   * const head = new HeadBuilder()
+   *   .addStylesheet('/styles/main.css')
+   *   .addStylesheet('/styles/theme.css', { media: '(prefers-color-scheme: dark)' })
+   *   .build();
+   */
+  addStylesheet(href: string | URL, options?: StylesheetOptions) {
+    return this.addElement('link', {
+      rel: 'stylesheet',
+      href: href.toString(),
+      ...options,
     });
   }
 

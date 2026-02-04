@@ -368,3 +368,9 @@ export type IconPreset = 'icon' | 'apple' | 'shortcut' | (string & {});
 export type IconOptions = Omit<HeadAttributeTypeMap['link'], 'rel' | 'href'> & {
   href: string | URL;
 };
+
+/**
+ * Stylesheet options for the addStylesheet method
+ * Additional link element attributes excluding rel and href which are set automatically
+ */
+export type StylesheetOptions = Omit<HeadLinkAttributes, 'rel' | 'href'>;
