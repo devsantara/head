@@ -363,11 +363,8 @@ export type IconPreset = 'icon' | 'apple' | 'shortcut' | (string & {});
 /**
  * Icon options for the addIcon method
  * The rel attribute is determined by the preset parameter, so it's not included here
+ * href is required for icon links
  */
-export interface IconOptions {
+export type IconOptions = Omit<HeadAttributeTypeMap['link'], 'rel' | 'href'> & {
   href: string | URL;
-  type?: string;
-  sizes?: string;
-  media?: string;
-  fetchPriority?: 'high' | 'low' | 'auto';
-}
+};

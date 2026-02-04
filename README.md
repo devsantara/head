@@ -81,7 +81,7 @@ const head = new HeadBuilder()
 ```typescript
 const head = new HeadBuilder()
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
-  .addLink({ rel: 'icon', href: '/favicon.ico' })
+  .addIcon('icon', { href: '/favicon.ico' })
   .addCanonical('https://devsantara.com')
   .build();
 ```
@@ -117,7 +117,7 @@ const head = new HeadBuilder({
   .addCharSet('utf-8')
   .addViewport({ width: 'device-width', initialScale: 1 })
   .addLink({ rel: 'stylesheet', href: '/styles.css' })
-  .addLink({ rel: 'icon', href: '/favicon.ico' })
+  .addIcon('icon', { href: '/favicon.ico' })
   .addScript({ src: '/analytics.js', async: true })
   .addStyle({ children: 'body { font-family: system-ui; }' })
   .build();
@@ -167,7 +167,7 @@ const head = new HeadBuilder({ adapter: new HeadReactAdapter() })
   .addTitle('My Website')
   .addCharSet('utf-8')
   .addViewport({ width: 'device-width', initialScale: 1 })
-  .addLink({ rel: 'icon', href: '/favicon.ico' })
+  .addIcon('icon', { href: '/favicon.ico' })
   .build();
 
 // Use in React component
