@@ -16,31 +16,14 @@ export interface HeadTanStackRouterAdapterResult {
 }
 
 /**
- * Adapter for converting HeadElement[] to TanStack Router head configuration
- *
- * This adapter transforms the head elements into the format expected by
- * TanStack Router's head management system, organizing elements by type.
- *
- * @example
- * const elements = new HeadBuilder()
- *   .addMeta({ name: 'description', content: 'My site' })
- *   .addLink({ rel: 'canonical', href: 'https://example.com' })
- *   .build();
- *
- * const adapter = new HeadTanstackRouterAdapter();
- * const config = adapter.transform(elements);
- * // Returns: {
- * //   meta: [{ name: 'description', content: 'My site' }],
- * //   links: [{ rel: 'canonical', href: 'https://example.com' }],
- * //   scripts: [],
- * //   styles: []
- * // }
+ * Adapter that transforms head elements into TanStack Router head configuration format.
  */
 export class HeadTanstackRouterAdapter implements HeadAdapter<HeadTanStackRouterAdapterResult> {
   /**
-   * Transforms HeadElement[] to TanStack Router head config
-   * @param elements - Array of head elements from HeadBuilder.build()
-   * @returns A TanStackHeadConfig object with elements organized by type
+   * Transforms head elements into TanStack Router head configuration with elements organized by type.
+   *
+   * @param elements - Array of head elements to transform
+   * @returns Head configuration object with categorized elements
    */
   transform(elements: HeadElement[]): HeadTanStackRouterAdapterResult {
     const config: HeadTanStackRouterAdapterResult = {
@@ -59,6 +42,13 @@ export class HeadTanstackRouterAdapter implements HeadAdapter<HeadTanStackRouter
         config.scripts?.push(element.attributes);
       } else if (isElementOfType(element, 'style')) {
         config.styles?.push(element.attributes);
+      } else if (isElementOfType(element, 'title')) {
+        /**
+         * TanStack Router automatically dedupes title and meta tags
+         * so we only need to push the title as a meta element
+         */
+        // oxlint-disable-next-line typescript/no-base-to-string
+        config.meta?.push({ title: String(element.attributes.children) });
       }
     }
 

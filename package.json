@@ -1,5 +1,5 @@
 {
-  "name": "@devsantara-labs/head",
+  "name": "@devsantara/head",
   "version": "0.1.1",
   "description": "A type-safe HTML head builder",
   "keywords": [

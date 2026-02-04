@@ -4,26 +4,14 @@ import type { HeadAdapter, HeadElement } from '../types';
 export type HeadReactAdapterResult = ReactNode[];
 
 /**
- * Adapter for converting HeadElement[] to React elements
- *
- * This adapter transforms the head elements into React.ReactNode[] that can be
- * rendered inside a React component or used with React-based head management libraries.
- *
- * @example
- * const elements = new HeadBuilder()
- *   .addMeta({ name: 'description', content: 'My site' })
- *   .addLink({ rel: 'canonical', href: 'https://example.com' })
- *   .build();
- *
- * const adapter = new HeadReactAdapter();
- * const reactElements = adapter.transform(elements);
- * // Returns: [<meta name="description" content="My site" />, <link rel="canonical" href="https://example.com" />]
+ * Adapter that transforms head elements into React components for rendering in React applications.
  */
 export class HeadReactAdapter implements HeadAdapter<HeadReactAdapterResult> {
   /**
-   * Transforms HeadElement[] to React.ReactNode[]
-   * @param elements - Array of head elements from HeadBuilder.build()
-   * @returns An array of React elements
+   * Transforms head elements into React components.
+   *
+   * @param elements - Array of head elements to transform
+   * @returns Array of React components ready for rendering
    */
   transform(elements: HeadElement[]): HeadReactAdapterResult {
     return elements.map((element, index) => {
