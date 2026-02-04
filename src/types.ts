@@ -353,3 +353,21 @@ export type AlternateLocaleOptions<TLocale extends string> = Record<
   AlternateLocaleKey<TLocale>,
   string | URL
 >;
+
+/**
+ * Icon preset type with autocomplete for common icon types
+ * Supports 'icon', 'apple' (for apple-touch-icon), 'shortcut' (for shortcut icon), or any custom string
+ */
+export type IconPreset = 'icon' | 'apple' | 'shortcut' | (string & {});
+
+/**
+ * Icon options for the addIcon method
+ * The rel attribute is determined by the preset parameter, so it's not included here
+ */
+export interface IconOptions {
+  href: string | URL;
+  type?: string;
+  sizes?: string;
+  media?: string;
+  fetchPriority?: 'high' | 'low' | 'auto';
+}

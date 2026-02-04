@@ -9,6 +9,8 @@ import type {
   OpenGraphOptions,
   TwitterOptions,
   AlternateLocaleOptions,
+  IconOptions,
+  IconPreset,
 } from './types';
 
 /**
@@ -782,6 +784,79 @@ export class HeadBuilder<TOutput = HeadElement[]> {
     return this.addElement('link', {
       rel: 'manifest',
       href: href.toString(),
+    });
+  }
+
+  /**
+   * Adds an icon link to the head configuration
+   *
+   * This method provides a convenient way to add various icon types with preset rel values.
+   * Common presets include 'icon', 'apple', and 'shortcut', but any custom string can be used.
+   *
+   * You can pass either an options object directly or a function that receives a helper object.
+   *
+   * @param preset - The icon type preset ('icon', 'apple', 'shortcut', or any custom string)
+   * @param valueOrFn - The icon options or a function that returns them
+   *
+   * @example
+   * // Standard icon
+   * const head = new HeadBuilder()
+   *   .addIcon('icon', { href: '/favicon.ico', sizes: '32x32' })
+   *   .build();
+   * // Results in: <link rel="icon" href="/favicon.ico" sizes="32x32" />
+   *
+   * @example
+   * // Apple touch icon
+   * const head = new HeadBuilder()
+   *   .addIcon('apple', { href: '/apple-icon.png', sizes: '180x180' })
+   *   .build();
+   * // Results in: <link rel="apple-touch-icon" href="/apple-icon.png" sizes="180x180" />
+   *
+   * @example
+   * // Shortcut icon
+   * const head = new HeadBuilder()
+   *   .addIcon('shortcut', { href: '/shortcut-icon.ico' })
+   *   .build();
+   * // Results in: <link rel="shortcut icon" href="/shortcut-icon.ico" />
+   *
+   * @example
+   * // Using builder helper callback function
+   * const head = new HeadBuilder({
+   *   metadataBase: new URL('https://devsantara.com')
+   * })
+   *   .addIcon('icon', (helper) => ({
+   *     href: helper.resolveUrl('/icons/favicon.ico'),
+   *     sizes: '32x32',
+   *     type: 'image/x-icon'
+   *   }))
+   *   .build();
+   *
+   * @example
+   * // Custom preset
+   * const head = new HeadBuilder()
+   *   .addIcon('mask-icon', { href: '/mask-icon.svg', color: '#000000' })
+   *   .build();
+   * // Results in: <link rel="mask-icon" href="/mask-icon.svg" color="#000000" />
+   */
+  addIcon(preset: IconPreset, valueOrFn: BuilderOption<IconOptions>) {
+    const options = this.parseValueOrFn(valueOrFn);
+
+    // Map preset to rel attribute
+    const relMap: Record<IconPreset, string> = {
+      apple: 'apple-touch-icon',
+      icon: 'icon',
+      shortcut: 'shortcut icon',
+    };
+
+    const rel = relMap[preset] || preset;
+
+    return this.addElement('link', {
+      rel,
+      href: options.href.toString(),
+      type: options.type,
+      sizes: options.sizes,
+      media: options.media,
+      fetchPriority: options.fetchPriority,
     });
   }
 
