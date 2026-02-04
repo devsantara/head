@@ -15,12 +15,13 @@ import type {
 } from './types';
 
 /**
- * Helper object passed to callback functions in builder methods
+ * Helper object provided to callback functions with utilities for dynamic metadata generation.
  */
 interface BuilderHelper {
   /**
-   * Resolves a URL (absolute or relative) into an absolute URL using the metadataBase
-   * @param url - The raw string or URL to resolve
+   * Resolves a relative or absolute URL into an absolute URL using the configured metadataBase.
+   *
+   * @param url - The URL to resolve
    * @returns The resolved absolute URL as a string
    */
   resolveUrl: (url: string | URL) => string;
@@ -37,9 +38,10 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   private adapter?: HeadAdapter<TOutput>;
 
   /**
-   * Parses builder options that can be either a value or a function
-   * @param valueOrFn - The options value or function that returns options
-   * @returns The resolved options value
+   * Resolves a value that can be either static or a callback function receiving helper utilities.
+   *
+   * @param valueOrFn - Static value or function that returns the value
+   * @returns The resolved value
    */
   private parseValueOrFn<T>(valueOrFn: BuilderOption<T>): T {
     if (typeof valueOrFn === 'function') {
@@ -52,38 +54,18 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Creates a new HeadBuilder instance with optional metadataBase and adapter configuration
-   *
-   * The metadataBase serves as the base path and origin for absolute URLs in various
-   * metadata fields. When relative URLs (for Open Graph images, alternates, etc.) are used,
-   * they are composed with this base. If not provided, relative URLs will be used as-is.
-   *
-   * The adapter can be injected to automatically transform the output when calling build().
-   * If provided, build() will return the adapted output; otherwise, it returns HeadElement[].
+   * Creates a new HeadBuilder instance for constructing HTML head elements with optional base URL resolution and output transformation.
    *
    * @param options - Configuration options
-   * @param options.metadataBase - The base URL to use for resolving relative URLs in metadata
-   * @param options.adapter - Optional adapter instance to transform the build output
+   * @param options.metadataBase - Base URL for resolving relative URLs in metadata (Open Graph, canonical, etc.)
+   * @param options.adapter - Adapter to transform output into framework-specific format
    *
    * @example
-   * // Without adapter - returns HeadElement[]
-   * const elements = new HeadBuilder()
-   *   .addMeta({ name: 'description', content: 'My site' })
-   *   .build();
-   *
-   * @example
-   * // With HTMLAdapter - returns string
-   * const html = new HeadBuilder({ adapter: new HTMLAdapter() })
-   *   .addMeta({ name: 'description', content: 'My site' })
-   *   .build();
-   *
-   * @example
-   * // With metadataBase and ReactAdapter - returns ReactNode[]
-   * const reactNodes = new HeadBuilder({
+   * const head = new HeadBuilder({
    *   metadataBase: new URL('https://devsantara.com'),
    *   adapter: new ReactAdapter()
    * })
-   *   .addMeta({ name: 'description', content: 'My site' })
+   *   .addTitle('My Site')
    *   .build();
    */
   constructor(options?: {
@@ -95,21 +77,10 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Resolves a URL (absolute or relative) into an absolute URL using the metadataBase
+   * Resolves a relative or absolute URL into an absolute URL using the configured metadataBase.
    *
-   * This method is used to resolve URLs for metadata fields like
-   * Open Graph images, canonical URLs, and other absolute URL requirements.
-   *
-   * @param url - The raw string or URL to resolve
+   * @param url - The URL to resolve
    * @returns The resolved absolute URL as a string
-   *
-   * @example
-   * const head = new HeadBuilder({ metadataBase: new URL('https://devsantara.com') })
-   *   .addOpenGraph((helper) => ({
-   *     title: 'My Page',
-   *     url: helper.resolveUrl('/page')
-   *   }));
-   * // Returns: 'https://devsantara.com/page'
    */
   private resolveUrl(url: string | URL): string {
     // If url is already a URL object, return as string
@@ -133,14 +104,11 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a head element to the builder's collection
+   * Adds a head element to the internal collection for later transformation.
    *
-   * This private method is used internally to add metadata elements (meta, link, script, or style)
-   * to the collection that will be used when building the final head configuration.
-   *
-   * @example
-   * this.addElement('meta', { name: 'description', content: 'A description' })
-   * this.addElement('link', { rel: 'canonical', href: 'https://devsantara.com' })
+   * @param type - The HTML element type
+   * @param attributes - The element's attributes
+   * @returns The builder instance for method chaining
    */
   private addElement<T extends keyof HeadAttributeTypeMap>(
     type: T,
@@ -151,15 +119,14 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a meta element directly to the head configuration
+   * Adds a custom meta element with any valid attributes. Use this for meta tags without dedicated helper methods.
    *
-   * This is a general utility method for adding meta elements when a specific
-   * helper method doesn't exist. It directly adds the element to the internal collection.
+   * @param attributes - The meta element attributes
+   * @returns The builder instance for method chaining
    *
    * @example
-   * const head = new HeadBuilder()
-   *   .addMeta({ name: 'description', content: 'My site description' })
-   *   .addMeta({ charSet: 'utf-8' })
+   * new HeadBuilder()
+   *   .addMeta({ name: 'theme-color', content: '#ffffff' })
    *   .build();
    */
   addMeta(attributes: HeadAttributeTypeMap['meta']) {
@@ -167,15 +134,14 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a link element directly to the head configuration
+   * Adds a custom link element with any valid attributes. Use this for link tags without dedicated helper methods.
    *
-   * This is a general utility method for adding link elements when a specific
-   * helper method doesn't exist. It directly adds the element to the internal collection.
+   * @param attributes - The link element attributes
+   * @returns The builder instance for method chaining
    *
    * @example
-   * const head = new HeadBuilder()
-   *   .addLink({ rel: 'canonical', href: 'https://devsantara.com' })
-   *   .addLink({ rel: 'stylesheet', href: '/styles.css' })
+   * new HeadBuilder()
+   *   .addLink({ rel: 'preconnect', href: 'https://fonts.googleapis.com' })
    *   .build();
    */
   addLink(attributes: HeadAttributeTypeMap['link']) {
@@ -183,15 +149,14 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a script element directly to the head configuration
+   * Adds a custom script element with any valid attributes for external scripts or inline code.
    *
-   * This is a general utility method for adding script elements when a specific
-   * helper method doesn't exist. It directly adds the element to the internal collection.
+   * @param attributes - The script element attributes
+   * @returns The builder instance for method chaining
    *
    * @example
-   * const head = new HeadBuilder()
+   * new HeadBuilder()
    *   .addScript({ src: '/analytics.js', async: true })
-   *   .addScript({children: 'console.log("Hello World");'});
    *   .build();
    */
   addScript(attributes: HeadAttributeTypeMap['script']) {
@@ -199,19 +164,14 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a style element directly to the head configuration
+   * Adds a custom style element with inline CSS.
    *
-   * This is a general utility method for adding style elements when a specific
-   * helper method doesn't exist. It directly adds the element to the internal collection.
+   * @param attributes - The style element attributes
+   * @returns The builder instance for method chaining
    *
    * @example
-   * const head = new HeadBuilder()
-   *   .addStyle({
-   *     children: `
-   *       .header { background: #333; color: white; padding: 20px; }
-   *       .hero { min-height: 100vh; display: flex; align-items: center; }
-   *     `
-   *   })
+   * new HeadBuilder()
+   *   .addStyle({ children: 'body { margin: 0; padding: 0; }' })
    *   .build();
    */
   addStyle(attributes: HeadAttributeTypeMap['style']) {
@@ -219,17 +179,13 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a character encoding declaration to the head configuration
+   * Adds a character encoding declaration to specify how the document should be interpreted.
    *
-   * This method provides a convenient way to declare the document's character encoding
-   * using a meta element with the charset attribute.
-   *
-   * @see https://html.spec.whatwg.org/multipage/semantics.html#character-encoding-declaration
-   *
-   * @param charSet - The character encoding value (e.g., 'utf-8', 'iso-8859-1')
+   * @param charSet - The character encoding (e.g., 'utf-8', 'iso-8859-1')
+   * @returns The builder instance for method chaining
    *
    * @example
-   * const head = new HeadBuilder()
+   * new HeadBuilder()
    *   .addCharSet('utf-8')
    *   .build();
    */
@@ -238,23 +194,14 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a color-scheme meta tag to the head configuration
+   * Adds a color scheme preference indicating which color schemes the page supports for proper rendering.
    *
-   * This method sets the color scheme preference for the document, indicating
-   * which color schemes the page supports (light, dark, or both).
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/color-scheme
-   *
-   * @param colorScheme - The color scheme value (e.g., 'light', 'dark', 'light dark')
+   * @param colorScheme - The supported color schemes (e.g., 'light', 'dark', 'light dark')
+   * @returns The builder instance for method chaining
    *
    * @example
-   * const head = new HeadBuilder()
+   * new HeadBuilder()
    *   .addColorScheme('light dark')
-   *   .build();
-   *
-   * @example
-   * const head = new HeadBuilder()
-   *   .addColorScheme('dark')
    *   .build();
    */
   addColorScheme(colorScheme: ColorScheme) {
@@ -265,17 +212,13 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a title element to the head configuration
-   *
-   * This method sets the document title that appears in the browser tab,
-   * search engine results, and bookmarks.
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title
+   * Adds a title element that appears in browser tabs, search results, and bookmarks.
    *
    * @param title - The document title text
+   * @returns The builder instance for method chaining
    *
    * @example
-   * const head = new HeadBuilder()
+   * new HeadBuilder()
    *   .addTitle('My Awesome Website')
    *   .build();
    */
@@ -284,23 +227,14 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a viewport meta tag to the head configuration
+   * Adds viewport configuration for responsive web design and mobile optimization.
    *
-   * This method provides a convenient way to configure the viewport settings
-   * for responsive web design.
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag
-   *
-   * @param options - Viewport configuration options
+   * @param options - Viewport settings (width, initial scale, zoom controls, etc.)
+   * @returns The builder instance for method chaining
    *
    * @example
-   * const head = new HeadBuilder()
-   *   .addViewport({
-   *     width: 'device-width',
-   *     initialScale: 1,
-   *     maximumScale: 5,
-   *     userScalable: true
-   *   })
+   * new HeadBuilder()
+   *   .addViewport({ width: 'device-width', initialScale: 1 })
    *   .build();
    */
   addViewport(options: ViewportOptions) {
@@ -338,17 +272,13 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a description meta tag to the head configuration
-   *
-   * This method provides a convenient way to set the page description that appears
-   * in search engine results and social media shares.
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name#description
+   * Adds a description that appears in search engine results and social media previews.
    *
    * @param description - The page description text
+   * @returns The builder instance for method chaining
    *
    * @example
-   * const head = new HeadBuilder()
+   * new HeadBuilder()
    *   .addDescription('A comprehensive guide to web development')
    *   .build();
    */
@@ -360,31 +290,15 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a canonical link to the head configuration
+   * Adds a canonical URL to help search engines identify the preferred version of a page and prevent duplicate content issues.
    *
-   * This method provides a convenient way to specify the canonical URL for the page,
-   * which helps search engines understand the preferred version of a page and avoid duplicate content issues.
-   *
-   * You can pass either a URL directly or a function that receives a helper object.
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel#canonical
-   *
-   * @param valueOrFn - The canonical URL or a function that returns it
+   * @param valueOrFn - The canonical URL or a callback function receiving helper utilities
+   * @returns The builder instance for method chaining
    *
    * @example
-   * // Direct URL
-   * const head = new HeadBuilder()
-   *   .addCanonical('https://devsantara.com/page')
-   *   .build();
-   *
-   * @example
-   * // Using builder helper callback function
-   * const head = new HeadBuilder({
-   *   metadataBase: new URL('https://devsantara.com')
-   * })
+   * new HeadBuilder({ metadataBase: new URL('https://devsantara.com') })
    *   .addCanonical((helper) => helper.resolveUrl('/page'))
    *   .build();
-   * // Results in: <link rel="canonical" href="https://devsantara.com/page" />
    */
   addCanonical(valueOrFn: BuilderOption<string | URL>) {
     const value = this.parseValueOrFn(valueOrFn);
@@ -395,33 +309,15 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a robots meta tag to the head configuration
+   * Adds robots directives to control search engine crawling and indexing behavior.
    *
-   * This method provides a convenient way to control search engine crawling and indexing behavior.
-   * Set index to false for noindex, follow to false for nofollow.
-   * You can also add custom directives as boolean properties, string values, or number values.
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/robots
-   *
-   * @param options - The robots configuration options
+   * @param options - Robots configuration with index/follow booleans and custom directives
+   * @returns The builder instance for method chaining
    *
    * @example
-   * const head = new HeadBuilder()
-   *   .addRobots({ index: false, follow: false })
+   * new HeadBuilder()
+   *   .addRobots({ index: true, follow: true, 'max-snippet': 160 })
    *   .build();
-   * // Results in: <meta name="robots" content="noindex, nofollow" />
-   *
-   * @example
-   * const head = new HeadBuilder()
-   *   .addRobots({ index: true, follow: true, noarchive: true })
-   *   .build();
-   * // Results in: <meta name="robots" content="index, follow, noarchive" />
-   *
-   * @example
-   * const head = new HeadBuilder()
-   *   .addRobots({ index: true, 'max-image-preview': 'large', 'max-snippet': 160 })
-   *   .build();
-   * // Results in: <meta name="robots" content="index, max-image-preview:large, max-snippet:160" />
    */
   addRobots(options: RobotsOptions) {
     const directiveParts: string[] = [];
@@ -447,45 +343,17 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds OpenGraph meta tags to the head configuration
+   * Adds Open Graph metadata for rich social media previews on platforms like Facebook, LinkedIn, and Slack.
    *
-   * This method provides a convenient way to add OpenGraph metadata for rich social media previews.
-   * It handles basic properties, images, and type-specific metadata.
-   *
-   * You can pass either an options object directly or a function that receives a helper object.
-   *
-   * @see https://ogp.me/
-   *
-   * @param valueOrFn - The OpenGraph configuration options or a function that returns them
+   * @param valueOrFn - Open Graph configuration or a callback function receiving helper utilities
+   * @returns The builder instance for method chaining
    *
    * @example
-   * // Direct options
-   * const head = new HeadBuilder()
-   *   .addOpenGraph({
-   *     title: 'My Page Title',
-   *     description: 'A description of my page',
-   *     url: 'https://devsantara.com/page',
-   *     image: {
-   *       url: 'https://devsantara.com/image.jpg',
-   *       alt: 'Image description',
-   *       width: 1200,
-   *       height: 630
-   *     }
-   *   })
-   *   .build();
-   *
-   * @example
-   * // Using builder helper callback function
-   * const head = new HeadBuilder({
-   *   metadataBase: new URL('https://devsantara.com')
-   * })
+   * new HeadBuilder({ metadataBase: new URL('https://devsantara.com') })
    *   .addOpenGraph((helper) => ({
-   *     title: 'My Page Title',
+   *     title: 'My Page',
    *     url: helper.resolveUrl('/page'),
-   *     image: {
-   *       url: helper.resolveUrl('/images/og-image.jpg'),
-   *       alt: 'Image description'
-   *     }
+   *     image: { url: helper.resolveUrl('/og-image.jpg') }
    *   }))
    *   .build();
    */
@@ -569,45 +437,16 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds Twitter Card meta tags to the head configuration
+   * Adds Twitter Card metadata for rich previews when links are shared on Twitter/X.
    *
-   * This method provides a convenient way to add Twitter Card metadata for rich previews on Twitter.
-   * It handles basic properties, images, and card-specific metadata.
-   *
-   * You can pass either an options object directly or a function that receives a helper object.
-   *
-   * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup
-   *
-   * @param valueOrFn - The Twitter Card configuration options or a function that returns them
+   * @param valueOrFn - Twitter Card configuration or a callback function receiving helper utilities
+   * @returns The builder instance for method chaining
    *
    * @example
-   * // Direct options
-   * const head = new HeadBuilder()
-   *   .addTwitter({
-   *     title: 'My Page Title',
-   *     description: 'A description of my page',
-   *     site: '@mysite',
-   *     creator: '@author',
-   *     image: {
-   *       url: 'https://devsantara.com/image.jpg',
-   *       alt: 'Image description'
-   *     },
-   *     card: { name: 'summary_large_image' }
-   *   })
-   *   .build();
-   *
-   * @example
-   * // Using builder helper callback function
-   * const head = new HeadBuilder({
-   *   metadataBase: new URL('https://devsantara.com')
-   * })
+   * new HeadBuilder({ metadataBase: new URL('https://devsantara.com') })
    *   .addTwitter((helper) => ({
-   *     title: 'My Page Title',
-   *     image: {
-   *       url: helper.resolveUrl('/images/twitter-card.jpg'),
-   *       alt: 'Image description'
-   *     },
-   *     card: { name: 'summary_large_image' }
+   *     card: { name: 'summary_large_image' },
+   *     image: { url: helper.resolveUrl('/twitter-card.jpg') }
    *   }))
    *   .build();
    */
@@ -685,49 +524,18 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds alternate locale/language links to the head configuration
+   * Adds alternate language/locale versions of the page to help search engines serve the correct localized content to users.
    *
-   * This method provides a convenient way to specify alternate versions of the current page
-   * in different languages or locales for SEO and internationalization purposes.
-   * Search engines use these links to serve the correct language version to users.
-   *
-   * You can pass either an options object directly or a function that receives a helper object.
-   *
-   * @see https://developers.google.com/search/docs/specialty/international/localized-versions
-   *
-   * @param valueOrFn - A record mapping language codes to URLs, or a function that returns such a record
+   * @param valueOrFn - Locale-to-URL mapping or a callback function receiving helper utilities
+   * @returns The builder instance for method chaining
    *
    * @example
-   * // Direct options
-   * const head = new HeadBuilder()
-   *   .addAlternateLocale({
-   *     en: 'https://example.com/en',
-   *     fr: 'https://example.com/fr',
-   *     'x-default': 'https://example.com'
-   *   })
-   *   .build();
-   *
-   * @example
-   * // Using builder helper callback function with relative URLs
-   * const head = new HeadBuilder({
-   *   metadataBase: new URL('https://example.com')
-   * })
+   * new HeadBuilder({ metadataBase: new URL('https://example.com') })
    *   .addAlternateLocale((helper) => ({
-   *     'en-US': helper.resolveUrl('/en-us'),
-   *     'es-ES': helper.resolveUrl('/es-es'),
+   *     'en-US': helper.resolveUrl('/en'),
+   *     'fr-FR': helper.resolveUrl('/fr'),
    *     'x-default': helper.resolveUrl('/')
    *   }))
-   *   .build();
-   *
-   * @example
-   * // With type parameter for locale keys
-   * type Locale = 'en' | 'id' | 'fr';
-   * const head = new HeadBuilder()
-   *   .addAlternateLocale<Locale>({
-   *     en: 'https://example.com/en',
-   *     id: 'https://example.com/id',
-   *     fr: 'https://example.com/fr'
-   *   })
    *   .build();
    */
   addAlternateLocale<TLocale extends string = string>(
@@ -747,28 +555,13 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a web app manifest link to the head configuration
+   * Adds a web app manifest link that defines how your application appears when installed on devices.
    *
-   * This method provides a convenient way to link to a web app manifest file,
-   * which defines how your app appears to users and how it can be launched.
-   *
-   * You can pass either a URL directly or a function that receives a helper object.
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/Manifest
-   *
-   * @param valueOrFn - The manifest URL or a function that returns it
+   * @param valueOrFn - The manifest URL or a callback function receiving helper utilities
+   * @returns The builder instance for method chaining
    *
    * @example
-   * // Direct URL
-   * const head = new HeadBuilder()
-   *   .addManifest('https://devsantara.com/manifest.json')
-   *   .build();
-   *
-   * @example
-   * // Using builder helper callback function with relative URL
-   * const head = new HeadBuilder({
-   *   metadataBase: new URL('https://devsantara.com')
-   * })
+   * new HeadBuilder({ metadataBase: new URL('https://devsantara.com') })
    *   .addManifest((helper) => helper.resolveUrl('/manifest.json'))
    *   .build();
    */
@@ -782,32 +575,15 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a stylesheet link to the head configuration
-   *
-   * This method provides a convenient way to link to CSS stylesheets.
+   * Adds an external CSS stylesheet link to the page.
    *
    * @param href - The stylesheet URL
-   * @param options - Optional additional attributes for the link element
+   * @param options - Additional link attributes (media queries, integrity, etc.)
+   * @returns The builder instance for method chaining
    *
    * @example
-   * // Single stylesheet
-   * const head = new HeadBuilder()
-   *   .addStylesheet('/styles.css')
-   *   .build();
-   * // Results in: <link rel="stylesheet" href="/styles.css" />
-   *
-   * @example
-   * // With media query
-   * const head = new HeadBuilder()
-   *   .addStylesheet('/print.css', { media: 'print' })
-   *   .build();
-   * // Results in: <link rel="stylesheet" href="/print.css" media="print" />
-   *
-   * @example
-   * // Multiple stylesheets
-   * const head = new HeadBuilder()
-   *   .addStylesheet('/styles/main.css')
-   *   .addStylesheet('/styles/theme.css', { media: '(prefers-color-scheme: dark)' })
+   * new HeadBuilder()
+   *   .addStylesheet('/styles.css', { media: 'print' })
    *   .build();
    */
   addStylesheet(href: string | URL, options?: StylesheetOptions) {
@@ -819,55 +595,19 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds an icon link to the head configuration
+   * Adds a favicon or app icon using preset types or custom rel values.
    *
-   * This method provides a convenient way to add various icon types with preset rel values.
-   * Common presets include 'icon', 'apple', and 'shortcut', but any custom string can be used.
-   *
-   * You can pass either an options object directly or a function that receives a helper object.
-   *
-   * @param preset - The icon type preset ('icon', 'apple', 'shortcut', or any custom string)
-   * @param valueOrFn - The icon options or a function that returns them
+   * @param preset - Icon type ('icon', 'apple', 'shortcut', or custom string)
+   * @param valueOrFn - Icon configuration or a callback function receiving helper utilities
+   * @returns The builder instance for method chaining
    *
    * @example
-   * // Standard icon
-   * const head = new HeadBuilder()
-   *   .addIcon('icon', { href: '/favicon.ico', sizes: '32x32' })
-   *   .build();
-   * // Results in: <link rel="icon" href="/favicon.ico" sizes="32x32" />
-   *
-   * @example
-   * // Apple touch icon
-   * const head = new HeadBuilder()
-   *   .addIcon('apple', { href: '/apple-icon.png', sizes: '180x180' })
-   *   .build();
-   * // Results in: <link rel="apple-touch-icon" href="/apple-icon.png" sizes="180x180" />
-   *
-   * @example
-   * // Shortcut icon
-   * const head = new HeadBuilder()
-   *   .addIcon('shortcut', { href: '/shortcut-icon.ico' })
-   *   .build();
-   * // Results in: <link rel="shortcut icon" href="/shortcut-icon.ico" />
-   *
-   * @example
-   * // Using builder helper callback function
-   * const head = new HeadBuilder({
-   *   metadataBase: new URL('https://devsantara.com')
-   * })
-   *   .addIcon('icon', (helper) => ({
-   *     href: helper.resolveUrl('/icons/favicon.ico'),
-   *     sizes: '32x32',
-   *     type: 'image/x-icon'
+   * new HeadBuilder({ metadataBase: new URL('https://devsantara.com') })
+   *   .addIcon('apple', (helper) => ({
+   *     href: helper.resolveUrl('/apple-icon.png'),
+   *     sizes: '180x180'
    *   }))
    *   .build();
-   *
-   * @example
-   * // Custom preset
-   * const head = new HeadBuilder()
-   *   .addIcon('mask-icon', { href: '/mask-icon.svg', color: '#000000' })
-   *   .build();
-   * // Results in: <link rel="mask-icon" href="/mask-icon.svg" color="#000000" />
    */
   addIcon(preset: IconPreset, valueOrFn: BuilderOption<IconOptions>) {
     const options = this.parseValueOrFn(valueOrFn);
@@ -892,10 +632,9 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Builds and returns the head configuration
+   * Builds and returns the final head configuration. Returns adapted output if an adapter was provided, otherwise returns `HeadElement[]`.
    *
-   * If an adapter was provided in the constructor, returns the adapted output.
-   * Otherwise, returns the raw HeadElement[] array.
+   * @returns The head configuration in the target format
    */
   build(): TOutput {
     if (this.adapter) {

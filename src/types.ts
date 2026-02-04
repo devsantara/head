@@ -1,24 +1,46 @@
+/**
+ * Meta element attributes with full React HTML type support.
+ */
 export type HeadMetaAttributes = React.DetailedHTMLProps<
   React.MetaHTMLAttributes<HTMLMetaElement>,
   HTMLMetaElement
 >;
+
+/**
+ * Link element attributes with full React HTML type support.
+ */
 export type HeadLinkAttributes = React.DetailedHTMLProps<
   React.LinkHTMLAttributes<HTMLLinkElement>,
   HTMLLinkElement
 >;
+
+/**
+ * Script element attributes with full React HTML type support.
+ */
 export type HeadScriptAttributes = React.DetailedHTMLProps<
   React.ScriptHTMLAttributes<HTMLScriptElement>,
   HTMLScriptElement
 >;
+
+/**
+ * Style element attributes with full React HTML type support.
+ */
 export type HeadStyleAttributes = React.DetailedHTMLProps<
   React.StyleHTMLAttributes<HTMLStyleElement>,
   HTMLStyleElement
 >;
+
+/**
+ * Title element attributes with full React HTML type support.
+ */
 export type HeadTitleAttributes = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLTitleElement>,
   HTMLTitleElement
 >;
 
+/**
+ * Mapping of HTML head element types to their respective attribute types.
+ */
 export interface HeadAttributeTypeMap {
   meta: HeadMetaAttributes;
   link: HeadLinkAttributes;
@@ -27,6 +49,11 @@ export interface HeadAttributeTypeMap {
   title: HeadTitleAttributes;
 }
 
+/**
+ * Represents a single HTML head element with its type and attributes.
+ *
+ * @template T - The element type (meta, link, script, style, or title)
+ */
 export type HeadElement<
   T extends keyof HeadAttributeTypeMap = keyof HeadAttributeTypeMap,
 > = {
@@ -35,22 +62,21 @@ export type HeadElement<
 };
 
 /**
- * Generic adapter interface for transforming HeadElement[] to a target format
- * @template T - The output type of the adapter
+ * Adapter interface for transforming head elements into framework-specific formats.
+ *
+ * @template T - The output type returned by the adapter
  */
 export interface HeadAdapter<T> {
   transform(elements: HeadElement[]): T;
 }
 
 /**
- * Character encoding type with autocomplete for common charsets
+ * Character encoding type with autocomplete for common charsets while allowing any string value.
  */
 export type CharSet = 'utf-8' | (string & {});
 
 /**
- * Color scheme preference for the document
- * Supports 'light', 'dark', 'normal', or combinations like 'light dark'
- * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta/name/color-scheme
+ * Color scheme preference indicating which color schemes the document supports.
  */
 export type ColorScheme =
   | 'light'
@@ -63,7 +89,7 @@ export type ColorScheme =
   | (string & {});
 
 /**
- * Viewport configuration options
+ * Viewport configuration for responsive web design and mobile optimization.
  */
 export interface ViewportOptions {
   width?: 'device-width' | number | (string & {});
@@ -77,10 +103,7 @@ export interface ViewportOptions {
 }
 
 /**
- * Robots meta tag options
- * Supports index and follow with autocomplete, plus any custom directives
- * Custom properties can be boolean (e.g., noarchive: true), string values (e.g., 'max-image-preview': 'large'), or number values (e.g., 'max-snippet': 160)
- * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/robots
+ * Robots directives for controlling search engine crawling and indexing behavior.
  */
 export interface RobotsOptions {
   index?: boolean;
@@ -89,9 +112,7 @@ export interface RobotsOptions {
 }
 
 /**
- * OpenGraph article metadata properties
- * Used for news articles, blog posts, and other written content
- * @see https://ogp.me/#type_article
+ * Open Graph article metadata properties for news articles, blog posts, and written content.
  */
 type ArticleMetadataProperty =
   | { name: 'article:published_time'; content: string }
@@ -102,9 +123,7 @@ type ArticleMetadataProperty =
   | { name: 'article:tag'; content: string };
 
 /**
- * OpenGraph book metadata properties
- * Used for books and publications
- * @see https://ogp.me/#type_book
+ * Open Graph book metadata properties for books and publications.
  */
 type BookMetadataProperty =
   | { name: 'book:isbn'; content: string }
@@ -113,9 +132,7 @@ type BookMetadataProperty =
   | { name: 'book:tag'; content: string };
 
 /**
- * OpenGraph profile metadata properties
- * Used for user profiles and personal pages
- * @see https://ogp.me/#type_profile
+ * Open Graph profile metadata properties for user profiles and personal pages.
  */
 type ProfileMetadataProperty =
   | { name: 'profile:first_name'; content: string }
@@ -124,9 +141,7 @@ type ProfileMetadataProperty =
   | { name: 'profile:gender'; content: string };
 
 /**
- * OpenGraph music.song metadata properties
- * Used for individual music songs
- * @see https://ogp.me/#type_music.song
+ * Open Graph music.song metadata properties for individual music tracks.
  */
 type MusicSongMetadataProperty =
   | { name: 'music:duration'; content: string }
@@ -136,9 +151,7 @@ type MusicSongMetadataProperty =
   | { name: 'music:musician'; content: string };
 
 /**
- * OpenGraph music.album metadata properties
- * Used for music albums
- * @see https://ogp.me/#type_music.album
+ * Open Graph music.album metadata properties for music albums.
  */
 type MusicAlbumMetadataProperty =
   | { name: 'music:song'; content: string }
@@ -148,9 +161,7 @@ type MusicAlbumMetadataProperty =
   | { name: 'music:release_date'; content: string };
 
 /**
- * OpenGraph music.playlist metadata properties
- * Used for music playlists
- * @see https://ogp.me/#type_music.playlist
+ * Open Graph music.playlist metadata properties for music playlists.
  */
 type MusicPlaylistMetadataProperty =
   | { name: 'music:song'; content: string }
@@ -159,9 +170,7 @@ type MusicPlaylistMetadataProperty =
   | { name: 'music:creator'; content: string };
 
 /**
- * OpenGraph music.radio_station metadata properties
- * Used for radio stations
- * @see https://ogp.me/#type_music.radio_station
+ * Open Graph music.radio_station metadata properties for radio stations.
  */
 interface MusicRadioStationMetadataProperty {
   name: 'music:creator';
@@ -169,9 +178,7 @@ interface MusicRadioStationMetadataProperty {
 }
 
 /**
- * OpenGraph video.movie metadata properties
- * Used for movies
- * @see https://ogp.me/#type_video.movie
+ * Open Graph video.movie metadata properties for movies.
  */
 type VideoMovieProperty =
   | { name: 'video:actor'; content: string }
@@ -183,9 +190,7 @@ type VideoMovieProperty =
   | { name: 'video:tag'; content: string };
 
 /**
- * OpenGraph video.episode metadata properties
- * Used for TV show episodes
- * @see https://ogp.me/#type_video.episode
+ * Open Graph video.episode metadata properties for TV show episodes.
  */
 type VideoEpisodeMetadataProperty =
   | { name: 'video:actor'; content: string }
@@ -198,9 +203,7 @@ type VideoEpisodeMetadataProperty =
   | { name: 'video:series'; content: string };
 
 /**
- * OpenGraph video.tv_show metadata properties
- * Used for TV shows
- * @see https://ogp.me/#type_video.tv_show
+ * Open Graph video.tv_show metadata properties for TV shows.
  */
 type VideoTvShowMetadataProperty =
   | { name: 'video:actor'; content: string }
@@ -212,9 +215,7 @@ type VideoTvShowMetadataProperty =
   | { name: 'video:tag'; content: string };
 
 /**
- * OpenGraph video.other metadata properties
- * Used for other video content that doesn't fit into movie, episode, or tv_show
- * @see https://ogp.me/#type_video.other
+ * Open Graph video.other metadata properties for video content not categorized as movie, episode, or TV show.
  */
 type VideoOtherMetadataProperty =
   | { name: 'video:actor'; content: string }
@@ -226,10 +227,7 @@ type VideoOtherMetadataProperty =
   | { name: 'video:tag'; content: string };
 
 /**
- * OpenGraph type property with optional type-specific metadata
- * Supports all standard OpenGraph content types (article, book, music.*, video.*, profile, website)
- * Each type can include its own specific metadata properties
- * @see https://ogp.me/#types
+ * Open Graph content type with optional type-specific metadata properties.
  */
 type OpenGraphType =
   | { name: 'article'; properties: ArticleMetadataProperty[] }
@@ -249,8 +247,7 @@ type OpenGraphType =
   | { name: 'website' };
 
 /**
- * OpenGraph metadata options
- * @see https://ogp.me/
+ * Open Graph metadata configuration for rich social media previews.
  */
 export interface OpenGraphOptions {
   title?: string;
@@ -268,9 +265,7 @@ export interface OpenGraphOptions {
 }
 
 /**
- * Twitter player card metadata properties
- * Used for video and audio content
- * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/player-card
+ * Twitter player card metadata properties for video and audio content.
  */
 type TwitterPlayerProperty =
   | { name: 'twitter:player'; content: string | URL }
@@ -279,9 +274,7 @@ type TwitterPlayerProperty =
   | { name: 'twitter:player:stream'; content: string | URL };
 
 /**
- * Twitter app card metadata properties
- * Used for mobile app installations
- * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/app-card
+ * Twitter app card metadata properties for mobile app installations.
  */
 type TwitterAppProperty =
   | { name: 'twitter:app:id:iphone'; content: string | number }
@@ -296,9 +289,7 @@ type TwitterAppProperty =
   | { name: 'twitter:app:country'; content: string };
 
 /**
- * Twitter Card type property with optional card-specific metadata
- * Supports summary, summary_large_image, player, and app card types
- * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards
+ * Twitter Card type with optional card-specific metadata.
  */
 type TwitterCard =
   | { name: 'summary' }
@@ -313,8 +304,7 @@ type TwitterCard =
     };
 
 /**
- * Twitter Card metadata options
- * @see https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup
+ * Twitter Card metadata configuration for rich previews on Twitter/X.
  */
 export interface TwitterOptions {
   title?: string;
@@ -329,25 +319,16 @@ export interface TwitterOptions {
   };
   card?: TwitterCard;
 }
+
 /**
- * Alternate locale/language key type
- * Supports 'x-default', specific locale strings, or any custom string
+ * Locale key type supporting 'x-default', specific locale strings, or custom values.
  */
 type AlternateLocaleKey<TLocale extends string> =
   | ('x-default' | TLocale)
   | (string & {});
 
 /**
- * Alternate locale/language options for internationalization
- * A record mapping language codes to their corresponding URLs
- * @see https://developers.google.com/search/docs/specialty/international/localized-versions
- *
- * @example
- * {
- *   "en": "https://example.com/en",
- *   "fr": "https://example.com/fr",
- *   "x-default": "https://example.com"
- * }
+ * Alternate locale/language mapping for internationalization, linking language codes to their corresponding URLs.
  */
 export type AlternateLocaleOptions<TLocale extends string> = Record<
   AlternateLocaleKey<TLocale>,
@@ -355,22 +336,18 @@ export type AlternateLocaleOptions<TLocale extends string> = Record<
 >;
 
 /**
- * Icon preset type with autocomplete for common icon types
- * Supports 'icon', 'apple' (for apple-touch-icon), 'shortcut' (for shortcut icon), or any custom string
+ * Icon preset type with autocomplete for common icon types while allowing custom values.
  */
 export type IconPreset = 'icon' | 'apple' | 'shortcut' | (string & {});
 
 /**
- * Icon options for the addIcon method
- * The rel attribute is determined by the preset parameter, so it's not included here
- * href is required for icon links
+ * Icon configuration with href required and rel determined by the preset parameter.
  */
 export type IconOptions = Omit<HeadAttributeTypeMap['link'], 'rel' | 'href'> & {
   href: string | URL;
 };
 
 /**
- * Stylesheet options for the addStylesheet method
- * Additional link element attributes excluding rel and href which are set automatically
+ * Stylesheet configuration with additional link attributes, excluding rel and href which are set automatically.
  */
 export type StylesheetOptions = Omit<HeadLinkAttributes, 'rel' | 'href'>;
