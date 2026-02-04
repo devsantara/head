@@ -1,4 +1,4 @@
-# @devsantara-labs/head
+# @devsantara/head
 
 ## 0.1.1
 

@@ -1,4 +1,4 @@
-# @devsantara-labs/head
+# @devsantara/head
 
 A type-safe HTML head builder library for managing document head metadata with full TypeScript support.
 
@@ -15,19 +15,19 @@ A type-safe HTML head builder library for managing document head metadata with f
 
 ```bash
 # npm
-npm install @devsantara-labs/head
+npm install @devsantara/head
 
 # pnpm
-pnpm add @devsantara-labs/head
+pnpm add @devsantara/head
 
 # yarn
-yarn add @devsantara-labs/head
+yarn add @devsantara/head
 ```
 
 ## Quick Start
 
 ```typescript
-import { HeadBuilder } from '@devsantara-labs/head';
+import { HeadBuilder } from '@devsantara/head';
 
 const head = new HeadBuilder()
   .addTitle('My Website')
@@ -106,8 +106,8 @@ const head = new HeadBuilder()
 ### Complete Example
 
 ```typescript
-import { HeadBuilder } from '@devsantara-labs/head';
-import { HeadReactAdapter } from '@devsantara-labs/head/adapters';
+import { HeadBuilder } from '@devsantara/head';
+import { HeadReactAdapter } from '@devsantara/head/adapters';
 
 const head = new HeadBuilder({
   metadataBase: new URL('https://devsantara.com'),
@@ -128,7 +128,7 @@ const head = new HeadBuilder({
 Some methods like `addCanonical()`, `addOpenGraph()`, and `addTwitter()` accept either a direct value or a callback function that receives a helper object. This helper provides utilities like `resolveUrl()` to construct absolute URLs using the `metadataBase`:
 
 ```typescript
-import { HeadBuilder } from '@devsantara-labs/head';
+import { HeadBuilder } from '@devsantara/head';
 
 const head = new HeadBuilder({
   metadataBase: new URL('https://devsantara.com'),
@@ -160,8 +160,8 @@ const head = new HeadBuilder({
 Converts head elements to React elements for rendering.
 
 ```typescript
-import { HeadBuilder } from '@devsantara-labs/head';
-import { HeadReactAdapter } from '@devsantara-labs/head/adapters';
+import { HeadBuilder } from '@devsantara/head';
+import { HeadReactAdapter } from '@devsantara/head/adapters';
 
 const head = new HeadBuilder({ adapter: new HeadReactAdapter() })
   .addTitle('My Website')
@@ -188,8 +188,8 @@ function App() {
 Converts head elements to TanStack Router head configuration format.
 
 ```typescript
-import { HeadBuilder } from '@devsantara-labs/head';
-import { HeadTanstackRouterAdapter } from '@devsantara-labs/head/adapters';
+import { HeadBuilder } from '@devsantara/head';
+import { HeadTanstackRouterAdapter } from '@devsantara/head/adapters';
 
 const head = new HeadBuilder({ adapter: new HeadTanstackRouterAdapter() })
   .addCharSet('utf-8')
@@ -221,7 +221,7 @@ You can create your own adapter by implementing the `HeadAdapter<T>` interface. 
 #### HeadAdapter Interface
 
 ```typescript
-import type { HeadAdapter, HeadElement } from '@devsantara-labs/head';
+import type { HeadAdapter, HeadElement } from '@devsantara/head';
 
 export interface HeadAdapter<T> {
   transform(elements: HeadElement[]): T;
@@ -247,8 +247,8 @@ type HeadElement = {
 Here's an example of creating a custom adapter that transforms head elements into plain HTML strings:
 
 ```typescript
-import type { HeadAdapter, HeadElement } from '@devsantara-labs/head';
-import { HeadBuilder } from '@devsantara-labs/head';
+import type { HeadAdapter, HeadElement } from '@devsantara/head';
+import { HeadBuilder } from '@devsantara/head';
 
 // Define your output type
 type HtmlStringOutput = string;
