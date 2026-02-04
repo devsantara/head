@@ -151,13 +151,6 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Gets the configured metadataBase URL
-   */
-  getMetadataBase(): URL | undefined {
-    return this.metadataBase;
-  }
-
-  /**
    * Adds a meta element directly to the head configuration
    *
    * This is a general utility method for adding meta elements when a specific
