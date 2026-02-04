@@ -214,10 +214,9 @@ export const Route = createRootRoute({
 
 ### Core Methods
 
-| Method              | Description                                                    |
-| ------------------- | -------------------------------------------------------------- |
-| `build()`           | Builds and returns the final head elements (or adapted output) |
-| `getMetadataBase()` | Gets the configured metadata base URL                          |
+| Method    | Description                                                    |
+| --------- | -------------------------------------------------------------- |
+| `build()` | Builds and returns the final head elements (or adapted output) |
 
 ### Basic Elements
 
