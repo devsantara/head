@@ -371,3 +371,9 @@ export interface IconOptions {
   media?: string;
   fetchPriority?: 'high' | 'low' | 'auto';
 }
+
+/**
+ * Stylesheet options for the addStylesheet method
+ * Additional link element attributes excluding rel and href which are set automatically
+ */
+export type StylesheetOptions = Omit<HeadLinkAttributes, 'rel' | 'href'>;

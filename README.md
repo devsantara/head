@@ -310,25 +310,26 @@ new HeadBuilder(options?: {
 
 #### Methods
 
-| Method                 | Parameters                                                  | Returns   | Description                                                   |
-| ---------------------- | ----------------------------------------------------------- | --------- | ------------------------------------------------------------- |
-| `addTitle()`           | `title: string`                                             | `this`    | Adds a `<title>` element                                      |
-| `addMeta()`            | `attributes: HeadMetaAttributes`                            | `this`    | Adds a `<meta>` element                                       |
-| `addLink()`            | `attributes: HeadLinkAttributes`                            | `this`    | Adds a `<link>` element                                       |
-| `addScript()`          | `attributes: HeadScriptAttributes`                          | `this`    | Adds a `<script>` element                                     |
-| `addStyle()`           | `attributes: HeadStyleAttributes`                           | `this`    | Adds a `<style>` element                                      |
-| `addCharSet()`         | `charSet: CharSet`                                          | `this`    | Adds a character encoding declaration                         |
-| `addColorScheme()`     | `colorScheme: ColorScheme`                                  | `this`    | Adds a color scheme preference declaration                    |
-| `addDescription()`     | `description: string`                                       | `this`    | Adds a description meta tag                                   |
-| `addCanonical()`       | `valueOrFn: BuilderOption<string \| URL>`                   | `this`    | Adds a canonical link for SEO                                 |
-| `addViewport()`        | `options: ViewportOptions`                                  | `this`    | Adds a viewport meta tag for responsive design                |
-| `addRobots()`          | `options: RobotsOptions`                                    | `this`    | Adds a robots meta tag for search engine control              |
-| `addOpenGraph()`       | `valueOrFn: BuilderOption<OpenGraphOptions>`                | `this`    | Adds OpenGraph meta tags for social media previews            |
-| `addTwitter()`         | `valueOrFn: BuilderOption<TwitterOptions>`                  | `this`    | Adds Twitter Card meta tags for Twitter previews              |
-| `addAlternateLocale()` | `valueOrFn: BuilderOption<AlternateLocaleOptions<TLocale>>` | `this`    | Adds alternate language/locale links for internationalization |
-| `addManifest()`        | `valueOrFn: BuilderOption<string \| URL>`                   | `this`    | Adds a web app manifest link for Progressive Web Apps         |
-| `addIcon()`            | `preset: IconPreset, valueOrFn: BuilderOption<IconOptions>` | `this`    | Adds an icon link with preset rel values (icon, apple, etc.)  |
-| `build()`              | -                                                           | `TOutput` | Returns the final output (adapted if adapter provided)        |
+| Method                 | Parameters                                                                 | Returns   | Description                                                   |
+| ---------------------- | -------------------------------------------------------------------------- | --------- | ------------------------------------------------------------- |
+| `addTitle()`           | `title: string`                                                            | `this`    | Adds a `<title>` element                                      |
+| `addMeta()`            | `attributes: HeadMetaAttributes`                                           | `this`    | Adds a `<meta>` element                                       |
+| `addLink()`            | `attributes: HeadLinkAttributes`                                           | `this`    | Adds a `<link>` element                                       |
+| `addScript()`          | `attributes: HeadScriptAttributes`                                         | `this`    | Adds a `<script>` element                                     |
+| `addStyle()`           | `attributes: HeadStyleAttributes`                                          | `this`    | Adds a `<style>` element                                      |
+| `addCharSet()`         | `charSet: CharSet`                                                         | `this`    | Adds a character encoding declaration                         |
+| `addColorScheme()`     | `colorScheme: ColorScheme`                                                 | `this`    | Adds a color scheme preference declaration                    |
+| `addDescription()`     | `description: string`                                                      | `this`    | Adds a description meta tag                                   |
+| `addCanonical()`       | `valueOrFn: BuilderOption<string \| URL>`                                  | `this`    | Adds a canonical link for SEO                                 |
+| `addViewport()`        | `options: ViewportOptions`                                                 | `this`    | Adds a viewport meta tag for responsive design                |
+| `addRobots()`          | `options: RobotsOptions`                                                   | `this`    | Adds a robots meta tag for search engine control              |
+| `addOpenGraph()`       | `valueOrFn: BuilderOption<OpenGraphOptions>`                               | `this`    | Adds OpenGraph meta tags for social media previews            |
+| `addTwitter()`         | `valueOrFn: BuilderOption<TwitterOptions>`                                 | `this`    | Adds Twitter Card meta tags for Twitter previews              |
+| `addAlternateLocale()` | `valueOrFn: BuilderOption<AlternateLocaleOptions<TLocale>>`                | `this`    | Adds alternate language/locale links for internationalization |
+| `addManifest()`        | `valueOrFn: BuilderOption<string \| URL>`                                  | `this`    | Adds a web app manifest link for Progressive Web Apps         |
+| `addStylesheet()`      | `href: string \| URL, options?: Omit<HeadLinkAttributes, 'rel' \| 'href'>` | `this`    | Adds a stylesheet link for CSS files                          |
+| `addIcon()`            | `preset: IconPreset, valueOrFn: BuilderOption<IconOptions>`                | `this`    | Adds an icon link with preset rel values (icon, apple, etc.)  |
+| `build()`              | -                                                                          | `TOutput` | Returns the final output (adapted if adapter provided)        |
 
 ### HeadAdapter
 
