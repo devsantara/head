@@ -1,7 +1,11 @@
 import type { HeadAttributeTypeMap, HeadElement } from './types';
 
 /**
- * Type guard to check if element is of a specific type
+ * Type guard that checks if a head element matches a specific element type.
+ *
+ * @param element - The head element to check
+ * @param type - The expected element type
+ * @returns True if the element matches the specified type
  */
 export function isElementOfType<T extends keyof HeadAttributeTypeMap>(
   element: HeadElement,
@@ -11,7 +15,10 @@ export function isElementOfType<T extends keyof HeadAttributeTypeMap>(
 }
 
 /**
- * Extracts children property from attributes safely
+ * Safely extracts the children property from element attributes.
+ *
+ * @param attributes - The element attributes
+ * @returns The children content as a string, or empty string if not present
  */
 export function getChildren(
   attributes: HeadAttributeTypeMap[keyof HeadAttributeTypeMap],
