@@ -222,13 +222,13 @@ export const Route = createRootRoute({
 
 For advanced use cases not covered by the essential methods below, use these basic methods to add any custom element directly.
 
-| Method                                                  | Description                                      |
-| ------------------------------------------------------- | ------------------------------------------------ |
-| `addTitle(title: string)`                               | Adds a `<title>` element                         |
-| `addMeta(attributes: HeadAttributeTypeMap['meta'])`     | Adds a `<meta>` element with custom attributes   |
-| `addLink(attributes: HeadAttributeTypeMap['link'])`     | Adds a `<link>` element with custom attributes   |
-| `addScript(attributes: HeadAttributeTypeMap['script'])` | Adds a `<script>` element with custom attributes |
-| `addStyle(attributes: HeadAttributeTypeMap['style'])`   | Adds a `<style>` element with custom attributes  |
+| Method                                                | Description                                                 |
+| ----------------------------------------------------- | ----------------------------------------------------------- |
+| `addTitle(title: string)`                             | Adds a `<title>` element                                    |
+| `addMeta(attributes: HeadAttributeTypeMap['meta'])`   | Adds a `<meta>` element with custom attributes              |
+| `addLink(attributes: HeadAttributeTypeMap['link'])`   | Adds a `<link>` element with custom attributes              |
+| `addScript(sourceOrUrl: string \| URL, attributes?)`  | Adds a `<script>` element for external files or inline code |
+| `addStyle(attributes: HeadAttributeTypeMap['style'])` | Adds a `<style>` element with custom attributes             |
 
 ### Essential Methods
 
