@@ -89,6 +89,11 @@ export type ColorScheme =
   | (string & {});
 
 /**
+ * Title configuration with support for templated titles using a template string and default title value.
+ */
+export type TitleOptions = { template: string; default: string };
+
+/**
  * Viewport configuration for responsive web design and mobile optimization.
  */
 export interface ViewportOptions {

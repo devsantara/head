@@ -140,6 +140,32 @@ const head = new HeadBuilder({
 ];
 ```
 
+### With Templated Title
+
+Set a title template once and dynamically update titles on different pages:
+
+```typescript
+import { HeadBuilder } from '@devsantara/head';
+
+// Shared head
+const sharedHead = new HeadBuilder().addTitle({
+  template: '%s | My Awesome site', // <- Set title template
+  default: 'Home',
+});
+
+// Home page
+const homeHead = sharedHead;
+// Output: <title>Home | My Awesome site</title>
+
+// Posts page
+const postHead = sharedHead.addTitle('Posts').build();
+// Output: <title>Posts | My Awesome site</title>
+
+// About page
+const aboutHead = sharedHead.addTitle('About Us').build();
+// Output: <title>About Us | My Awesome site</title>
+```
+
 ### With React Adapter
 
 ```tsx
@@ -222,13 +248,13 @@ export const Route = createRootRoute({
 
 For advanced use cases not covered by the essential methods below, use these basic methods to add any custom element directly.
 
-| Method                                                  | Description                                      |
-| ------------------------------------------------------- | ------------------------------------------------ |
-| `addTitle(title: string)`                               | Adds a `<title>` element                         |
-| `addMeta(attributes: HeadAttributeTypeMap['meta'])`     | Adds a `<meta>` element with custom attributes   |
-| `addLink(attributes: HeadAttributeTypeMap['link'])`     | Adds a `<link>` element with custom attributes   |
-| `addScript(attributes: HeadAttributeTypeMap['script'])` | Adds a `<script>` element with custom attributes |
-| `addStyle(attributes: HeadAttributeTypeMap['style'])`   | Adds a `<style>` element with custom attributes  |
+| Method                                                  | Description                                       |
+| ------------------------------------------------------- | ------------------------------------------------- |
+| `addTitle(title: string \| TitleOptions)`               | Adds a `<title>` element with optional templating |
+| `addMeta(attributes: HeadAttributeTypeMap['meta'])`     | Adds a `<meta>` element with custom attributes    |
+| `addLink(attributes: HeadAttributeTypeMap['link'])`     | Adds a `<link>` element with custom attributes    |
+| `addScript(attributes: HeadAttributeTypeMap['script'])` | Adds a `<script>` element with custom attributes  |
+| `addStyle(attributes: HeadAttributeTypeMap['style'])`   | Adds a `<style>` element with custom attributes   |
 
 ### Essential Methods
 
