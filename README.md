@@ -62,6 +62,10 @@ const head = new HeadBuilder()
   .addDescription('A comprehensive guide to web development')
   .addStyle('body { margin: 0; padding: 0; }')
   .addViewport({ width: 'device-width', initialScale: 1 })
+  .addScript('console.log("Hello, world!");')
+  .addScript(new URL('https://devsantara.com/assets/scripts/utils.js'), {
+    async: true,
+  })
   .build();
 ```
 
@@ -84,6 +88,28 @@ const head = new HeadBuilder()
     attributes: {
       name: 'viewport',
       content: 'width=device-width, initial-scale=1',
+    },
+  },
+  {
+    type: 'style',
+    attributes: {
+      type: 'text/css',
+      children: 'body { margin: 0; padding: 0; }',
+    },
+  },
+  {
+    type: 'script',
+    attributes: {
+      type: 'text/javascript',
+      children: 'console.log("Hello, world!");',
+    },
+  },
+  {
+    type: 'script',
+    attributes: {
+      type: 'text/javascript',
+      src: 'https://devsantara.com/assets/scripts/utils.js',
+      async: true,
     },
   },
 ];
