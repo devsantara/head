@@ -60,6 +60,7 @@ import { HeadBuilder } from '@devsantara/head';
 const head = new HeadBuilder()
   .addTitle('My Awesome Website')
   .addDescription('A comprehensive guide to web development')
+  .addStyle('body { margin: 0; padding: 0; }')
   .addViewport({ width: 'device-width', initialScale: 1 })
   .build();
 ```
@@ -222,13 +223,13 @@ export const Route = createRootRoute({
 
 For advanced use cases not covered by the essential methods below, use these basic methods to add any custom element directly.
 
-| Method                                                | Description                                                 |
-| ----------------------------------------------------- | ----------------------------------------------------------- |
-| `addTitle(title: string)`                             | Adds a `<title>` element                                    |
-| `addMeta(attributes: HeadAttributeTypeMap['meta'])`   | Adds a `<meta>` element with custom attributes              |
-| `addLink(attributes: HeadAttributeTypeMap['link'])`   | Adds a `<link>` element with custom attributes              |
-| `addScript(sourceOrUrl: string \| URL, attributes?)`  | Adds a `<script>` element for external files or inline code |
-| `addStyle(attributes: HeadAttributeTypeMap['style'])` | Adds a `<style>` element with custom attributes             |
+| Method                                               | Description                                                 |
+| ---------------------------------------------------- | ----------------------------------------------------------- |
+| `addTitle(title: string)`                            | Adds a `<title>` element                                    |
+| `addMeta(attributes: HeadAttributeTypeMap['meta'])`  | Adds a `<meta>` element with custom attributes              |
+| `addLink(attributes: HeadAttributeTypeMap['link'])`  | Adds a `<link>` element with custom attributes              |
+| `addScript(sourceOrUrl: string \| URL, attributes?)` | Adds a `<script>` element for external files or inline code |
+| `addStyle(css: string, attributes?)`                 | Adds a `<style>` element with inline CSS                    |
 
 ### Essential Methods
 

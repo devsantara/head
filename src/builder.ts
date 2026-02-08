@@ -181,18 +181,26 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a custom style element with inline CSS.
+   * Adds an inline style element with CSS code.
    *
-   * @param attributes - The style element attributes
+   * @param css - The inline CSS code
+   * @param attributes - Additional style attributes
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addStyle({ children: 'body { margin: 0; padding: 0; }' })
+   *   .addStyle('body { margin: 0; padding: 0; }')
    *   .build();
    */
-  addStyle(attributes: HeadAttributeTypeMap['style']) {
-    return this.addElement('style', attributes);
+  addStyle(
+    css: string,
+    attributes?: Omit<HeadAttributeTypeMap['style'], 'children'>,
+  ) {
+    return this.addElement('style', {
+      children: css,
+      type: 'text/css',
+      ...attributes,
+    });
   }
 
   /**
