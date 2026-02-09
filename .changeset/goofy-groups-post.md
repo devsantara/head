@@ -2,4 +2,4 @@
 '@devsantara/head': minor
 ---
 
-feat(script): split script url or source and other attributes
+feat(script): extract src or inline source as dedicated parameter in addScript

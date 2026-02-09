@@ -2,4 +2,4 @@
 '@devsantara/head': minor
 ---
 
-feat(style): split style css and other attributes
+feat(style): extract inline css as dedicated parameter in addStyle

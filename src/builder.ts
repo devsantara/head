@@ -134,18 +134,22 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a custom link element with any valid attributes. Use this for link tags without dedicated helper methods.
+   * Adds a custom link element with any valid attributes.
    *
-   * @param attributes - The link element attributes
+   * @param href - The URL to link to
+   * @param attributes - Additional link element attributes
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addLink({ rel: 'preconnect', href: 'https://fonts.googleapis.com' })
+   *   .addLink('https://fonts.googleapis.com', { rel: 'preconnect' })
    *   .build();
    */
-  addLink(attributes: HeadAttributeTypeMap['link']) {
-    return this.addElement('link', attributes);
+  addLink(
+    href: string | URL,
+    attributes?: Omit<HeadAttributeTypeMap['link'], 'href'>,
+  ) {
+    return this.addElement('link', { href: href.toString(), ...attributes });
   }
 
   /**
