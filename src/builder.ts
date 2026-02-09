@@ -153,32 +153,35 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a script element, either referencing an external file or containing inline code.
+   * Adds a script element, either inline code or an external file.
    *
-   * @param sourceOrUrl - Either an inline script string or a URL to an external script file
+   * @param srcOrCode - Script source: a URL string/object for external files, or `{ code: string }` for inline scripts
    * @param attributes - Additional script attributes (async, defer, integrity, etc.)
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addScript('console.log("Hello, World!")')
+   *   .addScript('/script.js')
    *   .addScript(new URL('https://example.com/script.js'), { async: true })
+   *   .addScript({ code: 'console.log("Hello, World!")' })
    *   .build();
    */
   addScript(
-    sourceOrUrl: string | URL,
+    srcOrCode: string | URL | { code: string },
     attributes?: Omit<HeadAttributeTypeMap['script'], 'children' | 'src'>,
   ) {
-    if (sourceOrUrl instanceof URL) {
+    // Inline script with { code: string }
+    if (typeof srcOrCode === 'object' && 'code' in srcOrCode) {
       return this.addElement('script', {
-        src: sourceOrUrl.toString(),
+        children: srcOrCode.code,
         type: 'text/javascript',
         ...attributes,
       });
     }
 
+    // External script (string or URL)
     return this.addElement('script', {
-      children: sourceOrUrl,
+      src: srcOrCode.toString(),
       type: 'text/javascript',
       ...attributes,
     });
