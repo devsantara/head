@@ -39,7 +39,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * Internal collection of head elements being built,
    * stored in a Map for deduplication based on element type and key attributes.
    */
-  private elementsByKey = new Map<string, HeadElement>();
+  private elementsMap = new Map<string, HeadElement>();
 
   /**
    * Resolves a value that can be either static or a callback function receiving helper utilities.
@@ -153,7 +153,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
     attributes: HeadAttributeTypeMap[T],
   ) {
     const key = this.getElementKey({ type, attributes });
-    this.elementsByKey.set(key, { type, attributes });
+    this.elementsMap.set(key, { type, attributes });
     return this;
   }
 
@@ -676,7 +676,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * @returns The head configuration in the target format
    */
   build(): TOutput {
-    const elements = Array.from(this.elementsByKey.values());
+    const elements = Array.from(this.elementsMap.values());
     if (this.adapter) {
       return this.adapter.transform(elements);
     }
