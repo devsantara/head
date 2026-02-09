@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { getChildren, isElementOfType } from './utils';
-import type { HeadElement } from './types';
+import { getChildren, isElementOfType } from '../utils';
+import type { HeadElement } from '../types';
 
 describe('Utils', () => {
   describe('isElementOfType', () => {

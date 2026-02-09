@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { HeadTanstackRouterAdapter } from './tanstack-router-adapter';
-import type { HeadElement } from '../types';
+import { HeadTanstackRouterAdapter } from '../tanstack-router-adapter';
+import type { HeadElement } from '../../types';
 
 describe('HeadTanstackRouterAdapter', () => {
   const adapter = new HeadTanstackRouterAdapter();
@@ -180,7 +180,7 @@ describe('HeadTanstackRouterAdapter', () => {
         {
           // oxlint-disable-next-line typescript/no-unsafe-type-assertion
           type: 'base' as any,
-          attributes: { href: 'https://example.com' },
+          attributes: { href: 'https://devsantara.com' },
         },
         {
           type: 'meta',
