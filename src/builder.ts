@@ -34,10 +34,25 @@ interface BuilderHelper {
 type BuilderOption<T> = T | ((helper: BuilderHelper) => T);
 
 export class HeadBuilder<TOutput = HeadElement[]> {
+  /**
+   * Optional base URL for resolving relative URLs in metadata (Open Graph, canonical, etc.)
+   */
   private metadataBase?: URL;
-  private elements: HeadElement[] = [];
+  /**
+   * Optional adapter to transform the built head elements into a framework-specific format.
+   * If not provided, `build()` returns `HeadElement[]`
+   */
   private adapter?: HeadAdapter<TOutput>;
+  /**
+   * Internal storage for title options to support templated titles.
+   * This allows the builder to generate the title dynamically based on previously set options.
+   */
   private titleOptions?: TitleOptions;
+  /**
+   * Internal collection of head elements being built,
+   * stored in a Map for deduplication based on element type and key attributes.
+   */
+  private elementsMap = new Map<string, HeadElement>();
 
   /**
    * Resolves a value that can be either static or a callback function receiving helper utilities.
@@ -106,7 +121,41 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a head element to the internal collection for later transformation.
+   * Generates a unique key for a head element based on its type and attributes.
+   * Used for deduplication - elements with the same key replace previous ones.
+   *
+   * @param element - The head element to generate a key for
+   * @returns A unique string key for the element
+   */
+  private getElementKey({ type, attributes }: HeadElement) {
+    if (type === 'title') {
+      return 'title';
+    }
+    if (type === 'meta') {
+      if ('charSet' in attributes) {
+        return 'meta:charSet';
+      }
+      if ('name' in attributes && 'content' in attributes) {
+        return `meta:name:${attributes.name}`;
+      }
+      if ('property' in attributes && 'content' in attributes) {
+        return `meta:property:${attributes.property}`;
+      }
+    }
+    if (type === 'link') {
+      if (attributes.rel === 'canonical') {
+        return 'link:canonical';
+      }
+      if (attributes.rel === 'alternate' && 'hrefLang' in attributes) {
+        return `link:alternate:${attributes.hrefLang}`;
+      }
+    }
+    return JSON.stringify(`${type}:${JSON.stringify(attributes)}`);
+  }
+
+  /**
+   * Adds a head element to the internal collection with deduplication.
+   * Elements with the same key will replace previous ones.
    *
    * @param type - The HTML element type
    * @param attributes - The element's attributes
@@ -116,7 +165,8 @@ export class HeadBuilder<TOutput = HeadElement[]> {
     type: T,
     attributes: HeadAttributeTypeMap[T],
   ) {
-    this.elements.push({ type, attributes });
+    const key = this.getElementKey({ type, attributes });
+    this.elementsMap.set(key, { type, attributes });
     return this;
   }
 
@@ -136,48 +186,80 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a custom link element with any valid attributes. Use this for link tags without dedicated helper methods.
+   * Adds a custom link element with any valid attributes.
    *
-   * @param attributes - The link element attributes
+   * @param href - The URL to link to
+   * @param attributes - Additional link element attributes
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addLink({ rel: 'preconnect', href: 'https://fonts.googleapis.com' })
+   *   .addLink('https://fonts.googleapis.com', { rel: 'preconnect' })
    *   .build();
    */
-  addLink(attributes: HeadAttributeTypeMap['link']) {
-    return this.addElement('link', attributes);
+  addLink(
+    href: string | URL,
+    attributes?: Omit<HeadAttributeTypeMap['link'], 'href'>,
+  ) {
+    return this.addElement('link', { href: href.toString(), ...attributes });
   }
 
   /**
-   * Adds a custom script element with any valid attributes for external scripts or inline code.
+   * Adds a script element, either inline code or an external file.
    *
-   * @param attributes - The script element attributes
+   * @param srcOrCode - Script source: a URL string/object for external files, or `{ code: string }` for inline scripts
+   * @param attributes - Additional script attributes (async, defer, integrity, etc.)
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addScript({ src: '/analytics.js', async: true })
+   *   .addScript('/script.js')
+   *   .addScript(new URL('https://example.com/script.js'), { async: true })
+   *   .addScript({ code: 'console.log("Hello, World!")' })
    *   .build();
    */
-  addScript(attributes: HeadAttributeTypeMap['script']) {
-    return this.addElement('script', attributes);
+  addScript(
+    srcOrCode: string | URL | { code: string },
+    attributes?: Omit<HeadAttributeTypeMap['script'], 'children' | 'src'>,
+  ) {
+    // Inline script with { code: string }
+    if (typeof srcOrCode === 'object' && 'code' in srcOrCode) {
+      return this.addElement('script', {
+        children: srcOrCode.code,
+        type: 'text/javascript',
+        ...attributes,
+      });
+    }
+
+    // External script (string or URL)
+    return this.addElement('script', {
+      src: srcOrCode.toString(),
+      type: 'text/javascript',
+      ...attributes,
+    });
   }
 
   /**
-   * Adds a custom style element with inline CSS.
+   * Adds an inline style element with CSS code.
    *
-   * @param attributes - The style element attributes
+   * @param css - The inline CSS code
+   * @param attributes - Additional style attributes
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addStyle({ children: 'body { margin: 0; padding: 0; }' })
+   *   .addStyle('body { margin: 0; padding: 0; }')
    *   .build();
    */
-  addStyle(attributes: HeadAttributeTypeMap['style']) {
-    return this.addElement('style', attributes);
+  addStyle(
+    css: string,
+    attributes?: Omit<HeadAttributeTypeMap['style'], 'children'>,
+  ) {
+    return this.addElement('style', {
+      children: css,
+      type: 'text/css',
+      ...attributes,
+    });
   }
 
   /**
@@ -670,10 +752,11 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * @returns The head configuration in the target format
    */
   build(): TOutput {
+    const elements = Array.from(this.elementsMap.values());
     if (this.adapter) {
-      return this.adapter.transform(this.elements);
+      return this.adapter.transform(elements);
     }
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-    return this.elements as unknown as TOutput;
+    return elements as unknown as TOutput;
   }
 }
