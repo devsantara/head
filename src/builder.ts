@@ -484,73 +484,73 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .build();
    */
   addOpenGraph(valueOrFn: BuilderOption<OpenGraphOptions>): this {
-    const options = this.parseValueOrFn(valueOrFn);
+    const value = this.parseValueOrFn(valueOrFn);
 
     // Add basic properties
-    if (options.title) {
-      this.addElement('meta', { property: 'og:title', content: options.title });
+    if (value.title) {
+      this.addElement('meta', { property: 'og:title', content: value.title });
     }
-    if (options.description) {
+    if (value.description) {
       this.addElement('meta', {
         property: 'og:description',
-        content: options.description,
+        content: value.description,
       });
     }
-    if (options.url) {
+    if (value.url) {
       this.addElement('meta', {
         property: 'og:url',
-        content: options.url.toString(),
+        content: value.url.toString(),
       });
     }
-    if (options.locale) {
+    if (value.locale) {
       this.addElement('meta', {
         property: 'og:locale',
-        content: options.locale,
+        content: value.locale,
       });
     }
 
     // Add image properties
-    if (options.image) {
+    if (value.image) {
       this.addElement('meta', {
         property: 'og:image',
-        content: options.image.url.toString(),
+        content: value.image.url.toString(),
       });
 
-      if (options.image.alt) {
+      if (value.image.alt) {
         this.addElement('meta', {
           property: 'og:image:alt',
-          content: options.image.alt,
+          content: value.image.alt,
         });
       }
-      if (options.image.type) {
+      if (value.image.type) {
         this.addElement('meta', {
           property: 'og:image:type',
-          content: options.image.type,
+          content: value.image.type,
         });
       }
-      if (options.image.width) {
+      if (value.image.width) {
         this.addElement('meta', {
           property: 'og:image:width',
-          content: options.image.width.toString(),
+          content: value.image.width.toString(),
         });
       }
-      if (options.image.height) {
+      if (value.image.height) {
         this.addElement('meta', {
           property: 'og:image:height',
-          content: options.image.height.toString(),
+          content: value.image.height.toString(),
         });
       }
     }
 
     // Add type and type-specific properties
-    if (options.type) {
+    if (value.type) {
       this.addElement('meta', {
         property: 'og:type',
-        content: options.type.name,
+        content: value.type.name,
       });
 
-      if ('properties' in options.type) {
-        for (const typeProperty of options.type.properties) {
+      if ('properties' in value.type) {
+        for (const typeProperty of value.type.properties) {
           this.addElement('meta', {
             property: typeProperty.name,
             content: typeProperty.content,
@@ -577,67 +577,67 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .build();
    */
   addTwitter(valueOrFn: BuilderOption<TwitterOptions>): this {
-    const options = this.parseValueOrFn(valueOrFn);
+    const value = this.parseValueOrFn(valueOrFn);
 
     // Add basic properties
-    if (options.title) {
+    if (value.title) {
       this.addElement('meta', {
         name: 'twitter:title',
-        content: options.title,
+        content: value.title,
       });
     }
-    if (options.description) {
+    if (value.description) {
       this.addElement('meta', {
         name: 'twitter:description',
-        content: options.description,
+        content: value.description,
       });
     }
-    if (options.site) {
-      this.addElement('meta', { name: 'twitter:site', content: options.site });
+    if (value.site) {
+      this.addElement('meta', { name: 'twitter:site', content: value.site });
     }
-    if (options.siteId) {
+    if (value.siteId) {
       this.addElement('meta', {
         name: 'twitter:site:id',
-        content: options.siteId,
+        content: value.siteId,
       });
     }
-    if (options.creator) {
+    if (value.creator) {
       this.addElement('meta', {
         name: 'twitter:creator',
-        content: options.creator,
+        content: value.creator,
       });
     }
-    if (options.creatorId) {
+    if (value.creatorId) {
       this.addElement('meta', {
         name: 'twitter:creator:id',
-        content: options.creatorId,
+        content: value.creatorId,
       });
     }
 
     // Add image properties
-    if (options.image) {
+    if (value.image) {
       this.addElement('meta', {
         name: 'twitter:image',
-        content: options.image.url.toString(),
+        content: value.image.url.toString(),
       });
 
-      if (options.image.alt) {
+      if (value.image.alt) {
         this.addElement('meta', {
           name: 'twitter:image:alt',
-          content: options.image.alt,
+          content: value.image.alt,
         });
       }
     }
 
     // Add card and card-specific properties
-    if (options.card) {
+    if (value.card) {
       this.addElement('meta', {
         name: 'twitter:card',
-        content: options.card.name,
+        content: value.card.name,
       });
 
-      if ('properties' in options.card) {
-        for (const cardProperty of options.card.properties) {
+      if ('properties' in value.card) {
+        for (const cardProperty of value.card.properties) {
           this.addElement('meta', {
             name: cardProperty.name,
             content: cardProperty.content.toString(),
@@ -667,9 +667,9 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   addAlternateLocale<TLocale extends string = string>(
     valueOrFn: BuilderOption<AlternateLocaleOptions<TLocale>>,
   ): this {
-    const options = this.parseValueOrFn(valueOrFn);
+    const value = this.parseValueOrFn(valueOrFn);
 
-    for (const [lang, href] of Object.entries(options)) {
+    for (const [lang, href] of Object.entries(value)) {
       this.addElement('link', {
         rel: 'alternate',
         hrefLang: lang,
@@ -692,10 +692,10 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .build();
    */
   addManifest(valueOrFn: BuilderOption<string | URL>): this {
-    const href = this.parseValueOrFn(valueOrFn);
+    const value = this.parseValueOrFn(valueOrFn);
     this.addElement('link', {
       rel: 'manifest',
-      href: href.toString(),
+      href: value.toString(),
     });
     return this;
   }
@@ -737,7 +737,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .build();
    */
   addIcon(preset: IconPreset, valueOrFn: BuilderOption<IconOptions>): this {
-    const options = this.parseValueOrFn(valueOrFn);
+    const { href, ...value } = this.parseValueOrFn(valueOrFn);
 
     // Map preset to rel attribute
     const relMap: Record<IconPreset, string> = {
@@ -749,11 +749,8 @@ export class HeadBuilder<TOutput = HeadElement[]> {
 
     this.addElement('link', {
       rel,
-      href: options.href.toString(),
-      type: options.type,
-      sizes: options.sizes,
-      media: options.media,
-      fetchPriority: options.fetchPriority,
+      href: href.toString(),
+      ...value,
     });
     return this;
   }
