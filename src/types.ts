@@ -89,6 +89,11 @@ export type ColorScheme =
   | (string & {});
 
 /**
+ * Title configuration with support for templated titles using a template string and default title value.
+ */
+export type TitleOptions = { template: string; default: string };
+
+/**
  * Viewport configuration for responsive web design and mobile optimization.
  */
 export interface ViewportOptions {
@@ -321,19 +326,17 @@ export interface TwitterOptions {
 }
 
 /**
- * Locale key type supporting 'x-default', specific locale strings, or custom values.
+ * Locale key type supporting specific locale strings or custom values.
  */
-type AlternateLocaleKey<TLocale extends string> =
-  | ('x-default' | TLocale)
-  | (string & {});
+type AlternateLocaleKey<TLocale extends string> = TLocale | (string & {});
 
 /**
  * Alternate locale/language mapping for internationalization, linking language codes to their corresponding URLs.
+ * The 'x-default' key is optional.
  */
-export type AlternateLocaleOptions<TLocale extends string> = Record<
-  AlternateLocaleKey<TLocale>,
-  string | URL
->;
+export type AlternateLocaleOptions<TLocale extends string> = {
+  'x-default'?: string | URL;
+} & Record<AlternateLocaleKey<TLocale>, string | URL>;
 
 /**
  * Icon preset type with autocomplete for common icon types while allowing custom values.

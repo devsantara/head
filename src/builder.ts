@@ -12,6 +12,7 @@ import type {
   IconOptions,
   IconPreset,
   StylesheetOptions,
+  TitleOptions,
 } from './types';
 
 /**
@@ -33,9 +34,25 @@ interface BuilderHelper {
 type BuilderOption<T> = T | ((helper: BuilderHelper) => T);
 
 export class HeadBuilder<TOutput = HeadElement[]> {
+  /**
+   * Optional base URL for resolving relative URLs in metadata (Open Graph, canonical, etc.)
+   */
   private metadataBase?: URL;
-  private elements: HeadElement[] = [];
+  /**
+   * Optional adapter to transform the built head elements into a framework-specific format.
+   * If not provided, `build()` returns `HeadElement[]`
+   */
   private adapter?: HeadAdapter<TOutput>;
+  /**
+   * Internal storage for title options to support templated titles.
+   * This allows the builder to generate the title dynamically based on previously set options.
+   */
+  private titleOptions?: TitleOptions;
+  /**
+   * Internal collection of head elements being built,
+   * stored in a Map for deduplication based on element type and key attributes.
+   */
+  private elementsMap = new Map<string, HeadElement>();
 
   /**
    * Resolves a value that can be either static or a callback function receiving helper utilities.
@@ -94,28 +111,61 @@ export class HeadBuilder<TOutput = HeadElement[]> {
     }
 
     // Resolve relative URL against metadataBase
-    try {
-      const resolved = new URL(url, this.metadataBase);
-      return resolved.href;
-    } catch {
-      // If URL construction fails, return raw url
-      return url;
-    }
+    const resolved = new URL(url, this.metadataBase);
+    return resolved.href;
   }
 
   /**
-   * Adds a head element to the internal collection for later transformation.
+   * Generates a unique key for a head element based on its type and attributes.
+   * Used for deduplication - elements with the same key replace previous ones.
+   *
+   * @param element - The head element to generate a key for
+   * @returns A unique string key for the element
+   */
+  private getElementKey({ type, attributes }: HeadElement): string {
+    if (type === 'title') {
+      return 'title';
+    }
+    if (type === 'meta') {
+      if ('charSet' in attributes) {
+        return 'meta:charSet';
+      }
+      if ('name' in attributes && 'content' in attributes) {
+        return `meta:name:${attributes.name}`;
+      }
+      if ('property' in attributes && 'content' in attributes) {
+        return `meta:property:${attributes.property}`;
+      }
+    }
+    if (type === 'link') {
+      if (attributes.rel === 'canonical') {
+        return 'link:canonical';
+      }
+      if (attributes.rel === 'manifest') {
+        return 'link:manifest';
+      }
+      if (attributes.rel === 'alternate' && 'hrefLang' in attributes) {
+        return `link:alternate:${attributes.hrefLang}`;
+      }
+    }
+    return JSON.stringify(`${type}:${JSON.stringify(attributes)}`);
+  }
+
+  /**
+   * Adds a head element to the internal collection with deduplication.
+   * Elements with the same key will replace previous ones.
    *
    * @param type - The HTML element type
    * @param attributes - The element's attributes
-   * @returns The builder instance for method chaining
+   * @returns The unique key for the added element
    */
   private addElement<T extends keyof HeadAttributeTypeMap>(
     type: T,
     attributes: HeadAttributeTypeMap[T],
-  ) {
-    this.elements.push({ type, attributes });
-    return this;
+  ): string {
+    const key = this.getElementKey({ type, attributes });
+    this.elementsMap.set(key, { type, attributes });
+    return key;
   }
 
   /**
@@ -129,53 +179,90 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .addMeta({ name: 'theme-color', content: '#ffffff' })
    *   .build();
    */
-  addMeta(attributes: HeadAttributeTypeMap['meta']) {
-    return this.addElement('meta', attributes);
+  addMeta(attributes: HeadAttributeTypeMap['meta']): this {
+    this.addElement('meta', attributes);
+    return this;
   }
 
   /**
-   * Adds a custom link element with any valid attributes. Use this for link tags without dedicated helper methods.
+   * Adds a custom link element with any valid attributes.
    *
-   * @param attributes - The link element attributes
+   * @param href - The URL to link to
+   * @param attributes - Additional link element attributes
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addLink({ rel: 'preconnect', href: 'https://fonts.googleapis.com' })
+   *   .addLink('https://fonts.googleapis.com', { rel: 'preconnect' })
    *   .build();
    */
-  addLink(attributes: HeadAttributeTypeMap['link']) {
-    return this.addElement('link', attributes);
+  addLink(
+    href: string | URL,
+    attributes?: Omit<HeadAttributeTypeMap['link'], 'href'>,
+  ): this {
+    this.addElement('link', { href: href.toString(), ...attributes });
+    return this;
   }
 
   /**
-   * Adds a custom script element with any valid attributes for external scripts or inline code.
+   * Adds a script element, either inline code or an external file.
    *
-   * @param attributes - The script element attributes
+   * @param srcOrCode - Script source: a URL string/object for external files, or `{ code: string }` for inline scripts
+   * @param attributes - Additional script attributes (async, defer, integrity, etc.)
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addScript({ src: '/analytics.js', async: true })
+   *   .addScript('/script.js')
+   *   .addScript(new URL('https://devsantara.com/script.js'), { async: true })
+   *   .addScript({ code: 'console.log("Hello, World!")' })
    *   .build();
    */
-  addScript(attributes: HeadAttributeTypeMap['script']) {
-    return this.addElement('script', attributes);
+  addScript(
+    srcOrCode: string | URL | { code: string },
+    attributes?: Omit<HeadAttributeTypeMap['script'], 'children' | 'src'>,
+  ): this {
+    // Inline script with { code: string }
+    if (typeof srcOrCode === 'object' && 'code' in srcOrCode) {
+      this.addElement('script', {
+        children: srcOrCode.code,
+        type: 'text/javascript',
+        ...attributes,
+      });
+      return this;
+    }
+
+    // External script (string or URL)
+    this.addElement('script', {
+      src: srcOrCode.toString(),
+      type: 'text/javascript',
+      ...attributes,
+    });
+    return this;
   }
 
   /**
-   * Adds a custom style element with inline CSS.
+   * Adds an inline style element with CSS code.
    *
-   * @param attributes - The style element attributes
+   * @param css - The inline CSS code
+   * @param attributes - Additional style attributes
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addStyle({ children: 'body { margin: 0; padding: 0; }' })
+   *   .addStyle('body { margin: 0; padding: 0; }')
    *   .build();
    */
-  addStyle(attributes: HeadAttributeTypeMap['style']) {
-    return this.addElement('style', attributes);
+  addStyle(
+    css: string,
+    attributes?: Omit<HeadAttributeTypeMap['style'], 'children'>,
+  ): this {
+    this.addElement('style', {
+      children: css,
+      type: 'text/css',
+      ...attributes,
+    });
+    return this;
   }
 
   /**
@@ -189,8 +276,9 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .addCharSet('utf-8')
    *   .build();
    */
-  addCharSet(charSet: CharSet) {
-    return this.addElement('meta', { charSet });
+  addCharSet(charSet: CharSet): this {
+    this.addElement('meta', { charSet });
+    return this;
   }
 
   /**
@@ -204,26 +292,58 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .addColorScheme('light dark')
    *   .build();
    */
-  addColorScheme(colorScheme: ColorScheme) {
-    return this.addElement('meta', {
+  addColorScheme(colorScheme: ColorScheme): this {
+    this.addElement('meta', {
       name: 'color-scheme',
       content: colorScheme,
     });
+    return this;
   }
 
   /**
    * Adds a title element that appears in browser tabs, search results, and bookmarks.
+   * Supports both simple string titles and templated titles with dynamic substitution.
    *
-   * @param title - The document title text
+   * @param title - The document title as a string, or TitleOptions object with template and default
    * @returns The builder instance for method chaining
    *
    * @example
+   * // Simple title
    * new HeadBuilder()
    *   .addTitle('My Awesome Website')
    *   .build();
+   *
+   * @example
+   * // Templated title with page-specific suffix
+   * const baseHead = new HeadBuilder()
+   *   .addTitle({ template: '%s | My Site', default: 'Home' })
+   *
+   * const head = baseHead.addTitle('About Us').build(); // Results in title "About Us | My Site"
    */
-  addTitle(title: string) {
-    return this.addElement('title', { children: title });
+  addTitle(title: string | TitleOptions): this {
+    if (typeof title === 'string') {
+      /**
+       * If title is provided as a string and titleOptions with a template exists,
+       * we generate the title using the template. This allows dynamic title generation based on previously set options.
+       * If no template is set, we use the raw title string as is.
+       */
+      const titleText = this.titleOptions
+        ? this.titleOptions.template.replace('%s', title)
+        : title;
+
+      this.addElement('title', { children: titleText });
+      return this;
+    }
+
+    /**
+     * If title is provided as an object with template and default,
+     * we store the options and generate the title using the template with default.
+     */
+    this.titleOptions = title;
+    this.addElement('title', {
+      children: this.titleOptions.template.replace('%s', title.default),
+    });
+    return this;
   }
 
   /**
@@ -237,7 +357,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .addViewport({ width: 'device-width', initialScale: 1 })
    *   .build();
    */
-  addViewport(options: ViewportOptions) {
+  addViewport(options: ViewportOptions): this {
     const contentParts: string[] = [];
 
     if (options.width !== undefined) {
@@ -265,10 +385,11 @@ export class HeadBuilder<TOutput = HeadElement[]> {
       contentParts.push(`interactive-widget=${options.interactiveWidget}`);
     }
 
-    return this.addElement('meta', {
+    this.addElement('meta', {
       name: 'viewport',
       content: contentParts.join(', '),
     });
+    return this;
   }
 
   /**
@@ -282,11 +403,12 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .addDescription('A comprehensive guide to web development')
    *   .build();
    */
-  addDescription(description: string) {
-    return this.addElement('meta', {
+  addDescription(description: string): this {
+    this.addElement('meta', {
       name: 'description',
       content: description,
     });
+    return this;
   }
 
   /**
@@ -300,12 +422,13 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .addCanonical((helper) => helper.resolveUrl('/page'))
    *   .build();
    */
-  addCanonical(valueOrFn: BuilderOption<string | URL>) {
+  addCanonical(valueOrFn: BuilderOption<string | URL>): this {
     const value = this.parseValueOrFn(valueOrFn);
-    return this.addElement('link', {
+    this.addElement('link', {
       rel: 'canonical',
       href: value.toString(),
     });
+    return this;
   }
 
   /**
@@ -319,7 +442,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .addRobots({ index: true, follow: true, 'max-snippet': 160 })
    *   .build();
    */
-  addRobots(options: RobotsOptions) {
+  addRobots(options: RobotsOptions): this {
     const directiveParts: string[] = [];
 
     for (const [key, value] of Object.entries(options)) {
@@ -336,10 +459,11 @@ export class HeadBuilder<TOutput = HeadElement[]> {
       }
     }
 
-    return this.addElement('meta', {
+    this.addElement('meta', {
       name: 'robots',
       content: directiveParts.join(', '),
     });
+    return this;
   }
 
   /**
@@ -357,74 +481,74 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   }))
    *   .build();
    */
-  addOpenGraph(valueOrFn: BuilderOption<OpenGraphOptions>) {
-    const options = this.parseValueOrFn(valueOrFn);
+  addOpenGraph(valueOrFn: BuilderOption<OpenGraphOptions>): this {
+    const value = this.parseValueOrFn(valueOrFn);
 
     // Add basic properties
-    if (options.title) {
-      this.addElement('meta', { property: 'og:title', content: options.title });
+    if (value.title) {
+      this.addElement('meta', { property: 'og:title', content: value.title });
     }
-    if (options.description) {
+    if (value.description) {
       this.addElement('meta', {
         property: 'og:description',
-        content: options.description,
+        content: value.description,
       });
     }
-    if (options.url) {
+    if (value.url) {
       this.addElement('meta', {
         property: 'og:url',
-        content: options.url.toString(),
+        content: value.url.toString(),
       });
     }
-    if (options.locale) {
+    if (value.locale) {
       this.addElement('meta', {
         property: 'og:locale',
-        content: options.locale,
+        content: value.locale,
       });
     }
 
     // Add image properties
-    if (options.image) {
+    if (value.image) {
       this.addElement('meta', {
         property: 'og:image',
-        content: options.image.url.toString(),
+        content: value.image.url.toString(),
       });
 
-      if (options.image.alt) {
+      if (value.image.alt) {
         this.addElement('meta', {
           property: 'og:image:alt',
-          content: options.image.alt,
+          content: value.image.alt,
         });
       }
-      if (options.image.type) {
+      if (value.image.type) {
         this.addElement('meta', {
           property: 'og:image:type',
-          content: options.image.type,
+          content: value.image.type,
         });
       }
-      if (options.image.width) {
+      if (value.image.width) {
         this.addElement('meta', {
           property: 'og:image:width',
-          content: options.image.width.toString(),
+          content: value.image.width.toString(),
         });
       }
-      if (options.image.height) {
+      if (value.image.height) {
         this.addElement('meta', {
           property: 'og:image:height',
-          content: options.image.height.toString(),
+          content: value.image.height.toString(),
         });
       }
     }
 
     // Add type and type-specific properties
-    if (options.type) {
+    if (value.type) {
       this.addElement('meta', {
         property: 'og:type',
-        content: options.type.name,
+        content: value.type.name,
       });
 
-      if ('properties' in options.type) {
-        for (const typeProperty of options.type.properties) {
+      if ('properties' in value.type) {
+        for (const typeProperty of value.type.properties) {
           this.addElement('meta', {
             property: typeProperty.name,
             content: typeProperty.content,
@@ -450,68 +574,68 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   }))
    *   .build();
    */
-  addTwitter(valueOrFn: BuilderOption<TwitterOptions>) {
-    const options = this.parseValueOrFn(valueOrFn);
+  addTwitter(valueOrFn: BuilderOption<TwitterOptions>): this {
+    const value = this.parseValueOrFn(valueOrFn);
 
     // Add basic properties
-    if (options.title) {
+    if (value.title) {
       this.addElement('meta', {
         name: 'twitter:title',
-        content: options.title,
+        content: value.title,
       });
     }
-    if (options.description) {
+    if (value.description) {
       this.addElement('meta', {
         name: 'twitter:description',
-        content: options.description,
+        content: value.description,
       });
     }
-    if (options.site) {
-      this.addElement('meta', { name: 'twitter:site', content: options.site });
+    if (value.site) {
+      this.addElement('meta', { name: 'twitter:site', content: value.site });
     }
-    if (options.siteId) {
+    if (value.siteId) {
       this.addElement('meta', {
         name: 'twitter:site:id',
-        content: options.siteId,
+        content: value.siteId,
       });
     }
-    if (options.creator) {
+    if (value.creator) {
       this.addElement('meta', {
         name: 'twitter:creator',
-        content: options.creator,
+        content: value.creator,
       });
     }
-    if (options.creatorId) {
+    if (value.creatorId) {
       this.addElement('meta', {
         name: 'twitter:creator:id',
-        content: options.creatorId,
+        content: value.creatorId,
       });
     }
 
     // Add image properties
-    if (options.image) {
+    if (value.image) {
       this.addElement('meta', {
         name: 'twitter:image',
-        content: options.image.url.toString(),
+        content: value.image.url.toString(),
       });
 
-      if (options.image.alt) {
+      if (value.image.alt) {
         this.addElement('meta', {
           name: 'twitter:image:alt',
-          content: options.image.alt,
+          content: value.image.alt,
         });
       }
     }
 
     // Add card and card-specific properties
-    if (options.card) {
+    if (value.card) {
       this.addElement('meta', {
         name: 'twitter:card',
-        content: options.card.name,
+        content: value.card.name,
       });
 
-      if ('properties' in options.card) {
-        for (const cardProperty of options.card.properties) {
+      if ('properties' in value.card) {
+        for (const cardProperty of value.card.properties) {
           this.addElement('meta', {
             name: cardProperty.name,
             content: cardProperty.content.toString(),
@@ -530,7 +654,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * @returns The builder instance for method chaining
    *
    * @example
-   * new HeadBuilder({ metadataBase: new URL('https://example.com') })
+   * new HeadBuilder({ metadataBase: new URL('https://devsantara.com') })
    *   .addAlternateLocale((helper) => ({
    *     'en-US': helper.resolveUrl('/en'),
    *     'fr-FR': helper.resolveUrl('/fr'),
@@ -540,10 +664,10 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    */
   addAlternateLocale<TLocale extends string = string>(
     valueOrFn: BuilderOption<AlternateLocaleOptions<TLocale>>,
-  ) {
-    const options = this.parseValueOrFn(valueOrFn);
+  ): this {
+    const value = this.parseValueOrFn(valueOrFn);
 
-    for (const [lang, href] of Object.entries(options)) {
+    for (const [lang, href] of Object.entries(value)) {
       this.addElement('link', {
         rel: 'alternate',
         hrefLang: lang,
@@ -565,13 +689,13 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .addManifest((helper) => helper.resolveUrl('/manifest.json'))
    *   .build();
    */
-  addManifest(valueOrFn: BuilderOption<string | URL>) {
-    const href = this.parseValueOrFn(valueOrFn);
-
-    return this.addElement('link', {
+  addManifest(valueOrFn: BuilderOption<string | URL>): this {
+    const value = this.parseValueOrFn(valueOrFn);
+    this.addElement('link', {
       rel: 'manifest',
-      href: href.toString(),
+      href: value.toString(),
     });
+    return this;
   }
 
   /**
@@ -586,12 +710,14 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   .addStylesheet('/styles.css', { media: 'print' })
    *   .build();
    */
-  addStylesheet(href: string | URL, options?: StylesheetOptions) {
-    return this.addElement('link', {
+  addStylesheet(href: string | URL, options?: StylesheetOptions): this {
+    this.addElement('link', {
       rel: 'stylesheet',
+      type: 'text/css',
       href: href.toString(),
       ...options,
     });
+    return this;
   }
 
   /**
@@ -609,8 +735,8 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   }))
    *   .build();
    */
-  addIcon(preset: IconPreset, valueOrFn: BuilderOption<IconOptions>) {
-    const options = this.parseValueOrFn(valueOrFn);
+  addIcon(preset: IconPreset, valueOrFn: BuilderOption<IconOptions>): this {
+    const { href, ...value } = this.parseValueOrFn(valueOrFn);
 
     // Map preset to rel attribute
     const relMap: Record<IconPreset, string> = {
@@ -618,17 +744,14 @@ export class HeadBuilder<TOutput = HeadElement[]> {
       icon: 'icon',
       shortcut: 'shortcut icon',
     };
-
     const rel = relMap[preset] || preset;
 
-    return this.addElement('link', {
+    this.addElement('link', {
       rel,
-      href: options.href.toString(),
-      type: options.type,
-      sizes: options.sizes,
-      media: options.media,
-      fetchPriority: options.fetchPriority,
+      href: href.toString(),
+      ...value,
     });
+    return this;
   }
 
   /**
@@ -637,10 +760,11 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * @returns The head configuration in the target format
    */
   build(): TOutput {
+    const elements = Array.from(this.elementsMap.values());
     if (this.adapter) {
-      return this.adapter.transform(this.elements);
+      return this.adapter.transform(elements);
     }
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-    return this.elements as unknown as TOutput;
+    return elements as unknown as TOutput;
   }
 }

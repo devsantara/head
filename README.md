@@ -60,7 +60,12 @@ import { HeadBuilder } from '@devsantara/head';
 const head = new HeadBuilder()
   .addTitle('My Awesome Website')
   .addDescription('A comprehensive guide to web development')
+  .addStyle('body { margin: 0; padding: 0; }')
   .addViewport({ width: 'device-width', initialScale: 1 })
+  .addScript({ code: 'console.log("Hello, world!");' })
+  .addScript(new URL('https://devsantara.com/assets/scripts/utils.js'), {
+    async: true,
+  })
   .build();
 ```
 
@@ -83,6 +88,28 @@ const head = new HeadBuilder()
     attributes: {
       name: 'viewport',
       content: 'width=device-width, initial-scale=1',
+    },
+  },
+  {
+    type: 'style',
+    attributes: {
+      type: 'text/css',
+      children: 'body { margin: 0; padding: 0; }',
+    },
+  },
+  {
+    type: 'script',
+    attributes: {
+      type: 'text/javascript',
+      children: 'console.log("Hello, world!");',
+    },
+  },
+  {
+    type: 'script',
+    attributes: {
+      type: 'text/javascript',
+      src: 'https://devsantara.com/assets/scripts/utils.js',
+      async: true,
     },
   },
 ];
@@ -139,6 +166,95 @@ const head = new HeadBuilder({
   },
 ];
 ```
+
+### With Templated Title
+
+Set a title template with a default value, then pass page-specific titles as strings. The builder automatically applies the saved template to subsequent title updates:
+
+```typescript
+import { HeadBuilder } from '@devsantara/head';
+
+// Create a builder and set title template with default
+// The template stays active for all future addTitle() calls
+const sharedHead = new HeadBuilder().addTitle({
+  template: '%s | My Awesome site', // Store template (%s is the placeholder)
+  default: 'Home', // Initial title using template
+});
+// Output: <title>Home | My Awesome site</title>
+
+// Update title for Posts page
+// Pass a string, builder applies the saved template automatically
+const postHead = sharedHead.addTitle('Posts').build();
+// Output: <title>Posts | My Awesome site</title>
+
+// Update title for About page
+// Template is still active from the first addTitle() call
+const aboutHead = sharedHead.addTitle('About Us').build();
+// Output: <title>About Us | My Awesome site</title>
+```
+
+**How it works:**
+
+1. First `addTitle()` with template object stores the template internally
+2. Subsequent `addTitle()` calls with strings automatically use the stored template
+3. The `%s` placeholder gets replaced with your page title
+4. Each title replaces the previous one (deduplication)
+
+### With Element Deduplication
+
+HeadBuilder automatically deduplicates elements—when you add an element matching an existing one, the new one replaces the old:
+
+```typescript
+import { HeadBuilder } from '@devsantara/head';
+
+const head = new HeadBuilder()
+  .addTitle('My Site')
+  .addTitle('Updated Title') // Replaces previous title
+
+  .addDescription('First description')
+  .addDescription('Updated description') // Replaces previous
+
+  .addMeta({ name: 'keywords', content: 'web, development' })
+  .addMeta({ name: 'author', content: 'John Doe' }) // Separate meta tags coexist
+
+  .addCanonical('https://devsantara.com/page1')
+  .addCanonical('https://devsantara.com/page2') // Replaces previous canonical
+
+  .build();
+```
+
+```typescript
+// Output (HeadElement[]):
+[
+  { type: 'title', attributes: { children: 'Updated Title' } },
+  {
+    type: 'meta',
+    attributes: { name: 'description', content: 'Updated description' },
+  },
+  {
+    type: 'meta',
+    attributes: { name: 'keywords', content: 'web, development' },
+  },
+  { type: 'meta', attributes: { name: 'author', content: 'John Doe' } },
+  {
+    type: 'link',
+    attributes: { rel: 'canonical', href: 'https://devsantara.com/page2' },
+  },
+];
+```
+
+**How it works:**
+
+- **Title**: Only one per document
+- **Meta by name**: One per unique `name` attribute (e.g., description, keywords)
+- **Meta by property**: One per unique `property` attribute (e.g., `og:title`, `og:description`)
+- **Charset**: Only one per document
+- **Canonical**: Only one per document
+- **Manifest**: Only one per document
+- **Alternate locales**: One per unique language code
+- **Other tags**: Deduplicated by exact attribute match
+
+This ensures clean metadata without accidental duplicates.
 
 ### With React Adapter
 
@@ -222,13 +338,13 @@ export const Route = createRootRoute({
 
 For advanced use cases not covered by the essential methods below, use these basic methods to add any custom element directly.
 
-| Method                                                  | Description                                      |
-| ------------------------------------------------------- | ------------------------------------------------ |
-| `addTitle(title: string)`                               | Adds a `<title>` element                         |
-| `addMeta(attributes: HeadAttributeTypeMap['meta'])`     | Adds a `<meta>` element with custom attributes   |
-| `addLink(attributes: HeadAttributeTypeMap['link'])`     | Adds a `<link>` element with custom attributes   |
-| `addScript(attributes: HeadAttributeTypeMap['script'])` | Adds a `<script>` element with custom attributes |
-| `addStyle(attributes: HeadAttributeTypeMap['style'])`   | Adds a `<style>` element with custom attributes  |
+| Method                                                                 | Description                                                                                 |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `addTitle(title: string \| TitleOptions)`                              | Adds a `<title>` element with optional templating                                           |
+| `addMeta(attributes: HeadAttributeTypeMap['meta'])`                    | Adds a `<meta>` element with custom attributes                                              |
+| `addLink(href: string \| URL, attributes?)`                            | Adds a `<link>` element with a URL and custom attributes                                    |
+| `addScript(srcOrCode: string \| URL \| { code: string }, attributes?)` | Adds a `<script>` element (external file with string/URL or inline with `{ code: string }`) |
+| `addStyle(css: string, attributes?)`                                   | Adds a `<style>` element with inline CSS                                                    |
 
 ### Essential Methods
 
