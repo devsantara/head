@@ -1,5 +1,5 @@
 ---
-'@devsantara/head': patch
+'@devsantara/head': minor
 ---
 
 feat(builder): implement element deduplication with map
