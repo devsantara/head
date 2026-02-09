@@ -1,5 +1,27 @@
 # @devsantara/head
 
+## 0.3.0
+
+### Minor Changes
+
+- 134dd78: feat(title): add templated title support
+- 59a43db: feat(script): extract src or inline source as dedicated parameter in addScript
+- 3a925eb: feat(builder): implement element deduplication with map
+
+  - Replace array-based element storage with Map for O(1) deduplication
+  - Add getElementKey() method to generate unique keys based on element type and attributes
+  - Elements with same key now replace previous ones instead of duplicating
+  - Update build() method to convert Map to array format
+
+- 59a43db: feat(link): extract href as dedicated parameter in addLink
+- 72df9bc: fix(builder): missing manifest key and remove unused try-catch
+- 59a43db: feat(style): extract inline css as dedicated parameter in addStyle
+
+### Patch Changes
+
+- 72df9bc: test: add test case to cover all codebase
+- dfd1960: refactor(builder): explicitly return this and unify variable names
+
 ## 0.2.0
 
 ### Minor Changes
