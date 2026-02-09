@@ -134,48 +134,80 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a custom link element with any valid attributes. Use this for link tags without dedicated helper methods.
+   * Adds a custom link element with any valid attributes.
    *
-   * @param attributes - The link element attributes
+   * @param href - The URL to link to
+   * @param attributes - Additional link element attributes
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addLink({ rel: 'preconnect', href: 'https://fonts.googleapis.com' })
+   *   .addLink('https://fonts.googleapis.com', { rel: 'preconnect' })
    *   .build();
    */
-  addLink(attributes: HeadAttributeTypeMap['link']) {
-    return this.addElement('link', attributes);
+  addLink(
+    href: string | URL,
+    attributes?: Omit<HeadAttributeTypeMap['link'], 'href'>,
+  ) {
+    return this.addElement('link', { href: href.toString(), ...attributes });
   }
 
   /**
-   * Adds a custom script element with any valid attributes for external scripts or inline code.
+   * Adds a script element, either inline code or an external file.
    *
-   * @param attributes - The script element attributes
+   * @param srcOrCode - Script source: a URL string/object for external files, or `{ code: string }` for inline scripts
+   * @param attributes - Additional script attributes (async, defer, integrity, etc.)
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addScript({ src: '/analytics.js', async: true })
+   *   .addScript('/script.js')
+   *   .addScript(new URL('https://example.com/script.js'), { async: true })
+   *   .addScript({ code: 'console.log("Hello, World!")' })
    *   .build();
    */
-  addScript(attributes: HeadAttributeTypeMap['script']) {
-    return this.addElement('script', attributes);
+  addScript(
+    srcOrCode: string | URL | { code: string },
+    attributes?: Omit<HeadAttributeTypeMap['script'], 'children' | 'src'>,
+  ) {
+    // Inline script with { code: string }
+    if (typeof srcOrCode === 'object' && 'code' in srcOrCode) {
+      return this.addElement('script', {
+        children: srcOrCode.code,
+        type: 'text/javascript',
+        ...attributes,
+      });
+    }
+
+    // External script (string or URL)
+    return this.addElement('script', {
+      src: srcOrCode.toString(),
+      type: 'text/javascript',
+      ...attributes,
+    });
   }
 
   /**
-   * Adds a custom style element with inline CSS.
+   * Adds an inline style element with CSS code.
    *
-   * @param attributes - The style element attributes
+   * @param css - The inline CSS code
+   * @param attributes - Additional style attributes
    * @returns The builder instance for method chaining
    *
    * @example
    * new HeadBuilder()
-   *   .addStyle({ children: 'body { margin: 0; padding: 0; }' })
+   *   .addStyle('body { margin: 0; padding: 0; }')
    *   .build();
    */
-  addStyle(attributes: HeadAttributeTypeMap['style']) {
-    return this.addElement('style', attributes);
+  addStyle(
+    css: string,
+    attributes?: Omit<HeadAttributeTypeMap['style'], 'children'>,
+  ) {
+    return this.addElement('style', {
+      children: css,
+      type: 'text/css',
+      ...attributes,
+    });
   }
 
   /**
