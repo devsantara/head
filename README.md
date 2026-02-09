@@ -249,13 +249,13 @@ export const Route = createRootRoute({
 
 For advanced use cases not covered by the essential methods below, use these basic methods to add any custom element directly.
 
-| Method                                                               | Description                                                                                 |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `addTitle(title: string)`                                            | Adds a `<title>` element                                                                    |
-| `addMeta(attributes: HeadAttributeTypeMap['meta'])`                  | Adds a `<meta>` element with custom attributes                                              |
-| `addLink(href: string \| URL, attributes?)`                          | Adds a `<link>` element with a URL and custom attributes                                    |
-| `addScript(options: string \| URL \| { code: string }, attributes?)` | Adds a `<script>` element (external file with string/URL or inline with `{ code: string }`) |
-| `addStyle(css: string, attributes?)`                                 | Adds a `<style>` element with inline CSS                                                    |
+| Method                                                                 | Description                                                                                 |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `addTitle(title: string)`                                              | Adds a `<title>` element                                                                    |
+| `addMeta(attributes: HeadAttributeTypeMap['meta'])`                    | Adds a `<meta>` element with custom attributes                                              |
+| `addLink(href: string \| URL, attributes?)`                            | Adds a `<link>` element with a URL and custom attributes                                    |
+| `addScript(srcOrCode: string \| URL \| { code: string }, attributes?)` | Adds a `<script>` element (external file with string/URL or inline with `{ code: string }`) |
+| `addStyle(css: string, attributes?)`                                   | Adds a `<style>` element with inline CSS                                                    |
 
 ### Essential Methods
 
