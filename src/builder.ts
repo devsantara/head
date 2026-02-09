@@ -34,8 +34,12 @@ type BuilderOption<T> = T | ((helper: BuilderHelper) => T);
 
 export class HeadBuilder<TOutput = HeadElement[]> {
   private metadataBase?: URL;
-  private elements: HeadElement[] = [];
   private adapter?: HeadAdapter<TOutput>;
+  /**
+   * Internal collection of head elements being built,
+   * stored in a Map for deduplication based on element type and key attributes.
+   */
+  private elementsMap = new Map<string, HeadElement>();
 
   /**
    * Resolves a value that can be either static or a callback function receiving helper utilities.
@@ -104,7 +108,41 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   }
 
   /**
-   * Adds a head element to the internal collection for later transformation.
+   * Generates a unique key for a head element based on its type and attributes.
+   * Used for deduplication - elements with the same key replace previous ones.
+   *
+   * @param element - The head element to generate a key for
+   * @returns A unique string key for the element
+   */
+  private getElementKey({ type, attributes }: HeadElement) {
+    if (type === 'title') {
+      return 'title';
+    }
+    if (type === 'meta') {
+      if ('charSet' in attributes) {
+        return 'meta:charSet';
+      }
+      if ('name' in attributes && 'content' in attributes) {
+        return `meta:name:${attributes.name}`;
+      }
+      if ('property' in attributes && 'content' in attributes) {
+        return `meta:property:${attributes.property}`;
+      }
+    }
+    if (type === 'link') {
+      if (attributes.rel === 'canonical') {
+        return 'link:canonical';
+      }
+      if (attributes.rel === 'alternate' && 'hrefLang' in attributes) {
+        return `link:alternate:${attributes.hrefLang}`;
+      }
+    }
+    return JSON.stringify(`${type}:${JSON.stringify(attributes)}`);
+  }
+
+  /**
+   * Adds a head element to the internal collection with deduplication.
+   * Elements with the same key will replace previous ones.
    *
    * @param type - The HTML element type
    * @param attributes - The element's attributes
@@ -114,7 +152,8 @@ export class HeadBuilder<TOutput = HeadElement[]> {
     type: T,
     attributes: HeadAttributeTypeMap[T],
   ) {
-    this.elements.push({ type, attributes });
+    const key = this.getElementKey({ type, attributes });
+    this.elementsMap.set(key, { type, attributes });
     return this;
   }
 
@@ -669,10 +708,11 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * @returns The head configuration in the target format
    */
   build(): TOutput {
+    const elements = Array.from(this.elementsMap.values());
     if (this.adapter) {
-      return this.adapter.transform(this.elements);
+      return this.adapter.transform(elements);
     }
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-    return this.elements as unknown as TOutput;
+    return elements as unknown as TOutput;
   }
 }
