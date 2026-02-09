@@ -12,6 +12,7 @@ import type {
   IconOptions,
   IconPreset,
   StylesheetOptions,
+  TitleOptions,
 } from './types';
 
 /**
@@ -33,8 +34,20 @@ interface BuilderHelper {
 type BuilderOption<T> = T | ((helper: BuilderHelper) => T);
 
 export class HeadBuilder<TOutput = HeadElement[]> {
+  /**
+   * Optional base URL for resolving relative URLs in metadata (Open Graph, canonical, etc.)
+   */
   private metadataBase?: URL;
+  /**
+   * Optional adapter to transform the built head elements into a framework-specific format.
+   * If not provided, `build()` returns `HeadElement[]`
+   */
   private adapter?: HeadAdapter<TOutput>;
+  /**
+   * Internal storage for title options to support templated titles.
+   * This allows the builder to generate the title dynamically based on previously set options.
+   */
+  private titleOptions?: TitleOptions;
   /**
    * Internal collection of head elements being built,
    * stored in a Map for deduplication based on element type and key attributes.
@@ -284,17 +297,48 @@ export class HeadBuilder<TOutput = HeadElement[]> {
 
   /**
    * Adds a title element that appears in browser tabs, search results, and bookmarks.
+   * Supports both simple string titles and templated titles with dynamic substitution.
    *
-   * @param title - The document title text
+   * @param title - The document title as a string, or TitleOptions object with template and default
    * @returns The builder instance for method chaining
    *
    * @example
+   * // Simple title
    * new HeadBuilder()
    *   .addTitle('My Awesome Website')
    *   .build();
+   *
+   * @example
+   * // Templated title with page-specific suffix
+   * const baseHead = new HeadBuilder()
+   *   .addTitle({ template: '%s | My Site', default: 'Home' })
+   *
+   * const head = baseHead.addTitle('About Us').build(); // Results in title "About Us | My Site"
    */
-  addTitle(title: string) {
-    return this.addElement('title', { children: title });
+  addTitle(title: string | TitleOptions) {
+    if (typeof title === 'string') {
+      /**
+       * If title is provided as a string and titleOptions with a template exists,
+       * we generate the title using the template. This allows dynamic title generation based on previously set options.
+       * If no template is set, we use the raw title string as is.
+       */
+      const titleText = this.titleOptions
+        ? this.titleOptions.template.replace('%s', title)
+        : title;
+
+      this.addElement('title', { children: titleText });
+      return this;
+    }
+
+    /**
+     * If title is provided as an object with template and default,
+     * we store the options and generate the title using the template with default.
+     */
+    this.titleOptions = title;
+    this.addElement('title', {
+      children: this.titleOptions.template.replace('%s', title.default),
+    });
+    return this;
   }
 
   /**
