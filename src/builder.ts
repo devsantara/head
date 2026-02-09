@@ -111,13 +111,8 @@ export class HeadBuilder<TOutput = HeadElement[]> {
     }
 
     // Resolve relative URL against metadataBase
-    try {
-      const resolved = new URL(url, this.metadataBase);
-      return resolved.href;
-    } catch {
-      // If URL construction fails, return raw url
-      return url;
-    }
+    const resolved = new URL(url, this.metadataBase);
+    return resolved.href;
   }
 
   /**
@@ -145,6 +140,9 @@ export class HeadBuilder<TOutput = HeadElement[]> {
     if (type === 'link') {
       if (attributes.rel === 'canonical') {
         return 'link:canonical';
+      }
+      if (attributes.rel === 'manifest') {
+        return 'link:manifest';
       }
       if (attributes.rel === 'alternate' && 'hrefLang' in attributes) {
         return `link:alternate:${attributes.hrefLang}`;
@@ -216,7 +214,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * @example
    * new HeadBuilder()
    *   .addScript('/script.js')
-   *   .addScript(new URL('https://example.com/script.js'), { async: true })
+   *   .addScript(new URL('https://devsantara.com/script.js'), { async: true })
    *   .addScript({ code: 'console.log("Hello, World!")' })
    *   .build();
    */
@@ -656,7 +654,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * @returns The builder instance for method chaining
    *
    * @example
-   * new HeadBuilder({ metadataBase: new URL('https://example.com') })
+   * new HeadBuilder({ metadataBase: new URL('https://devsantara.com') })
    *   .addAlternateLocale((helper) => ({
    *     'en-US': helper.resolveUrl('/en'),
    *     'fr-FR': helper.resolveUrl('/fr'),
@@ -715,6 +713,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   addStylesheet(href: string | URL, options?: StylesheetOptions): this {
     this.addElement('link', {
       rel: 'stylesheet',
+      type: 'text/css',
       href: href.toString(),
       ...options,
     });
