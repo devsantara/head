@@ -364,6 +364,7 @@ High-level convenience methods for common metadata patterns. These methods handl
 | `addStylesheet(href: string \| URL, options?: StylesheetOptions)`      | Adds an external stylesheet link                            |
 | `addManifest(valueOrFn: BuilderOption<string \| URL>)`                 | Adds a web app manifest link                                |
 | `addAlternateLocale(valueOrFn: BuilderOption<AlternateLocaleOptions>)` | Adds alternate language/locale links                        |
+| `addHttpEquiv(httpEquiv: HttpEquivKey, content: string)`               | Adds a pragma directive using the `http-equiv` attribute    |
 
 > **💡 Tip:** Most methods support either direct values or callback functions that receive a helper object with `resolveUrl()` for dynamic URL resolution.
 
