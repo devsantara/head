@@ -8,7 +8,7 @@ import type {
 } from '../types';
 import { isElementOfType } from '../utils';
 
-export interface HeadTanStackRouterAdapterResult {
+interface HeadTanStackRouterAdapterResult {
   links?: HeadLinkAttributes[];
   scripts?: HeadScriptAttributes[];
   meta?: HeadMetaAttributes[];
