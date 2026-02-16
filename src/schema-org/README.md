@@ -156,7 +156,9 @@ const schema = new SchemaOrgBuilder<Organization>(
 
 ### Integration with HeadBuilder
 
-Embed Schema.org entities directly in your head metadata:
+Use the `addSchemaOrg()` method in HeadBuilder to seamlessly embed Schema.org entities directly in your head metadata. This method automatically wraps your schema in a JSON-LD script tag.
+
+#### Basic Integration
 
 ```typescript
 import { HeadBuilder } from '@devsantara/head';
@@ -170,10 +172,23 @@ const schema = new SchemaOrgBuilder<Organization>().addEntity('org', {
 });
 
 const head = new HeadBuilder()
-  .addTitle('Welcome')
-  .addDescription('Visit our site')
-  .addSchemaOrg(schema) // Add the schema
+  .addSchemaOrg(schema) // <- Integrate Schema.org structured data>
   .build();
+```
+
+#### Output
+
+The `addSchemaOrg()` method automatically generates a JSON-LD script tag:
+
+```html
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://example.com/#org",
+    "name": "My Organization"
+  }
+</script>
 ```
 
 ## 📚 API Reference
