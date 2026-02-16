@@ -21,10 +21,10 @@ export class Entity<TSchema extends BaseSchemaOptions = BaseSchemaOptions> {
   /**
    * Gets the `@id` of this entity if defined.
    *
-   * @returns The entity's `@id` property value or undefined
+   * @returns The entity's `@id` property value or unknown if not defined
    */
-  getID(): (typeof this.properties)['@id'] {
-    return this.getProperties()['@id'];
+  getID(): TSchema['@id'] {
+    return this.properties['@id'];
   }
 
   /**
