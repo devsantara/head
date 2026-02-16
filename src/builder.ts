@@ -799,7 +799,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   addSchemaOrg(schemaOrg: SchemaOrg): this {
     this.addElement('script', {
       type: 'application/ld+json',
-      children: JSON.stringify(schemaOrg.build()),
+      children: schemaOrg.build(),
     });
 
     return this;
