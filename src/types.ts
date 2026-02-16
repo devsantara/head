@@ -89,6 +89,20 @@ export type ColorScheme =
   | (string & {});
 
 /**
+ * Valid http-equiv attribute values for meta elements.
+ * Provides autocomplete for standard values while allowing custom values.
+ */
+export type HttpEquiv =
+  | 'content-security-policy'
+  | 'content-type'
+  | 'default-style'
+  | 'refresh'
+  | 'content-language'
+  | 'set-cookie'
+  | 'x-ua-compatible'
+  | (string & {});
+
+/**
  * Title configuration with support for templated titles using a template string and default title value.
  */
 export type TitleOptions = { template: string; default: string };

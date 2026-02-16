@@ -110,6 +110,19 @@ describe('HeadBuilder Element Key and Deduplication', () => {
       });
     });
 
+    it('should use "meta:http-equiv:{httpEquiv}" key - same http-equiv deduplicates', () => {
+      const result = new HeadBuilder()
+        .addHttpEquiv('refresh', '30')
+        .addHttpEquiv('refresh', '60')
+        .build();
+
+      expect(result).toHaveLength(1);
+      expect(result[0].attributes).toEqual({
+        httpEquiv: 'refresh',
+        content: '60',
+      });
+    });
+
     it('should use JSON key for non-special elements - identical attributes deduplicate', () => {
       const result = new HeadBuilder()
         .addLink('https://fonts.com', { rel: 'preconnect' })
