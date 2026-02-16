@@ -1,23 +1,23 @@
 import { describe, it, expect } from 'vitest';
 import type { Brand, Product, Organization, Person } from 'schema-dts';
-import { SchemaOrg } from '../index';
+import { SchemaOrgBuilder } from '../index';
 
-describe('SchemaOrg', () => {
+describe('SchemaOrgBuilder', () => {
   describe('instance creation', () => {
     it('should create instance without baseUrl', () => {
-      const schema = new SchemaOrg();
-      expect(schema).toBeInstanceOf(SchemaOrg);
+      const schema = new SchemaOrgBuilder();
+      expect(schema).toBeInstanceOf(SchemaOrgBuilder);
     });
 
     it('should create instance with baseUrl', () => {
-      const schema = new SchemaOrg(new URL('https://devsantara.com'));
-      expect(schema).toBeInstanceOf(SchemaOrg);
+      const schema = new SchemaOrgBuilder(new URL('https://devsantara.com'));
+      expect(schema).toBeInstanceOf(SchemaOrgBuilder);
     });
   });
 
   describe('add()', () => {
     it('should add entity with static value', () => {
-      const schema = new SchemaOrg().add('brand', {
+      const schema = new SchemaOrgBuilder().add('brand', {
         '@type': 'Brand',
         name: 'My Brand',
       });
@@ -31,7 +31,7 @@ describe('SchemaOrg', () => {
     });
 
     it('should add entity with @id', () => {
-      const schema = new SchemaOrg().add('brand', {
+      const schema = new SchemaOrgBuilder().add('brand', {
         '@type': 'Brand',
         '@id': 'https://devsantara.com/#brand',
         name: 'My Brand',
@@ -42,27 +42,26 @@ describe('SchemaOrg', () => {
     });
 
     it('should add entity with callback function', () => {
-      const schema = new SchemaOrg(new URL('https://devsantara.com')).add(
-        'brand',
-        (_, helper) => ({
-          '@type': 'Brand',
-          '@id': helper.resolveUrl('/brand'),
-          name: 'My Brand',
-        }),
-      );
+      const schema = new SchemaOrgBuilder(
+        new URL('https://devsantara.com'),
+      ).add('brand', (_, helper) => ({
+        '@type': 'Brand',
+        '@id': helper.resolveUrl('/brand'),
+        name: 'My Brand',
+      }));
 
       const result = JSON.parse(schema.build());
       expect(result['@id']).toBe('https://devsantara.com/brand');
     });
 
     it('should return builder for chaining', () => {
-      const schema = new SchemaOrg();
+      const schema = new SchemaOrgBuilder();
       const result = schema.add('brand', { '@type': 'Brand' });
-      expect(result).toBeInstanceOf(SchemaOrg);
+      expect(result).toBeInstanceOf(SchemaOrgBuilder);
     });
 
     it('should throw error when adding duplicate key', () => {
-      const schema = new SchemaOrg().add('brand', { '@type': 'Brand' });
+      const schema = new SchemaOrgBuilder().add('brand', { '@type': 'Brand' });
 
       expect(() => {
         // @ts-expect-error - testing duplicate key error handling
@@ -71,7 +70,7 @@ describe('SchemaOrg', () => {
     });
 
     it('should allow adding multiple entities with different keys', () => {
-      const schema = new SchemaOrg()
+      const schema = new SchemaOrgBuilder()
         .add('brand', { '@type': 'Brand', name: 'Brand A' })
         .add('product', { '@type': 'Product', name: 'Product B' });
 
@@ -83,7 +82,7 @@ describe('SchemaOrg', () => {
   describe('build()', () => {
     describe('single entity', () => {
       it('should output single entity without @graph wrapper', () => {
-        const schema = new SchemaOrg().add('brand', {
+        const schema = new SchemaOrgBuilder().add('brand', {
           '@type': 'Brand',
           name: 'My Brand',
         });
@@ -97,7 +96,7 @@ describe('SchemaOrg', () => {
       });
 
       it('should include all entity properties', () => {
-        const schema = new SchemaOrg().add('brand', {
+        const schema = new SchemaOrgBuilder().add('brand', {
           '@type': 'Brand',
           '@id': 'https://devsantara.com/#brand',
           name: 'My Brand',
@@ -119,7 +118,7 @@ describe('SchemaOrg', () => {
 
     describe('multiple entities', () => {
       it('should output multiple entities with @graph wrapper', () => {
-        const schema = new SchemaOrg()
+        const schema = new SchemaOrgBuilder()
           .add('brand', { '@type': 'Brand', name: 'Brand A' })
           .add('product', { '@type': 'Product', name: 'Product B' });
 
@@ -130,7 +129,7 @@ describe('SchemaOrg', () => {
       });
 
       it('should maintain order of entities in graph', () => {
-        const schema = new SchemaOrg()
+        const schema = new SchemaOrgBuilder()
           .add('first', { '@type': 'Brand', name: 'First' })
           .add('second', { '@type': 'Product', name: 'Second' })
           .add('third', { '@type': 'Organization', name: 'Third' });
@@ -145,7 +144,7 @@ describe('SchemaOrg', () => {
 
   describe('entity references', () => {
     it('should support references between entities', () => {
-      const schema = new SchemaOrg()
+      const schema = new SchemaOrgBuilder()
         .add('brand', {
           '@type': 'Brand',
           '@id': 'https://devsantara.com/#brand',
@@ -164,7 +163,7 @@ describe('SchemaOrg', () => {
     });
 
     it('should access previously added entities in callback', () => {
-      const schema = new SchemaOrg()
+      const schema = new SchemaOrgBuilder()
         .add('brand1', {
           '@type': 'Brand',
           '@id': 'https://devsantara.com/#brand1',
@@ -191,14 +190,13 @@ describe('SchemaOrg', () => {
 
   describe('URL resolution', () => {
     it('should resolve relative URLs with baseUrl', () => {
-      const schema = new SchemaOrg(new URL('https://devsantara.com')).add(
-        'brand',
-        (_, helper) => ({
-          '@type': 'Brand',
-          '@id': helper.resolveUrl('/brand'),
-          url: helper.resolveUrl('/'),
-        }),
-      );
+      const schema = new SchemaOrgBuilder(
+        new URL('https://devsantara.com'),
+      ).add('brand', (_, helper) => ({
+        '@type': 'Brand',
+        '@id': helper.resolveUrl('/brand'),
+        url: helper.resolveUrl('/'),
+      }));
 
       const result = JSON.parse(schema.build());
       expect(result['@id']).toBe('https://devsantara.com/brand');
@@ -206,7 +204,7 @@ describe('SchemaOrg', () => {
     });
 
     it('should return URL as-is when no baseUrl provided', () => {
-      const schema = new SchemaOrg().add('brand', (_, helper) => ({
+      const schema = new SchemaOrgBuilder().add('brand', (_, helper) => ({
         '@type': 'Brand',
         '@id': helper.resolveUrl('/brand'),
       }));
@@ -216,7 +214,7 @@ describe('SchemaOrg', () => {
     });
 
     it('should handle URL objects in resolveUrl', () => {
-      const schema = new SchemaOrg().add('brand', (_, helper) => ({
+      const schema = new SchemaOrgBuilder().add('brand', (_, helper) => ({
         '@type': 'Brand',
         '@id': helper.resolveUrl(new URL('https://devsantara.com/brand')),
       }));
@@ -226,14 +224,13 @@ describe('SchemaOrg', () => {
     });
 
     it('should resolve relative paths correctly', () => {
-      const schema = new SchemaOrg(new URL('https://devsantara.com/base/')).add(
-        'brand',
-        (_, helper) => ({
-          '@type': 'Brand',
-          '@id': helper.resolveUrl('brand'),
-          url: helper.resolveUrl('./page'),
-        }),
-      );
+      const schema = new SchemaOrgBuilder(
+        new URL('https://devsantara.com/base/'),
+      ).add('brand', (_, helper) => ({
+        '@type': 'Brand',
+        '@id': helper.resolveUrl('brand'),
+        url: helper.resolveUrl('./page'),
+      }));
 
       const result = JSON.parse(schema.build());
       expect(result['@id']).toBe('https://devsantara.com/base/brand');
@@ -241,13 +238,12 @@ describe('SchemaOrg', () => {
     });
 
     it('should handle absolute URLs in resolveUrl with baseUrl', () => {
-      const schema = new SchemaOrg(new URL('https://devsantara.com')).add(
-        'brand',
-        (_, helper) => ({
-          '@type': 'Brand',
-          '@id': helper.resolveUrl('https://other.com/brand'),
-        }),
-      );
+      const schema = new SchemaOrgBuilder(
+        new URL('https://devsantara.com'),
+      ).add('brand', (_, helper) => ({
+        '@type': 'Brand',
+        '@id': helper.resolveUrl('https://other.com/brand'),
+      }));
 
       const result = JSON.parse(schema.build());
       expect(result['@id']).toBe('https://other.com/brand');
@@ -256,19 +252,19 @@ describe('SchemaOrg', () => {
 
   describe('JSON-LD output format', () => {
     it('should return valid JSON string', () => {
-      const schema = new SchemaOrg().add('brand', { '@type': 'Brand' });
+      const schema = new SchemaOrgBuilder().add('brand', { '@type': 'Brand' });
       const output = schema.build();
       expect(() => JSON.parse(output)).not.toThrow();
     });
 
     it('should always include @context', () => {
-      const schema = new SchemaOrg().add('brand', { '@type': 'Brand' });
+      const schema = new SchemaOrgBuilder().add('brand', { '@type': 'Brand' });
       const result = JSON.parse(schema.build());
       expect(result['@context']).toBe('https://schema.org');
     });
 
     it('should preserve special characters in properties', () => {
-      const schema = new SchemaOrg().add('brand', {
+      const schema = new SchemaOrgBuilder().add('brand', {
         '@type': 'Brand',
         name: 'Brand & Co. "Special"',
         description: "It's a <great> brand",
@@ -282,7 +278,7 @@ describe('SchemaOrg', () => {
 
   describe('schema-dts integration', () => {
     it('should work with Brand type from schema-dts', () => {
-      const schema = new SchemaOrg<Brand>(
+      const schema = new SchemaOrgBuilder<Brand>(
         new URL('https://devsantara.com'),
       ).add('brand', {
         '@type': 'Brand',
@@ -300,7 +296,7 @@ describe('SchemaOrg', () => {
     });
 
     it('should work with Product type from schema-dts', () => {
-      const schema = new SchemaOrg<Product>().add('product', {
+      const schema = new SchemaOrgBuilder<Product>().add('product', {
         '@type': 'Product',
         name: 'TypeScript Library',
         description: 'A type-safe head builder',
@@ -318,7 +314,7 @@ describe('SchemaOrg', () => {
     });
 
     it('should work with Organization type from schema-dts', () => {
-      const schema = new SchemaOrg<Organization>().add('org', {
+      const schema = new SchemaOrgBuilder<Organization>().add('org', {
         '@type': 'Organization',
         name: 'Devsantara',
         url: 'https://devsantara.com',
@@ -333,7 +329,7 @@ describe('SchemaOrg', () => {
     });
 
     it('should work with Person type from schema-dts', () => {
-      const schema = new SchemaOrg<Person>().add('person', {
+      const schema = new SchemaOrgBuilder<Person>().add('person', {
         '@type': 'Person',
         name: 'John Doe',
         jobTitle: 'Software Engineer',
@@ -351,7 +347,7 @@ describe('SchemaOrg', () => {
     });
 
     it('should work with multiple schema-dts types in graph', () => {
-      const schema = new SchemaOrg<Brand | Product>(
+      const schema = new SchemaOrgBuilder<Brand | Product>(
         new URL('https://devsantara.com'),
       )
         .add('brand', {
@@ -378,7 +374,7 @@ describe('SchemaOrg', () => {
     });
 
     it('should support complex nested structures with schema-dts', () => {
-      const schema = new SchemaOrg<Organization | Person>()
+      const schema = new SchemaOrgBuilder<Organization | Person>()
         .add('org', {
           '@type': 'Organization',
           '@id': 'https://devsantara.com/#org',
@@ -409,7 +405,7 @@ describe('SchemaOrg', () => {
     });
 
     it('should support URL resolution with schema-dts types', () => {
-      const schema = new SchemaOrg<Brand>(
+      const schema = new SchemaOrgBuilder<Brand>(
         new URL('https://devsantara.com'),
       ).add('brand', (_, helper) => ({
         '@type': 'Brand',

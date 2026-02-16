@@ -15,7 +15,7 @@ import type {
   ViewportOptions,
 } from './types';
 
-import type { SchemaOrg } from './schema-org';
+import type { SchemaOrgBuilder } from './schema-org';
 
 /**
  * Helper object provided to callback functions with utilities for dynamic metadata generation.
@@ -758,9 +758,9 @@ export class HeadBuilder<TOutput = HeadElement[]> {
 
   /**
    * Adds Schema.org structured data as JSON-LD for rich search results and semantic web integration.
-   * Use the SchemaOrg builder to create type-safe structured data with entity relationships.
+   * Use the SchemaOrgBuilder builder to create type-safe structured data with entity relationships.
    *
-   * @param schemaOrg - SchemaOrg instance containing the structured data to embed
+   * @param schemaOrg - SchemaOrgBuilder instance containing the structured data to embed
    * @returns The builder instance for method chaining
    *
    * **Note:** Requires the `schema-dts` package for type-safe Schema.org types: `npm install schema-dts`
@@ -769,7 +769,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * // Single entity
    * import type { Brand } from 'schema-dts';
    *
-   * const schema = new SchemaOrg<Brand>(new URL('https://devsantara.com'))
+   * const schema = new SchemaOrgBuilder<Brand>(new URL('https://devsantara.com'))
    *   .add('brand', {
    *     '@type': 'Brand',
    *     name: 'My Brand',
@@ -782,7 +782,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * // Multiple entities with references
    * import type { Brand, Product } from 'schema-dts';
    *
-   * const schema = new SchemaOrg<Brand | Product>(new URL('https://devsantara.com'))
+   * const schema = new SchemaOrgBuilder<Brand | Product>(new URL('https://devsantara.com'))
    *   .add('brand', {
    *     '@type': 'Brand',
    *     '@id': 'https://devsantara.com/#brand',
@@ -796,7 +796,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *
    * new HeadBuilder().addSchemaOrg(schema).build();
    */
-  addSchemaOrg(schemaOrg: SchemaOrg): this {
+  addSchemaOrg(schemaOrg: SchemaOrgBuilder): this {
     this.addElement('script', {
       type: 'application/ld+json',
       children: schemaOrg.build(),

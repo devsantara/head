@@ -16,7 +16,7 @@ import type { BaseSchemaOptions, Helper } from './types';
  * // Single entity with schema-dts types
  * import type { Brand } from 'schema-dts';
  *
- * const schema = new SchemaOrg<Brand>(new URL('https://example.com'))
+ * const schema = new SchemaOrgBuilder<Brand>(new URL('https://example.com'))
  *   .add('brand', {
  *     '@type': 'Brand',
  *     name: 'My Brand'
@@ -26,7 +26,7 @@ import type { BaseSchemaOptions, Helper } from './types';
  * // Multiple entities with references
  * import type { Brand, Product } from 'schema-dts';
  *
- * const schema = new SchemaOrg<Brand | Product>(new URL('https://example.com'))
+ * const schema = new SchemaOrgBuilder<Brand | Product>(new URL('https://example.com'))
  *   .add('brand', {
  *     '@type': 'Brand',
  *     '@id': 'https://example.com/#brand',
@@ -38,7 +38,7 @@ import type { BaseSchemaOptions, Helper } from './types';
  *     brand: { '@id': ref.brand.getID() }
  *   }));
  */
-export class SchemaOrg<
+export class SchemaOrgBuilder<
   TSchemaOptions extends BaseSchemaOptions | string = BaseSchemaOptions,
   TKeys extends string = never,
   TGraph extends Record<string, Entity> = {},
@@ -47,12 +47,12 @@ export class SchemaOrg<
   private graph: TGraph;
 
   /**
-   * Creates a new SchemaOrg builder instance for constructing Schema.org structured data.
+   * Creates a new SchemaOrgBuilder instance for constructing Schema.org structured data.
    *
    * @param baseUrl - Optional base URL for resolving relative URLs in schema properties
    *
    * @example
-   * const schema = new SchemaOrg(new URL('https://example.com'));
+   * const schema = new SchemaOrgBuilder(new URL('https://example.com'));
    */
   constructor(baseUrl?: URL) {
     this.baseUrl = baseUrl;
@@ -90,7 +90,7 @@ export class SchemaOrg<
    * @template TKey - The unique string key for this entity
    * @param key - Unique identifier for this entity in the graph (must not already exist)
    * @param value - Entity properties object or callback function receiving graph references and helper utilities
-   * @returns Updated SchemaOrg instance with the new entity added to the type-safe graph
+   * @returns Updated SchemaOrgBuilder instance with the new entity added to the type-safe graph
    * @throws Error if the key already exists in the graph
    *
    * @example
@@ -125,7 +125,7 @@ export class SchemaOrg<
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion
     this.graph[key] = new Entity<TSchema>(actualValue) as any;
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-    return this as unknown as SchemaOrg<
+    return this as unknown as SchemaOrgBuilder<
       Exclude<TSchemaOptions, string>,
       TKeys | TKey,
       TGraph & Record<TKey, Entity<TSchema>>
