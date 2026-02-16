@@ -1,19 +1,21 @@
 import type {
-  HeadAttributeTypeMap,
-  HeadAdapter,
-  HeadElement,
+  AlternateLocaleOptions,
   CharSet,
   ColorScheme,
-  RobotsOptions,
-  ViewportOptions,
-  OpenGraphOptions,
-  TwitterOptions,
-  AlternateLocaleOptions,
+  HeadAdapter,
+  HeadAttributeTypeMap,
+  HeadElement,
   IconOptions,
   IconPreset,
+  OpenGraphOptions,
+  RobotsOptions,
   StylesheetOptions,
   TitleOptions,
+  TwitterOptions,
+  ViewportOptions,
 } from './types';
+
+import type { SchemaOrg } from './schema-org';
 
 /**
  * Helper object provided to callback functions with utilities for dynamic metadata generation.
@@ -751,6 +753,55 @@ export class HeadBuilder<TOutput = HeadElement[]> {
       href: href.toString(),
       ...value,
     });
+    return this;
+  }
+
+  /**
+   * Adds Schema.org structured data as JSON-LD for rich search results and semantic web integration.
+   * Use the SchemaOrg builder to create type-safe structured data with entity relationships.
+   *
+   * @param schemaOrg - SchemaOrg instance containing the structured data to embed
+   * @returns The builder instance for method chaining
+   *
+   * **Note:** Requires the `schema-dts` package for type-safe Schema.org types: `npm install schema-dts`
+   *
+   * @example
+   * // Single entity
+   * import type { Brand } from 'schema-dts';
+   *
+   * const schema = new SchemaOrg<Brand>(new URL('https://example.com'))
+   *   .add('brand', {
+   *     '@type': 'Brand',
+   *     name: 'My Brand',
+   *     url: 'https://example.com'
+   *   });
+   *
+   * new HeadBuilder().addSchemaOrg(schema).build();
+   *
+   * @example
+   * // Multiple entities with references
+   * import type { Brand, Product } from 'schema-dts';
+   *
+   * const schema = new SchemaOrg<Brand | Product>(new URL('https://example.com'))
+   *   .add('brand', {
+   *     '@type': 'Brand',
+   *     '@id': 'https://example.com/#brand',
+   *     name: 'My Brand'
+   *   })
+   *   .add('product', (ref) => ({
+   *     '@type': 'Product',
+   *     name: 'My Product',
+   *     brand: { '@id': ref.brand.getID() }
+   *   }));
+   *
+   * new HeadBuilder().addSchemaOrg(schema).build();
+   */
+  addSchemaOrg(schemaOrg: SchemaOrg): this {
+    this.addElement('script', {
+      type: 'application/ld+json',
+      children: JSON.stringify(schemaOrg.build()),
+    });
+
     return this;
   }
 
