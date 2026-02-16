@@ -5,8 +5,11 @@
   "keywords": [
     "devsantara",
     "head",
+    "json-ld",
     "meta",
+    "metadata",
     "react",
+    "schema.org",
     "seo",
     "typescript"
   ],
@@ -31,6 +34,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
+    "./schema-org": "./dist/schema-org/index.js",
     "./adapters": "./dist/adapters/index.js",
     "./package.json": "./package.json"
   },
@@ -60,6 +64,7 @@
     "oxfmt": "^0.27.0",
     "oxlint": "^1.42.0",
     "oxlint-tsgolint": "^0.11.4",
+    "schema-dts": "^1.1.5",
     "tsdown": "^0.20.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
