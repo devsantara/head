@@ -16,7 +16,7 @@ import type { BaseSchemaOptions, Helper } from './types';
  * // Single entity with schema-dts types
  * import type { Brand } from 'schema-dts';
  *
- * const schema = new SchemaOrg<Brand>(new URL('https://devsantara.com'))
+ * const schema = new SchemaOrg<Brand>(new URL('https://example.com'))
  *   .add('brand', {
  *     '@type': 'Brand',
  *     name: 'My Brand'
@@ -26,10 +26,10 @@ import type { BaseSchemaOptions, Helper } from './types';
  * // Multiple entities with references
  * import type { Brand, Product } from 'schema-dts';
  *
- * const schema = new SchemaOrg<Brand | Product>(new URL('https://devsantara.com'))
+ * const schema = new SchemaOrg<Brand | Product>(new URL('https://example.com'))
  *   .add('brand', {
  *     '@type': 'Brand',
- *     '@id': 'https://devsantara.com/#brand',
+ *     '@id': 'https://example.com/#brand',
  *     name: 'My Brand'
  *   })
  *   .add('product', (ref) => ({
@@ -39,7 +39,7 @@ import type { BaseSchemaOptions, Helper } from './types';
  *   }));
  */
 export class SchemaOrg<
-  TSchemaOptions extends BaseSchemaOptions = BaseSchemaOptions,
+  TSchemaOptions extends BaseSchemaOptions | string = BaseSchemaOptions,
   TKeys extends string = never,
   TGraph extends Record<string, Entity> = {},
 > {
@@ -52,7 +52,7 @@ export class SchemaOrg<
    * @param baseUrl - Optional base URL for resolving relative URLs in schema properties
    *
    * @example
-   * const schema = new SchemaOrg(new URL('https://devsantara.com'));
+   * const schema = new SchemaOrg(new URL('https://example.com'));
    */
   constructor(baseUrl?: URL) {
     this.baseUrl = baseUrl;
@@ -97,7 +97,7 @@ export class SchemaOrg<
    * // Static entity
    * schema.add('brand', {
    *   '@type': 'Brand',
-   *   '@id': 'https://devsantara.com/#brand',
+   *   '@id': 'https://example.com/#brand',
    *   name: 'My Brand'
    * });
    *
@@ -109,7 +109,7 @@ export class SchemaOrg<
    *   brand: { '@id': ref.brand.getID() }
    * }));
    */
-  add<TSchema extends TSchemaOptions, TKey extends string>(
+  add<TSchema extends Exclude<TSchemaOptions, string>, TKey extends string>(
     key: TKey extends TKeys ? never : TKey,
     value: TSchema | ((ref: TGraph, helper: Helper) => TSchema),
   ) {
@@ -126,7 +126,7 @@ export class SchemaOrg<
     this.graph[key] = new Entity<TSchema>(actualValue) as any;
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion
     return this as unknown as SchemaOrg<
-      TSchemaOptions,
+      Exclude<TSchemaOptions, string>,
       TKeys | TKey,
       TGraph & Record<TKey, Entity<TSchema>>
     >;
