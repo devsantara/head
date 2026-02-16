@@ -23,6 +23,7 @@ Build SEO-friendly metadata with a fluent API, full TypeScript support, and fram
 - **Social Media** – Open Graph and Twitter Card meta tags for rich previews.
 - **Mobile Optimization** – Viewport configuration, color schemes, PWA icons.
 - **Advanced Tags** – Alternates, manifests, stylesheets, scripts, and custom meta tags.
+- **Structured Data** – Schema.org JSON-LD support for rich snippets, knowledge graphs, and enhanced SEO.
 - **Simplified URL Management** – Most metadata (Open Graph, canonical, alternates) requires absolute URLs. Set `metadataBase` once and use convenient relative paths everywhere.
 - **Continuously Expanding** – Actively adding more metadata types based on community feedback.
 
@@ -326,6 +327,42 @@ export const Route = createRootRoute({
 ]
 ```
 
+## 🌐 Schema.org Structured Data
+
+Add rich structured data with [Schema.org](https://schema.org) JSON-LD support for enhanced search engine understanding and knowledge graphs.
+
+### Quick Start
+
+```typescript
+import { HeadBuilder } from '@devsantara/head';
+import { SchemaOrgBuilder } from '@devsantara/head/schema-org';
+import type { Organization } from 'schema-dts';
+
+const schema = new SchemaOrgBuilder<Organization>().addEntity('org', {
+  '@type': 'Organization',
+  name: 'My Company',
+  url: 'https://devsantara.com',
+});
+
+const head = new HeadBuilder()
+  .addTitle('Welcome')
+  .addDescription('Visit our site')
+  .addSchemaOrg(schema)
+  .build();
+```
+
+### Features
+
+- **Type-Safe Entities** – Full TypeScript support with `schema-dts` package
+- **Multiple Entities** – Build complex entity graphs with relationships
+- **Entity References** – Link entities together with `@id` cross-references
+- **URL Resolution** – Automatically resolve relative URLs with metadata base
+- **JSON-LD Output** – Standards-compliant format ready for search engines
+
+### Learn More
+
+For comprehensive documentation, examples, and best practices, see the [Schema.org Module Documentation](./src/schema-org/README.md).
+
 ## 📚 API Reference
 
 ### Core Methods
@@ -350,20 +387,22 @@ For advanced use cases not covered by the essential methods below, use these bas
 
 High-level convenience methods for common metadata patterns. These methods handle the complexity of creating properly structured head.
 
-| Method                                                                 | Description                                                 |
-| ---------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `addDescription(description: string)`                                  | Adds a meta description tag                                 |
-| `addCanonical(valueOrFn: BuilderOption<string \| URL>)`                | Adds a canonical URL link                                   |
-| `addRobots(options: RobotsOptions)`                                    | Adds robots meta tag for search engine directives           |
-| `addCharSet(charset: CharSet)`                                         | Adds character encoding declaration                         |
-| `addViewport(options: ViewportOptions)`                                | Adds viewport configuration for responsive design           |
-| `addColorScheme(colorScheme: ColorScheme)`                             | Adds color scheme preference (light/dark mode)              |
-| `addOpenGraph(valueOrFn: BuilderOption<OpenGraphOptions>)`             | Adds Open Graph meta tags for social media previews         |
-| `addTwitter(valueOrFn: BuilderOption<TwitterOptions>)`                 | Adds Twitter Card meta tags                                 |
-| `addIcon(preset: IconPreset, valueOrFn: BuilderOption<IconOptions>)`   | Adds favicon or app icons (favicon, apple-touch-icon, etc.) |
-| `addStylesheet(href: string \| URL, options?: StylesheetOptions)`      | Adds an external stylesheet link                            |
-| `addManifest(valueOrFn: BuilderOption<string \| URL>)`                 | Adds a web app manifest link                                |
-| `addAlternateLocale(valueOrFn: BuilderOption<AlternateLocaleOptions>)` | Adds alternate language/locale links                        |
+| Method                                                                         | Description                                                 |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| `addDescription(description: string)`                                          | Adds a meta description tag                                 |
+| `addCanonical(valueOrFn: BuilderOption<string \| URL>)`                        | Adds a canonical URL link                                   |
+| `addRobots(options: RobotsOptions)`                                            | Adds robots meta tag for search engine directives           |
+| `addCharSet(charset: CharSet)`                                                 | Adds character encoding declaration                         |
+| `addViewport(options: ViewportOptions)`                                        | Adds viewport configuration for responsive design           |
+| `addColorScheme(colorScheme: ColorScheme)`                                     | Adds color scheme preference (light/dark mode)              |
+| `addOpenGraph(valueOrFn: BuilderOption<OpenGraphOptions>)`                     | Adds Open Graph meta tags for social media previews         |
+| `addTwitter(valueOrFn: BuilderOption<TwitterOptions>)`                         | Adds Twitter Card meta tags                                 |
+| `addIcon(preset: IconPreset, valueOrFn: BuilderOption<IconOptions>)`           | Adds favicon or app icons (favicon, apple-touch-icon, etc.) |
+| `addStylesheet(href: string \| URL, options?: StylesheetOptions)`              | Adds an external stylesheet link                            |
+| `addManifest(valueOrFn: BuilderOption<string \| URL>)`                         | Adds a web app manifest link                                |
+| `addAlternateLocale(valueOrFn: BuilderOption<AlternateLocaleOptions>)`         | Adds alternate language/locale links                        |
+| `addHttpEquiv(httpEquiv: HttpEquivKey, content: string)`                       | Adds a pragma directive using the `http-equiv` attribute    |
+| `addSchemaOrg(valueOrFn: SchemaOrgBuilder \| BuilderOption<SchemaOrgBuilder>)` | Adds Schema.org structured data as JSON-LD                  |
 
 > **💡 Tip:** Most methods support either direct values or callback functions that receive a helper object with `resolveUrl()` for dynamic URL resolution.
 

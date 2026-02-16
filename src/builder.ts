@@ -1,19 +1,22 @@
 import type {
-  HeadAttributeTypeMap,
-  HeadAdapter,
-  HeadElement,
+  AlternateLocaleOptions,
   CharSet,
   ColorScheme,
-  RobotsOptions,
-  ViewportOptions,
-  OpenGraphOptions,
-  TwitterOptions,
-  AlternateLocaleOptions,
+  HeadAdapter,
+  HeadAttributeTypeMap,
+  HeadElement,
+  HttpEquiv,
   IconOptions,
   IconPreset,
+  OpenGraphOptions,
+  RobotsOptions,
   StylesheetOptions,
   TitleOptions,
+  TwitterOptions,
+  ViewportOptions,
 } from './types';
+
+import { SchemaOrgBuilder } from './schema-org';
 
 /**
  * Helper object provided to callback functions with utilities for dynamic metadata generation.
@@ -129,6 +132,9 @@ export class HeadBuilder<TOutput = HeadElement[]> {
     if (type === 'meta') {
       if ('charSet' in attributes) {
         return 'meta:charSet';
+      }
+      if ('httpEquiv' in attributes) {
+        return `meta:http-equiv:${attributes.httpEquiv}`;
       }
       if ('name' in attributes && 'content' in attributes) {
         return `meta:name:${attributes.name}`;
@@ -262,6 +268,23 @@ export class HeadBuilder<TOutput = HeadElement[]> {
       type: 'text/css',
       ...attributes,
     });
+    return this;
+  }
+
+  /**
+   * Adds a pragma directive using the http-equiv attribute on a meta element.
+   *
+   * @param httpEquiv - The pragma directive (e.g., 'content-type', 'refresh')
+   * @param content - The value for the directive
+   * @returns The builder instance for method chaining
+   *
+   * @example
+   * new HeadBuilder()
+   *   .addHttpEquiv('refresh', '30')
+   *   .build();
+   */
+  addHttpEquiv(httpEquiv: HttpEquiv, content: string): this {
+    this.addElement('meta', { httpEquiv, content });
     return this;
   }
 
@@ -751,6 +774,74 @@ export class HeadBuilder<TOutput = HeadElement[]> {
       href: href.toString(),
       ...value,
     });
+    return this;
+  }
+
+  /**
+   * Adds Schema.org structured data as JSON-LD for rich search results and semantic web integration.
+   * Use the SchemaOrgBuilder builder to create type-safe structured data with entity relationships.
+   * Can accept either a pre-built SchemaOrgBuilder instance or a callback function.
+   *
+   * @param valueOrFn - SchemaOrgBuilder instance or callback function receiving helper utilities
+   * @returns The builder instance for method chaining
+   *
+   * **Note:** Requires the `schema-dts` package for type-safe Schema.org types: `npm install schema-dts`
+   *
+   * @example
+   * // Single entity with pre-built schema
+   * import type { Brand } from 'schema-dts';
+   *
+   * const schema = new SchemaOrgBuilder<Brand>(new URL('https://devsantara.com'))
+   *   .addEntity('brand', {
+   *     '@type': 'Brand',
+   *     name: 'My Brand',
+   *     url: 'https://devsantara.com'
+   *   });
+   *
+   * new HeadBuilder().addSchemaOrg(schema).build();
+   *
+   * @example
+   * // Multiple entities with references
+   * import type { Brand, Product } from 'schema-dts';
+   *
+   * const schema = new SchemaOrgBuilder<Brand | Product>(new URL('https://devsantara.com'))
+   *   .addEntity('brand', {
+   *     '@type': 'Brand',
+   *     '@id': 'https://devsantara.com/#brand',
+   *     name: 'My Brand'
+   *   })
+   *   .addEntity('product', (ref) => ({
+   *     '@type': 'Product',
+   *     name: 'My Product',
+   *     brand: { '@id': ref.brand.getID() }
+   *   }));
+   *
+   * new HeadBuilder().addSchemaOrg(schema).build();
+   *
+   * @example
+   * // Using callback with URL resolution
+   * import type { Brand } from 'schema-dts';
+   *
+   * new HeadBuilder({ metadataBase: new URL('https://devsantara.com') })
+   *   .addSchemaOrg((helper) => new SchemaOrgBuilder<Brand>(new URL(helper.resolveUrl('/')))
+   *     .addEntity('brand', {
+   *       '@type': 'Brand',
+   *       '@id': helper.resolveUrl('/#brand'),
+   *       name: 'My Brand',
+   *       url: helper.resolveUrl('/')
+   *     })
+   *   )
+   *   .build();
+   */
+  addSchemaOrg(
+    valueOrFn: SchemaOrgBuilder | BuilderOption<SchemaOrgBuilder>,
+  ): this {
+    const value = this.parseValueOrFn(valueOrFn);
+    this.addElement('script', {
+      type: 'application/ld+json',
+      children: value.build(),
+    });
+
     return this;
   }
 
