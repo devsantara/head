@@ -770,7 +770,7 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * import type { Brand } from 'schema-dts';
    *
    * const schema = new SchemaOrgBuilder<Brand>(new URL('https://devsantara.com'))
-   *   .add('brand', {
+   *   .addEntity('brand', {
    *     '@type': 'Brand',
    *     name: 'My Brand',
    *     url: 'https://devsantara.com'
@@ -783,12 +783,12 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * import type { Brand, Product } from 'schema-dts';
    *
    * const schema = new SchemaOrgBuilder<Brand | Product>(new URL('https://devsantara.com'))
-   *   .add('brand', {
+   *   .addEntity('brand', {
    *     '@type': 'Brand',
    *     '@id': 'https://devsantara.com/#brand',
    *     name: 'My Brand'
    *   })
-   *   .add('product', (ref) => ({
+   *   .addEntity('product', (ref) => ({
    *     '@type': 'Product',
    *     name: 'My Product',
    *     brand: { '@id': ref.brand.getID() }

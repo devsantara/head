@@ -6,7 +6,7 @@ import type { HeadElement } from '../types';
 
 describe('HeadBuilder.addSchemaOrg', () => {
   it('should add single entity schema as JSON-LD script', () => {
-    const schema = new SchemaOrgBuilder<Brand>().add('brand', {
+    const schema = new SchemaOrgBuilder<Brand>().addEntity('brand', {
       '@type': 'Brand',
       name: 'My Brand',
       url: 'https://devsantara.com',
@@ -31,12 +31,12 @@ describe('HeadBuilder.addSchemaOrg', () => {
 
   it('should add multi-entity schema with @graph', () => {
     const schema = new SchemaOrgBuilder<Brand | Product>()
-      .add('brand', {
+      .addEntity('brand', {
         '@type': 'Brand',
         '@id': 'https://devsantara.com/#brand',
         name: 'My Brand',
       })
-      .add('product', (ref) => ({
+      .addEntity('product', (ref) => ({
         '@type': 'Product',
         name: 'My Product',
         brand: { '@id': ref.brand.getID() },
@@ -59,7 +59,7 @@ describe('HeadBuilder.addSchemaOrg', () => {
   });
 
   it('should properly stringify schema with special characters', () => {
-    const schema = new SchemaOrgBuilder<Brand>().add('brand', {
+    const schema = new SchemaOrgBuilder<Brand>().addEntity('brand', {
       '@type': 'Brand',
       name: 'Brand "Quoted" & Special <chars>',
       description: "It's a test",
@@ -74,7 +74,7 @@ describe('HeadBuilder.addSchemaOrg', () => {
   });
 
   it('should return builder instance for chaining', () => {
-    const schema = new SchemaOrgBuilder<Brand>().add('brand', {
+    const schema = new SchemaOrgBuilder<Brand>().addEntity('brand', {
       '@type': 'Brand',
       name: 'My Brand',
     });
@@ -86,7 +86,7 @@ describe('HeadBuilder.addSchemaOrg', () => {
   });
 
   it('should allow chaining with other head elements', () => {
-    const schema = new SchemaOrgBuilder<Brand>().add('brand', {
+    const schema = new SchemaOrgBuilder<Brand>().addEntity('brand', {
       '@type': 'Brand',
       name: 'My Brand',
     });
@@ -106,7 +106,7 @@ describe('HeadBuilder.addSchemaOrg', () => {
   it('should handle schema with baseUrl resolution', () => {
     const schema = new SchemaOrgBuilder<Brand>(
       new URL('https://devsantara.com'),
-    ).add('brand', (_, helper) => ({
+    ).addEntity('brand', (_, helper) => ({
       '@type': 'Brand',
       '@id': helper.resolveUrl('/#brand'),
       url: helper.resolveUrl('/'),
@@ -122,12 +122,12 @@ describe('HeadBuilder.addSchemaOrg', () => {
   });
 
   it('should allow adding multiple different schemas', () => {
-    const schema1 = new SchemaOrgBuilder<Brand>().add('brand', {
+    const schema1 = new SchemaOrgBuilder<Brand>().addEntity('brand', {
       '@type': 'Brand',
       name: 'First Brand',
     });
 
-    const schema2 = new SchemaOrgBuilder<Product>().add('product', {
+    const schema2 = new SchemaOrgBuilder<Product>().addEntity('product', {
       '@type': 'Product',
       name: 'My Product',
     });

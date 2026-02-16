@@ -17,7 +17,7 @@ import type { BaseSchemaOptions, Helper } from './types';
  * import type { Brand } from 'schema-dts';
  *
  * const schema = new SchemaOrgBuilder<Brand>(new URL('https://example.com'))
- *   .add('brand', {
+ *   .addEntity('brand', {
  *     '@type': 'Brand',
  *     name: 'My Brand'
  *   });
@@ -27,12 +27,12 @@ import type { BaseSchemaOptions, Helper } from './types';
  * import type { Brand, Product } from 'schema-dts';
  *
  * const schema = new SchemaOrgBuilder<Brand | Product>(new URL('https://example.com'))
- *   .add('brand', {
+ *   .addEntity('brand', {
  *     '@type': 'Brand',
  *     '@id': 'https://example.com/#brand',
  *     name: 'My Brand'
  *   })
- *   .add('product', (ref) => ({
+ *   .addEntity('product', (ref) => ({
  *     '@type': 'Product',
  *     name: 'My Product',
  *     brand: { '@id': ref.brand.getID() }
@@ -95,7 +95,7 @@ export class SchemaOrgBuilder<
    *
    * @example
    * // Static entity
-   * schema.add('brand', {
+   * schema.addEntity('brand', {
    *   '@type': 'Brand',
    *   '@id': 'https://example.com/#brand',
    *   name: 'My Brand'
@@ -103,13 +103,16 @@ export class SchemaOrgBuilder<
    *
    * @example
    * // Dynamic entity with references and URL resolution
-   * schema.add('product', (ref, helper) => ({
+   * schema.addEntity('product', (ref, helper) => ({
    *   '@type': 'Product',
    *   '@id': helper.resolveUrl('/product'),
    *   brand: { '@id': ref.brand.getID() }
    * }));
    */
-  add<TSchema extends Exclude<TSchemaOptions, string>, TKey extends string>(
+  addEntity<
+    TSchema extends Exclude<TSchemaOptions, string>,
+    TKey extends string,
+  >(
     key: TKey extends TKeys ? never : TKey,
     value: TSchema | ((ref: TGraph, helper: Helper) => TSchema),
   ) {
