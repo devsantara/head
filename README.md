@@ -23,6 +23,7 @@ Build SEO-friendly metadata with a fluent API, full TypeScript support, and fram
 - **Social Media** – Open Graph and Twitter Card meta tags for rich previews.
 - **Mobile Optimization** – Viewport configuration, color schemes, PWA icons.
 - **Advanced Tags** – Alternates, manifests, stylesheets, scripts, and custom meta tags.
+- **Structured Data** – Schema.org JSON-LD support for rich snippets, knowledge graphs, and enhanced SEO.
 - **Simplified URL Management** – Most metadata (Open Graph, canonical, alternates) requires absolute URLs. Set `metadataBase` once and use convenient relative paths everywhere.
 - **Continuously Expanding** – Actively adding more metadata types based on community feedback.
 
