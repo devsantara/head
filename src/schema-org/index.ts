@@ -16,7 +16,7 @@ import type { BaseSchemaOptions, Helper } from './types';
  * // Single entity with schema-dts types
  * import type { Brand } from 'schema-dts';
  *
- * const schema = new SchemaOrgBuilder<Brand>(new URL('https://example.com'))
+ * const schema = new SchemaOrgBuilder<Brand>()
  *   .addEntity('brand', {
  *     '@type': 'Brand',
  *     name: 'My Brand'
@@ -26,10 +26,10 @@ import type { BaseSchemaOptions, Helper } from './types';
  * // Multiple entities with references
  * import type { Brand, Product } from 'schema-dts';
  *
- * const schema = new SchemaOrgBuilder<Brand | Product>(new URL('https://example.com'))
+ * const schema = new SchemaOrgBuilder<Brand | Product>()
  *   .addEntity('brand', {
  *     '@type': 'Brand',
- *     '@id': 'https://example.com/#brand',
+ *     '@id': 'https://devsantara.com/#brand',
  *     name: 'My Brand'
  *   })
  *   .addEntity('product', (ref) => ({
@@ -52,7 +52,7 @@ export class SchemaOrgBuilder<
    * @param baseUrl - Optional base URL for resolving relative URLs in schema properties
    *
    * @example
-   * const schema = new SchemaOrgBuilder(new URL('https://example.com'));
+   * const schema = new SchemaOrgBuilder(new URL('https://devsantara.com'));
    */
   constructor(baseUrl?: URL) {
     this.baseUrl = baseUrl;
@@ -97,7 +97,7 @@ export class SchemaOrgBuilder<
    * // Static entity
    * schema.addEntity('brand', {
    *   '@type': 'Brand',
-   *   '@id': 'https://example.com/#brand',
+   *   '@id': 'https://devsantara.com/#brand',
    *   name: 'My Brand'
    * });
    *

@@ -38,7 +38,7 @@ const schema = new SchemaOrgBuilder()
   .addEntity('brand', {
     '@type': 'Brand',
     name: 'My Brand',
-    logo: 'https://example.com/logo.png',
+    logo: 'https://devsantara.com/logo.png',
   })
   .build();
 ```
@@ -49,7 +49,7 @@ const schema = new SchemaOrgBuilder()
   "@context": "https://schema.org",
   "@type": "Brand",
   "name": "My Brand",
-  "logo": "https://example.com/logo.png"
+  "logo": "https://devsantara.com/logo.png"
 }
 ```
 
@@ -68,10 +68,10 @@ import type { Organization } from 'schema-dts';
 const schema = new SchemaOrgBuilder<Organization>()
   .addEntity('org', {
     '@type': 'Organization',
-    '@id': 'https://example.com/#org',
+    '@id': 'https://devsantara.com/#org',
     name: 'My Organization',
-    url: 'https://example.com',
-    logo: 'https://example.com/logo.png',
+    url: 'https://devsantara.com',
+    logo: 'https://devsantara.com/logo.png',
   })
   .build();
 ```
@@ -87,12 +87,12 @@ import type { Brand, Product } from 'schema-dts';
 const schema = new SchemaOrgBuilder<Brand | Product>()
   .addEntity('brand', {
     '@type': 'Brand',
-    '@id': 'https://example.com/#brand',
+    '@id': 'https://devsantara.com/#brand',
     name: 'My Brand',
   })
   .addEntity('product', (ref) => ({
     '@type': 'Product',
-    '@id': 'https://example.com/products/awesome-widget',
+    '@id': 'https://devsantara.com/products/awesome-widget',
     name: 'Awesome Widget',
     brand: {
       '@id': ref.brand.getID(), // Reference the brand entity
@@ -108,14 +108,14 @@ const schema = new SchemaOrgBuilder<Brand | Product>()
   "@graph": [
     {
       "@type": "Brand",
-      "@id": "https://example.com/#brand",
+      "@id": "https://devsantara.com/#brand",
       "name": "My Brand"
     },
     {
       "@type": "Product",
-      "@id": "https://example.com/products/awesome-widget",
+      "@id": "https://devsantara.com/products/awesome-widget",
       "name": "Awesome Widget",
-      "brand": { "@id": "https://example.com/#brand" }
+      "brand": { "@id": "https://devsantara.com/#brand" }
     }
   ]
 }
@@ -130,7 +130,7 @@ import { SchemaOrgBuilder } from '@devsantara/head/schema-org';
 import type { Organization } from 'schema-dts';
 
 const schema = new SchemaOrgBuilder<Organization>(
-  new URL('https://example.com'),
+  new URL('https://devsantara.com'),
 )
   .addEntity('org', (_, helper) => ({
     '@type': 'Organization',
@@ -147,10 +147,10 @@ const schema = new SchemaOrgBuilder<Organization>(
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "@id": "https://example.com/#org",
+  "@id": "https://devsantara.com/#org",
   "name": "My Organization",
-  "logo": "https://example.com/images/logo.png",
-  "url": "https://example.com/"
+  "logo": "https://devsantara.com/images/logo.png",
+  "url": "https://devsantara.com/"
 }
 ```
 
@@ -167,7 +167,7 @@ import type { Organization } from 'schema-dts';
 
 const schema = new SchemaOrgBuilder<Organization>().addEntity('org', {
   '@type': 'Organization',
-  '@id': 'https://example.com/#org',
+  '@id': 'https://devsantara.com/#org',
   name: 'My Organization',
 });
 
@@ -185,7 +185,7 @@ The `addSchemaOrg()` method automatically generates a JSON-LD script tag:
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": "https://example.com/#org",
+    "@id": "https://devsantara.com/#org",
     "name": "My Organization"
   }
 </script>
@@ -210,7 +210,7 @@ constructor(baseUrl?: URL)
 **Example:**
 
 ```typescript
-const schema = new SchemaOrgBuilder(new URL('https://example.com'));
+const schema = new SchemaOrgBuilder(new URL('https://devsantara.com'));
 ```
 
 #### Methods
@@ -312,7 +312,7 @@ Access previously added entities to create relationships between them.
 In callback functions, the `ref` object provides access to all previously added entities:
 
 ```typescript
-const schema = new SchemaOrgBuilder(new URL('https://example.com'))
+const schema = new SchemaOrgBuilder()
   .addEntity('author', {
     '@type': 'Person',
     '@id': '#author',

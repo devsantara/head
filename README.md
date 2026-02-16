@@ -340,7 +340,7 @@ import type { Organization } from 'schema-dts';
 const schema = new SchemaOrgBuilder<Organization>().addEntity('org', {
   '@type': 'Organization',
   name: 'My Company',
-  url: 'https://example.com',
+  url: 'https://devsantara.com',
 });
 
 const head = new HeadBuilder()
