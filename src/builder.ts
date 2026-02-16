@@ -15,7 +15,7 @@ import type {
   ViewportOptions,
 } from './types';
 
-import type { SchemaOrgBuilder } from './schema-org';
+import { SchemaOrgBuilder } from './schema-org';
 
 /**
  * Helper object provided to callback functions with utilities for dynamic metadata generation.
@@ -759,14 +759,15 @@ export class HeadBuilder<TOutput = HeadElement[]> {
   /**
    * Adds Schema.org structured data as JSON-LD for rich search results and semantic web integration.
    * Use the SchemaOrgBuilder builder to create type-safe structured data with entity relationships.
+   * Can accept either a pre-built SchemaOrgBuilder instance or a callback function.
    *
-   * @param schemaOrg - SchemaOrgBuilder instance containing the structured data to embed
+   * @param valueOrFn - SchemaOrgBuilder instance or callback function receiving helper utilities
    * @returns The builder instance for method chaining
    *
    * **Note:** Requires the `schema-dts` package for type-safe Schema.org types: `npm install schema-dts`
    *
    * @example
-   * // Single entity
+   * // Single entity with pre-built schema
    * import type { Brand } from 'schema-dts';
    *
    * const schema = new SchemaOrgBuilder<Brand>(new URL('https://devsantara.com'))
@@ -795,11 +796,29 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *   }));
    *
    * new HeadBuilder().addSchemaOrg(schema).build();
+   *
+   * @example
+   * // Using callback with URL resolution
+   * import type { Brand } from 'schema-dts';
+   *
+   * new HeadBuilder({ metadataBase: new URL('https://devsantara.com') })
+   *   .addSchemaOrg((helper) => new SchemaOrgBuilder<Brand>(new URL(helper.resolveUrl('/')))
+   *     .addEntity('brand', {
+   *       '@type': 'Brand',
+   *       '@id': helper.resolveUrl('/#brand'),
+   *       name: 'My Brand',
+   *       url: helper.resolveUrl('/')
+   *     })
+   *   )
+   *   .build();
    */
-  addSchemaOrg(schemaOrg: SchemaOrgBuilder): this {
+  addSchemaOrg(
+    valueOrFn: SchemaOrgBuilder | BuilderOption<SchemaOrgBuilder>,
+  ): this {
+    const value = this.parseValueOrFn(valueOrFn);
     this.addElement('script', {
       type: 'application/ld+json',
-      children: schemaOrg.build(),
+      children: value.build(),
     });
 
     return this;

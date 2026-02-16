@@ -142,4 +142,47 @@ describe('HeadBuilder.addSchemaOrg', () => {
     expect(result[0].type).toBe('script');
     expect(result[1].type).toBe('script');
   });
+
+  it('should accept callback function for dynamic schema generation', () => {
+    const result = new HeadBuilder({
+      metadataBase: new URL('https://devsantara.com'),
+    })
+      .addSchemaOrg((helper) =>
+        new SchemaOrgBuilder<Brand>().addEntity('brand', {
+          '@type': 'Brand',
+          '@id': helper.resolveUrl('/#brand'),
+          name: 'My Brand',
+          url: helper.resolveUrl('/'),
+        }),
+      )
+      .build();
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+    const parsedChildren = JSON.parse(result[0].attributes.children as string);
+    expect(parsedChildren['@id']).toBe('https://devsantara.com/#brand');
+    expect(parsedChildren.url).toBe('https://devsantara.com/');
+  });
+
+  it('should pass baseUrl to SchemaOrgBuilder via callback helper', () => {
+    const result = new HeadBuilder({
+      metadataBase: new URL('https://devsantara.com'),
+    })
+      .addSchemaOrg((helper) =>
+        new SchemaOrgBuilder<Brand>(new URL(helper.resolveUrl('/'))).addEntity(
+          'brand',
+          (_, schemaHelper) => ({
+            '@type': 'Brand',
+            '@id': schemaHelper.resolveUrl('/#brand'),
+            name: 'My Brand',
+            url: schemaHelper.resolveUrl('/'),
+          }),
+        ),
+      )
+      .build();
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+    const parsedChildren = JSON.parse(result[0].attributes.children as string);
+    expect(parsedChildren['@id']).toBe('https://devsantara.com/#brand');
+    expect(parsedChildren.url).toBe('https://devsantara.com/');
+  });
 });
