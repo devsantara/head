@@ -5,6 +5,7 @@ import type {
   HeadAdapter,
   HeadAttributeTypeMap,
   HeadElement,
+  HttpEquiv,
   IconOptions,
   IconPreset,
   OpenGraphOptions,
@@ -131,6 +132,9 @@ export class HeadBuilder<TOutput = HeadElement[]> {
     if (type === 'meta') {
       if ('charSet' in attributes) {
         return 'meta:charSet';
+      }
+      if ('httpEquiv' in attributes) {
+        return `meta:http-equiv:${attributes.httpEquiv}`;
       }
       if ('name' in attributes && 'content' in attributes) {
         return `meta:name:${attributes.name}`;
@@ -264,6 +268,23 @@ export class HeadBuilder<TOutput = HeadElement[]> {
       type: 'text/css',
       ...attributes,
     });
+    return this;
+  }
+
+  /**
+   * Adds a pragma directive using the http-equiv attribute on a meta element.
+   *
+   * @param httpEquiv - The pragma directive (e.g., 'content-type', 'refresh')
+   * @param content - The value for the directive
+   * @returns The builder instance for method chaining
+   *
+   * @example
+   * new HeadBuilder()
+   *   .addHttpEquiv('refresh', '30')
+   *   .build();
+   */
+  addHttpEquiv(httpEquiv: HttpEquiv, content: string): this {
+    this.addElement('meta', { httpEquiv, content });
     return this;
   }
 

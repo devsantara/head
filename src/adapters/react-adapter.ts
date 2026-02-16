@@ -1,7 +1,7 @@
 import { createElement, type ReactNode } from 'react';
 import type { HeadAdapter, HeadElement } from '../types';
 
-export type HeadReactAdapterResult = ReactNode[];
+type HeadReactAdapterResult = ReactNode[];
 
 /**
  * Adapter that transforms head elements into React components for rendering in React applications.
