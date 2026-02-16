@@ -769,11 +769,11 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * // Single entity
    * import type { Brand } from 'schema-dts';
    *
-   * const schema = new SchemaOrg<Brand>(new URL('https://example.com'))
+   * const schema = new SchemaOrg<Brand>(new URL('https://devsantara.com'))
    *   .add('brand', {
    *     '@type': 'Brand',
    *     name: 'My Brand',
-   *     url: 'https://example.com'
+   *     url: 'https://devsantara.com'
    *   });
    *
    * new HeadBuilder().addSchemaOrg(schema).build();
@@ -782,10 +782,10 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * // Multiple entities with references
    * import type { Brand, Product } from 'schema-dts';
    *
-   * const schema = new SchemaOrg<Brand | Product>(new URL('https://example.com'))
+   * const schema = new SchemaOrg<Brand | Product>(new URL('https://devsantara.com'))
    *   .add('brand', {
    *     '@type': 'Brand',
-   *     '@id': 'https://example.com/#brand',
+   *     '@id': 'https://devsantara.com/#brand',
    *     name: 'My Brand'
    *   })
    *   .add('product', (ref) => ({
