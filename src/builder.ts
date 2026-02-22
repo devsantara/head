@@ -327,6 +327,8 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    * Adds a title element that appears in browser tabs, search results, and bookmarks.
    * Supports both simple string titles and templated titles with dynamic substitution.
    *
+   * When a template is provided via TitleOptions, the default is used initially and the template is applied to subsequent string titles.
+   *
    * @param title - The document title as a string, or TitleOptions object with template and default
    * @returns The builder instance for method chaining
    *
@@ -338,9 +340,11 @@ export class HeadBuilder<TOutput = HeadElement[]> {
    *
    * @example
    * // Templated title with page-specific suffix
+   * // Setting the template with default stores 'Home' as the title
    * const baseHead = new HeadBuilder()
-   *   .addTitle({ template: '%s | My Site', default: 'Home' })
+   *   .addTitle({ template: '%s | My Site', default: 'Home' });
    *
+   * // Subsequent string titles apply the template
    * const head = baseHead.addTitle('About Us').build(); // Results in title "About Us | My Site"
    */
   addTitle(title: string | TitleOptions): this {
@@ -360,12 +364,10 @@ export class HeadBuilder<TOutput = HeadElement[]> {
 
     /**
      * If title is provided as an object with template and default,
-     * we store the options and generate the title using the template with default.
+     * we store the options and add the default title. Subsequent calls with string titles will use the template for generation.
      */
     this.titleOptions = title;
-    this.addElement('title', {
-      children: this.titleOptions.template.replace('%s', title.default),
-    });
+    this.addElement('title', { children: this.titleOptions.default });
     return this;
   }
 
