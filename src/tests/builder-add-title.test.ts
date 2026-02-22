@@ -19,7 +19,7 @@ describe('HeadBuilder.addTitle', () => {
 
     expect(result[0]).toEqual({
       type: 'title',
-      attributes: { children: 'Home | My Site' },
+      attributes: { children: 'Home' },
     });
   });
 
@@ -36,7 +36,7 @@ describe('HeadBuilder.addTitle', () => {
     });
   });
 
-  it('should update template when new template is set', () => {
+  it('should update template when new template is set (default template)', () => {
     const result = new HeadBuilder()
       .addTitle({ template: '%s | Site A', default: 'Home' })
       .addTitle({ template: '%s | Site B', default: 'Index' })
@@ -44,7 +44,20 @@ describe('HeadBuilder.addTitle', () => {
 
     expect(result[0]).toEqual({
       type: 'title',
-      attributes: { children: 'Index | Site B' },
+      attributes: { children: 'Index' },
+    });
+  });
+
+  it('should update template when new template is set (full template)', () => {
+    const result = new HeadBuilder()
+      .addTitle({ template: '%s | Site A', default: 'Home' })
+      .addTitle({ template: '%s | Site B', default: 'Index' })
+      .addTitle('Contact')
+      .build();
+
+    expect(result[0]).toEqual({
+      type: 'title',
+      attributes: { children: 'Contact | Site B' },
     });
   });
 
