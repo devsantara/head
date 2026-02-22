@@ -1,6 +1,6 @@
 {
   "name": "@devsantara/head",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A type-safe HTML head builder library for managing document head metadata with full TypeScript support",
   "keywords": [
     "devsantara",

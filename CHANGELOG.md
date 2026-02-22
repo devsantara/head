@@ -1,5 +1,11 @@
 # @devsantara/head
 
+## 0.4.1
+
+### Patch Changes
+
+- 5278cf9: fix(add-title): default title should show without the template
+
 ## 0.4.0
 
 ### Minor Changes
