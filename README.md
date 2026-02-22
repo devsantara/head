@@ -176,28 +176,23 @@ Set a title template with a default value, then pass page-specific titles as str
 import { HeadBuilder } from '@devsantara/head';
 
 // Create a builder and set title template with default
-// The template stays active for all future addTitle() calls
-const sharedHead = new HeadBuilder().addTitle({
+// The default value is used initially, template is stored for future use
+const baseHead = new HeadBuilder().addTitle({
   template: '%s | My Awesome site', // Store template (%s is the placeholder)
-  default: 'Home', // Initial title using template
+  default: 'Home', // Initial title (template not applied yet)
 });
-// Output: <title>Home | My Awesome site</title>
+// Output: <title>Home</title>
 
 // Update title for Posts page
 // Pass a string, builder applies the saved template automatically
-const postHead = sharedHead.addTitle('Posts').build();
+const postHead = baseHead.addTitle('Posts').build();
 // Output: <title>Posts | My Awesome site</title>
-
-// Update title for About page
-// Template is still active from the first addTitle() call
-const aboutHead = sharedHead.addTitle('About Us').build();
-// Output: <title>About Us | My Awesome site</title>
 ```
 
 **How it works:**
 
-1. First `addTitle()` with template object stores the template internally
-2. Subsequent `addTitle()` calls with strings automatically use the stored template
+1. First `addTitle()` with template object stores the template internally and uses just the default value
+2. Subsequent `addTitle()` calls with strings automatically apply the stored template
 3. The `%s` placeholder gets replaced with your page title
 4. Each title replaces the previous one (deduplication)
 
